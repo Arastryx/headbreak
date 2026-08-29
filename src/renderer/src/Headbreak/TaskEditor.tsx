@@ -7,6 +7,8 @@ export interface TaskEditorProps {
   onSubmit: (task: HeadbreakTask) => void
 }
 
+let idCounter = 1
+
 export function TaskEditor({ onSubmit }: TaskEditorProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -35,7 +37,7 @@ export function TaskEditor({ onSubmit }: TaskEditorProps) {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => onSubmit({ title, description })}
+          onClick={() => onSubmit({ id: idCounter++, title, description })}
         >
           Create
         </Button>

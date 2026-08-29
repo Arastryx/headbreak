@@ -6,16 +6,21 @@ import {
   CardHeader,
   Dialog,
   DialogContent,
-  Stack
+  DialogTitle,
+  Stack,
+  Typography
 } from '@mui/material'
 import React, { useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import { TaskEditor } from './TaskEditor'
 import { HeadbreakTask } from './task'
+import { TaskCard } from './TaskCard'
 
-export interface ColumnProps {}
+export interface ColumnProps {
+  name: string
+}
 
-export function Column({}: ColumnProps) {
+export function Column({ name }: ColumnProps) {
   const [tasks, setTasks] = useState<HeadbreakTask[]>([])
 
   const [showCreate, setShowCreate] = useState(false)
@@ -34,18 +39,14 @@ export function Column({}: ColumnProps) {
         }}
       >
         {tasks.map((t, index) => (
-          <Card elevation={1} key={index} sx={{ flexShrink: 0 }}>
-            <CardHeader title={t.title} sx={{ pb: 1 }} />
-            {t.description && (
-              <CardContent sx={{ pt: 0, '&:last-child': { pb: 2 } }}>{t.description}</CardContent>
-            )}
-          </Card>
+          <TaskCard key={index} task={t} column={name} index={index} />
         ))}
         <Button sx={{ width: '100%' }} onClick={() => setShowCreate(true)}>
           <AddIcon />
         </Button>
       </Stack>
       <Dialog open={showCreate} onClose={() => setShowCreate(false)}>
+        <DialogTitle>Create Task</DialogTitle>
         <DialogContent>
           <TaskEditor
             onSubmit={(t) => {

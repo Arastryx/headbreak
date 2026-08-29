@@ -11,6 +11,8 @@
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "typewatch:node": "tsc --noEmit -w -p tsconfig.node.json --composite false",
+    "typewatch:web": "tsc --noEmit -w -p tsconfig.web.json --composite false",
     "start": "electron-vite preview",
     "dev": "electron-vite dev --watch",
     "build": "npm run typecheck && electron-vite build",
@@ -21,6 +23,7 @@
     "build:linux": "electron-vite build && electron-builder --linux"
   },
   "dependencies": {
+    "@dnd-kit/react": "^0.5.0",
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@emotion/react": "^11.14.0",
@@ -50,15 +53,5 @@
     "react-dom": "^19.2.1",
     "typescript": "^5.9.3",
     "vite": "^7.2.6"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "electron",
-      "esbuild"
-    ],
-    "ignoredBuiltDependencies": [
-      "better-sqlite3",
-      "electron-winstaller"
-    ]
   }
 }
