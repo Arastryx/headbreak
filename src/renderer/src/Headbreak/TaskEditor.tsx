@@ -1,17 +1,20 @@
 import { Box, Button, Stack, TextField } from '@mui/material'
 import { useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
-import { HeadbreakTask } from './task'
+import { useIpcCall } from './Common/useIpcCall'
+import { useTasks } from './TaskProvider'
 
 export interface TaskEditorProps {
-  onSubmit: (task: HeadbreakTask) => void
+  onSubmit: () => void
+  columnId: number
 }
 
-let idCounter = 1
-
-export function TaskEditor({ onSubmit }: TaskEditorProps) {
+export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+
+  const { callIpc: createTask, isLoading } = useIpcCall(window.taskApi.create, [])
+  const { reload } = useTasks()
 
   return (
     <Box sx={{ width: 400 }}>
@@ -37,7 +40,11 @@ export function TaskEditor({ onSubmit }: TaskEditorProps) {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => onSubmit({ id: idCounter++, title, description })}
+          onClick={async () => {
+            await createTask({ columnId, title, description })
+            reload()
+            onSubmit()
+          }}
         >
           Create
         </Button>

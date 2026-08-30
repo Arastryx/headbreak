@@ -11,6 +11,8 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"

@@ -1,11 +1,10 @@
 import { Card, CardHeader, CardContent, Typography } from '@mui/material'
-import { HeadbreakTask } from './task'
 import { useSortable } from '@dnd-kit/react/sortable'
 
 export interface TaskCardProps {
-  task: HeadbreakTask
+  task: Headbreak.Task
   index: number
-  column: string
+  column: number
 }
 
 export function TaskCard({ task, index, column }: TaskCardProps) {
