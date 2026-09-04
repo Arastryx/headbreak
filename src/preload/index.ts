@@ -23,9 +23,9 @@ function generateCallback(channel: string) {
 try {
   contextBridge.exposeInMainWorld('electron', electronAPI)
 
-  contextBridge.exposeInMainWorld('taskApi', {
-    create: generateEndpoint('task/create'),
-    get: generateEndpoint('task/get')
+  contextBridge.exposeInMainWorld('kanbanApi', {
+    create: generateEndpoint('kanban/create-task'),
+    get: generateEndpoint('kanban/get-tasks')
   })
 } catch (error) {
   console.error(error)

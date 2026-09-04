@@ -10,7 +10,7 @@ export interface TaskProviderProps {
 }
 
 export function TaskProvider({ children }: TaskProviderProps) {
-  const result = useIpcData(() => window.taskApi.get(), [])
+  const result = useIpcData(() => window.kanbanApi.getTasks(), [])
 
   return <TaskContext.Provider value={result}>{children}</TaskContext.Provider>
 }

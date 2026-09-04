@@ -15,8 +15,8 @@ async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export namespace TaskManager {
-  export async function create(task: TaskPayload) {
+export namespace KanbanManager {
+  export async function createTask(task: TaskPayload) {
     await sleep(50 + 25 * Math.random())
     if (tasks[task.columnId] == null) {
       tasks[task.columnId] = []
@@ -25,7 +25,7 @@ export namespace TaskManager {
     tasks[task.columnId].push({ ...task, id: idCounter++, order: tasks[task.columnId].length + 1 })
   }
 
-  export async function get() {
+  export async function getTasks() {
     await sleep(75 + 50 * Math.random())
     return tasks
   }

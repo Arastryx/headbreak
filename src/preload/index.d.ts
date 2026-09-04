@@ -31,9 +31,9 @@ declare global {
     electron: ElectronAPI
     api: unknown
 
-    taskApi: {
-      create: (task: Headbreak.CreateTaskParams) => Result<Headbreak.Task>
-      get: () => Result<Headbreak.TaskSet>
+    kanbanApi: {
+      createTask: (task: Headbreak.CreateTaskParams) => Result<Headbreak.Task>
+      getTasks: () => Result<Headbreak.TaskSet>
     }
   }
 }

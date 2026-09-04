@@ -13,7 +13,7 @@ export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
 
-  const { callIpc: createTask, isLoading } = useIpcCall(window.taskApi.create, [])
+  const { callIpc: createTask, isLoading } = useIpcCall(window.kanbanApi.createTask, [])
   const { reload } = useTasks()
 
   return (
@@ -40,6 +40,7 @@ export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
+          loading={isLoading}
           onClick={async () => {
             await createTask({ columnId, title, description })
             reload()
