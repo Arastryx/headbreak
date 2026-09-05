@@ -6,6 +6,19 @@ import { setupKanbanApi } from './kanbanApi'
 import { initDatabase, unitOfWork } from './database/database'
 import { TaskSchema } from './database/entities/Task'
 
+const isDev = !app.isPackaged
+
+async function installDevtron() {
+  const { devtron } = await import('@electron/devtron')
+  await devtron.install()
+}
+
+if (isDev) {
+  installDevtron().catch((error) => {
+    console.error('Failed to install Devtron:', error)
+  })
+}
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -55,7 +68,6 @@ app.whenReady().then(async () => {
   })
 
   await initDatabase()
-  const em = unitOfWork()
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))

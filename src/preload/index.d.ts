@@ -6,13 +6,18 @@ declare global {
   namespace Headbreak {
     interface Task {
       id: number
-      columnId: number
-      order: number
       title: string
       description?: string
+      column: number
     }
 
-    interface CreateTaskParams extends Omit<Task, 'id' | 'order'> {}
+    interface Column {
+      id: number
+      label?: string
+      tasks: Task[]
+    }
+
+    interface CreateTaskParams extends Omit<Task, 'id'> {}
 
     type TaskSet = Record<number, Task[]>
 
@@ -33,7 +38,8 @@ declare global {
 
     kanbanApi: {
       createTask: (task: Headbreak.CreateTaskParams) => Result<Headbreak.Task>
-      getTasks: () => Result<Headbreak.TaskSet>
+      createColumn: () => Result<Headbreak.Column>
+      get: () => Result<Headbreak.Column[]>
     }
   }
 }

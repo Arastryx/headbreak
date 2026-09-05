@@ -42,7 +42,7 @@ export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
           startIcon={<AddIcon />}
           loading={isLoading}
           onClick={async () => {
-            await createTask({ columnId, title, description })
+            await createTask({ column: columnId, title, description })
             reload()
             onSubmit()
           }}

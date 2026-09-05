@@ -19,7 +19,7 @@ let orm: Awaited<ReturnType<typeof initialize>> | undefined
 
 export async function initDatabase() {
   orm = await initialize()
-  await orm.schema.refresh()
+  await orm.schema.update()
 }
 
 export function unitOfWork() {

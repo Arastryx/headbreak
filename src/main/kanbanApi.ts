@@ -8,7 +8,12 @@ export function setupKanbanApi() {
     (e, ...params: Parameters<typeof KanbanManager.createTask>) =>
       handleError(() => KanbanManager.createTask(...params))
   )
-  ipcMain.handle('kanban/get-tasks', (e, ...params: Parameters<typeof KanbanManager.createTask>) =>
-    handleError(() => KanbanManager.getTasks())
+  ipcMain.handle(
+    'kanban/create-column',
+    (e, ...params: Parameters<typeof KanbanManager.createColumn>) =>
+      handleError(() => KanbanManager.createColumn(...params))
+  )
+  ipcMain.handle('kanban/get', (e, ...params: Parameters<typeof KanbanManager.getKanban>) =>
+    handleError(() => KanbanManager.getKanban())
   )
 }

@@ -1,10 +1,12 @@
 import { defineEntity, InferEntity, p } from '@mikro-orm/core'
+import { TaskSchema } from './Task'
 
 export const ColumnSchema = defineEntity({
   name: 'Column',
   properties: {
     id: p.integer().primary(),
-    label: p.string().length(255)
+    label: p.string().length(255).nullable(),
+    tasks: () => p.oneToMany(TaskSchema).mappedBy('column')
   }
 })
 

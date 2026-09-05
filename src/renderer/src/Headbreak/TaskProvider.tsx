@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react'
 import { useIpcData } from './Common/useIpcCall'
 
-export interface TaskData extends ReturnType<typeof useIpcData<Headbreak.TaskSet>> {}
+export interface TaskData extends ReturnType<typeof useIpcData<Headbreak.Column[]>> {}
 
 const TaskContext = createContext<TaskData | null>(null)
 
@@ -10,7 +10,7 @@ export interface TaskProviderProps {
 }
 
 export function TaskProvider({ children }: TaskProviderProps) {
-  const result = useIpcData(() => window.kanbanApi.getTasks(), [])
+  const result = useIpcData(() => window.kanbanApi.get(), [])
 
   return <TaskContext.Provider value={result}>{children}</TaskContext.Provider>
 }

@@ -24,8 +24,9 @@ try {
   contextBridge.exposeInMainWorld('electron', electronAPI)
 
   contextBridge.exposeInMainWorld('kanbanApi', {
-    create: generateEndpoint('kanban/create-task'),
-    get: generateEndpoint('kanban/get-tasks')
+    createTask: generateEndpoint('kanban/create-task'),
+    createColumn: generateEndpoint('kanban/create-column'),
+    get: generateEndpoint('kanban/get')
   })
 } catch (error) {
   console.error(error)
