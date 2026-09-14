@@ -3,6 +3,7 @@ import { useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import { useIpcCall } from './Common/useIpcCall'
 import { useTasks } from './TaskProvider'
+import { v4 } from 'uuid'
 
 export interface TaskEditorProps {
   onSubmit: () => void
@@ -42,7 +43,7 @@ export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
           startIcon={<AddIcon />}
           loading={isLoading}
           onClick={async () => {
-            await createTask({ column: columnId, title, description })
+            await createTask({ id: v4(), column: columnId, title, description })
             reload()
             onSubmit()
           }}

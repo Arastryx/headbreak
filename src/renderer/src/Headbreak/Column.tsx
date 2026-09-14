@@ -1,21 +1,34 @@
-import { Box, Button, Dialog, DialogContent, DialogTitle, Stack } from '@mui/material'
+import {
+  Box,
+  Button,
+  ButtonBase,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material'
 import { useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import { TaskEditor } from './TaskEditor'
 import { TaskCard } from './TaskCard'
 import { useDroppable } from '@dnd-kit/react'
 import { CollisionPriority } from '@dnd-kit/abstract'
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
 
 export interface ColumnProps {
-  id: number
-  tasks?: Headbreak.Task[]
+  column: Headbreak.Column
 }
 
-export function Column({ id, tasks }: ColumnProps) {
+export function Column({ column }: ColumnProps) {
   const [showCreate, setShowCreate] = useState(false)
+  const [showEdit, setShowEdit] = useState(false)
 
   const { ref } = useDroppable({
-    id,
+    id: column.id,
     type: 'column',
     accept: 'item',
     collisionPriority: CollisionPriority.Low
@@ -23,6 +36,24 @@ export function Column({ id, tasks }: ColumnProps) {
 
   return (
     <Box>
+      {!showEdit && (
+        <ButtonBase sx={{ width: '100%' }} onClick={() => setShowEdit(true)}>
+          <Typography variant="h6" sx={{ textAlign: 'center' }}>
+            {column.label ?? 'Unnamed'}
+          </Typography>
+        </ButtonBase>
+      )}
+      {showEdit && (
+        <Stack direction="row" sx={{ alignItems: 'center' }}>
+          <TextField placeholder="Label" size="small" sx={{ flex: 1 }} />
+          <IconButton size="small">
+            <CheckIcon />
+          </IconButton>{' '}
+          <IconButton size="small" onClick={() => setShowEdit(false)}>
+            <CloseIcon />
+          </IconButton>
+        </Stack>
+      )}
       <Stack
         ref={ref}
         spacing={1}
@@ -35,8 +66,8 @@ export function Column({ id, tasks }: ColumnProps) {
           overflow: 'auto'
         }}
       >
-        {tasks?.map((t, index) => (
-          <TaskCard key={index} task={t} column={id} index={index} />
+        {column.tasks?.map((t, index) => (
+          <TaskCard key={index} task={t} column={column.id} index={index} />
         ))}
         <Button sx={{ width: '100%' }} onClick={() => setShowCreate(true)}>
           <AddIcon />
@@ -49,7 +80,7 @@ export function Column({ id, tasks }: ColumnProps) {
             onSubmit={() => {
               setShowCreate(false)
             }}
-            columnId={id}
+            columnId={column.id}
           />
         </DialogContent>
       </Dialog>

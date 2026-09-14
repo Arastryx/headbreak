@@ -5,6 +5,7 @@ import { DragDropProvider } from '@dnd-kit/react'
 import { useTasks } from './TaskProvider'
 import AddIcon from '@mui/icons-material/Add'
 import { useIpcCall } from './Common/useIpcCall'
+import { v4 } from 'uuid'
 
 let idCounter = 1
 
@@ -23,12 +24,12 @@ export function Kanban({}: KanbanProps) {
     <DragDropProvider>
       <Stack direction={'row'} spacing={2} sx={{ height: '100vh', p: 2 }}>
         {kanban?.map((c) => (
-          <Column key={c.id} id={c.id} tasks={c.tasks} />
+          <Column key={c.id} column={c} />
         ))}
         <Button
           loading={isLoading}
           onClick={async () => {
-            await createColumn()
+            await createColumn(v4())
             reloadKanban()
           }}
         >

@@ -5,7 +5,7 @@ type Result<Payload> = Promise<Payload | Headbreak.Error>
 declare global {
   namespace Headbreak {
     interface Task {
-      id: number
+      id: string
       title: string
       description?: string
       column: number
@@ -17,7 +17,7 @@ declare global {
       tasks: Task[]
     }
 
-    interface CreateTaskParams extends Omit<Task, 'id'> {}
+    interface CreateTaskParams extends Task {}
 
     type TaskSet = Record<number, Task[]>
 
@@ -37,8 +37,8 @@ declare global {
     api: unknown
 
     kanbanApi: {
-      createTask: (task: Headbreak.CreateTaskParams) => Result<Headbreak.Task>
-      createColumn: () => Result<Headbreak.Column>
+      createTask: (task: Headbreak.Task) => Result<Headbreak.Task>
+      createColumn: (id: string) => Result<Headbreak.Column>
       get: () => Result<Headbreak.Column[]>
     }
   }

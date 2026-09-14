@@ -4,6 +4,7 @@ import { ColumnSchema } from './database/entities/Column'
 import { TaskSchema } from './database/entities/Task'
 
 interface TaskPayload {
+  id: string
   title: string
   description?: string
   column: number
@@ -14,6 +15,7 @@ export namespace KanbanManager {
     const unit = unitOfWork()
 
     const task = unit.create(TaskSchema, {
+      id: payload.id,
       title: payload.title,
       description: payload.description,
       column: payload.column
@@ -23,13 +25,22 @@ export namespace KanbanManager {
     return normalize(task)
   }
 
-  export async function createColumn() {
+  export async function createColumn(id: string) {
     const unit = unitOfWork()
 
-    const column = unit.create(ColumnSchema, {})
+    const column = unit.create(ColumnSchema, { id })
 
     await unit.flush()
     return normalize(column)
+  }
+
+  export async function editColumn(id: string, label: string) {
+    const unit = unitOfWork()
+
+    const column = await unit.findOneOrFail(ColumnSchema, id)
+    column.label = label
+
+    await unit.flush()
   }
 
   export async function getKanban() {

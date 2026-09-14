@@ -4,7 +4,7 @@ import { ColumnSchema, IColumn } from './Column'
 export const TaskSchema = defineEntity({
   name: 'Task',
   properties: {
-    id: p.integer().primary(),
+    id: p.uuid().primary(),
     title: p.string().length(255),
     description: p.text().nullable(),
     column: () => p.manyToOne(ColumnSchema)
