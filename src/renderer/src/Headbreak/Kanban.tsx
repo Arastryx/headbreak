@@ -1,11 +1,8 @@
-import React, { useState } from 'react'
 import { Column } from './Column'
-import { Box, Button, Stack } from '@mui/material'
+import { Button, Stack } from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
-import { useTasks } from './TaskProvider'
 import AddIcon from '@mui/icons-material/Add'
-import { useIpcCall } from './Common/useIpcCall'
-import { v4 } from 'uuid'
+import { useKanban } from './KanbanProvider'
 
 let idCounter = 1
 
@@ -17,8 +14,8 @@ interface Column {
 export interface KanbanProps {}
 
 export function Kanban({}: KanbanProps) {
-  const { data: kanban, reload: reloadKanban } = useTasks()
-  const { callIpc: createColumn, isLoading } = useIpcCall(window.kanbanApi.createColumn, [])
+  const { kanban, createColumn } = useKanban()
+  // const { callIpc: createColumn, isLoading } = useIpcCall(window.kanbanApi.createColumn, [])
 
   return (
     <DragDropProvider>
@@ -27,10 +24,9 @@ export function Kanban({}: KanbanProps) {
           <Column key={c.id} column={c} />
         ))}
         <Button
-          loading={isLoading}
+          // loading={isLoading}
           onClick={async () => {
-            await createColumn(v4())
-            reloadKanban()
+            createColumn()
           }}
         >
           <AddIcon />

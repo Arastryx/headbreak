@@ -8,11 +8,11 @@ declare global {
       id: string
       title: string
       description?: string
-      column: number
+      column: string
     }
 
     interface Column {
-      id: number
+      id: string
       label?: string
       tasks: Task[]
     }
@@ -37,8 +37,7 @@ declare global {
     api: unknown
 
     kanbanApi: {
-      createTask: (task: Headbreak.Task) => Result<Headbreak.Task>
-      createColumn: (id: string) => Result<Headbreak.Column>
+      sync: (kanban: Headbreak.Column[]) => Result<void>
       get: () => Result<Headbreak.Column[]>
     }
   }

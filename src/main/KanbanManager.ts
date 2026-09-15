@@ -1,49 +1,57 @@
 import { wrap } from '@mikro-orm/core'
-import { unitOfWork } from './database/database'
-import { ColumnSchema } from './database/entities/Column'
-import { TaskSchema } from './database/entities/Task'
+import { Fork, unitOfWork } from './database/database'
+import { Column, ColumnSchema } from './database/entities/Column'
+import { Task, TaskSchema } from './database/entities/Task'
 
 interface TaskPayload {
   id: string
   title: string
   description?: string
-  column: number
+}
+
+interface ColumnPayload {
+  id: string
+  label?: string
+  tasks: TaskPayload[]
 }
 
 export namespace KanbanManager {
-  export async function createTask(payload: TaskPayload) {
+  export async function sync(payload: ColumnPayload[]) {
     const unit = unitOfWork()
 
-    const task = unit.create(TaskSchema, {
-      id: payload.id,
-      title: payload.title,
-      description: payload.description,
-      column: payload.column
-    })
-
-    await unit.flush()
-    return normalize(task)
-  }
-
-  export async function createColumn(id: string) {
-    const unit = unitOfWork()
-
-    const column = unit.create(ColumnSchema, { id })
-
-    await unit.flush()
-    return normalize(column)
-  }
-
-  export async function editColumn(id: string, label: string) {
-    const unit = unitOfWork()
-
-    const column = await unit.findOneOrFail(ColumnSchema, id)
-    column.label = label
-
+    await Promise.all(payload.map((c) => createUpdateColumn(c, unit)))
     await unit.flush()
   }
 
-  export async function getKanban() {
+  async function createUpdateColumn(payload: ColumnPayload, unit: Fork) {
+    let column = await unit.findOne(ColumnSchema, payload.id)
+
+    if (!column) {
+      column = new Column()
+      column.id = payload.id
+      unit.persist(column)
+    }
+
+    column.label = payload.label
+
+    await Promise.all(payload.tasks.map((t) => createUpdateTask(t, column, unit)))
+  }
+
+  async function createUpdateTask(payload: TaskPayload, column: Column, unit: Fork) {
+    let task = await unit.findOne(TaskSchema, payload.id)
+
+    if (!task) {
+      task = new Task()
+      task.id = payload.id
+      unit.persist(task)
+    }
+
+    task.title = payload.title
+    task.description = payload.description
+    task.column = column
+  }
+
+  export async function get() {
     const unit = unitOfWork()
 
     const result = await unit.findAll(ColumnSchema, { populate: ['tasks'] })

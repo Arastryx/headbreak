@@ -1,4 +1,4 @@
-import { defineEntity, InferEntity, p } from '@mikro-orm/core'
+import { defineEntity, p } from '@mikro-orm/core'
 import { TaskSchema } from './Task'
 
 export const ColumnSchema = defineEntity({
@@ -10,4 +10,5 @@ export const ColumnSchema = defineEntity({
   }
 })
 
-export type IColumn = InferEntity<typeof ColumnSchema>
+export class Column extends ColumnSchema.class {}
+ColumnSchema.setClass(Column)

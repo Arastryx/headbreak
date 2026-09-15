@@ -1,5 +1,5 @@
-import { defineEntity, InferEntity, p } from '@mikro-orm/core'
-import { ColumnSchema, IColumn } from './Column'
+import { defineEntity, p } from '@mikro-orm/core'
+import { ColumnSchema } from './Column'
 
 export const TaskSchema = defineEntity({
   name: 'Task',

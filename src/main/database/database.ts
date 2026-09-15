@@ -29,3 +29,5 @@ export function unitOfWork() {
 
   return orm.em.fork()
 }
+
+export type Fork = ReturnType<typeof unitOfWork>

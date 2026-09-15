@@ -1,21 +1,19 @@
 import { Box, Button, Stack, TextField } from '@mui/material'
 import { useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
-import { useIpcCall } from './Common/useIpcCall'
-import { useTasks } from './TaskProvider'
 import { v4 } from 'uuid'
+import { useKanban } from './KanbanProvider'
 
 export interface TaskEditorProps {
   onSubmit: () => void
-  columnId: number
+  columnId: string
 }
 
 export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
 
-  const { callIpc: createTask, isLoading } = useIpcCall(window.kanbanApi.createTask, [])
-  const { reload } = useTasks()
+  const { createTask } = useKanban()
 
   return (
     <Box sx={{ width: 400 }}>
@@ -41,10 +39,8 @@ export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          loading={isLoading}
           onClick={async () => {
-            await createTask({ id: v4(), column: columnId, title, description })
-            reload()
+            createTask({ columnId, title, description })
             onSubmit()
           }}
         >

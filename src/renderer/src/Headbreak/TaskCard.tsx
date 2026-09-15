@@ -4,7 +4,7 @@ import { useSortable } from '@dnd-kit/react/sortable'
 export interface TaskCardProps {
   task: Headbreak.Task
   index: number
-  column: number
+  column: string
 }
 
 export function TaskCard({ task, index, column }: TaskCardProps) {

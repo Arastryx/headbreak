@@ -3,17 +3,10 @@ import { KanbanManager } from './KanbanManager'
 import { handleError } from './handleError'
 
 export function setupKanbanApi() {
-  ipcMain.handle(
-    'kanban/create-task',
-    (e, ...params: Parameters<typeof KanbanManager.createTask>) =>
-      handleError(() => KanbanManager.createTask(...params))
+  ipcMain.handle('kanban/sync', (e, ...params: Parameters<typeof KanbanManager.sync>) =>
+    handleError(() => KanbanManager.sync(...params))
   )
-  ipcMain.handle(
-    'kanban/create-column',
-    (e, ...params: Parameters<typeof KanbanManager.createColumn>) =>
-      handleError(() => KanbanManager.createColumn(...params))
-  )
-  ipcMain.handle('kanban/get', (e, ...params: Parameters<typeof KanbanManager.getKanban>) =>
-    handleError(() => KanbanManager.getKanban())
+  ipcMain.handle('kanban/get', (e, ...params: Parameters<typeof KanbanManager.get>) =>
+    handleError(() => KanbanManager.get())
   )
 }
