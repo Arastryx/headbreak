@@ -112,5 +112,31 @@ function useColumnManagement(
     return column
   }, [kanban])
 
-  return { createColumn }
+  const editColumn = useCallback(
+    (id: string, label?: string) => {
+      const column: Headbreak.Column = {
+        id: v4(),
+        tasks: []
+      }
+
+      setKanban(
+        produce(kanban, (copy) => {
+          const targetColumn = copy?.find((c) => c.id === id)
+
+          if (!targetColumn) {
+            throw new Error(`Tried to add a task to non-existent column ${id}`)
+          }
+
+          targetColumn.label = label
+        })
+      )
+
+      dirtyRef.current = true
+
+      return column
+    },
+    [kanban]
+  )
+
+  return { createColumn, editColumn }
 }

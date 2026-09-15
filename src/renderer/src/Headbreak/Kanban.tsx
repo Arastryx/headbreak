@@ -4,8 +4,6 @@ import { DragDropProvider } from '@dnd-kit/react'
 import AddIcon from '@mui/icons-material/Add'
 import { useKanban } from './KanbanProvider'
 
-let idCounter = 1
-
 interface Column {
   id: number
   label?: string

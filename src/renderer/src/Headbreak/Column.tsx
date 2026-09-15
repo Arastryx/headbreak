@@ -18,6 +18,7 @@ import { useDroppable } from '@dnd-kit/react'
 import { CollisionPriority } from '@dnd-kit/abstract'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
+import { useKanban } from './KanbanProvider'
 
 export interface ColumnProps {
   column: Headbreak.Column
@@ -26,6 +27,9 @@ export interface ColumnProps {
 export function Column({ column }: ColumnProps) {
   const [showCreate, setShowCreate] = useState(false)
   const [showEdit, setShowEdit] = useState(false)
+  const [internalLabel, setInternalLabel] = useState(column.label ?? '')
+
+  const { editColumn } = useKanban()
 
   const { ref } = useDroppable({
     id: column.id,
@@ -33,6 +37,16 @@ export function Column({ column }: ColumnProps) {
     accept: 'item',
     collisionPriority: CollisionPriority.Low
   })
+
+  const updateLabel = () => {
+    editColumn(column.id, internalLabel)
+    setShowEdit(false)
+  }
+
+  const cancelLabelChange = () => {
+    setInternalLabel(column.label ?? '')
+    setShowEdit(false)
+  }
 
   return (
     <Box>
@@ -45,11 +59,24 @@ export function Column({ column }: ColumnProps) {
       )}
       {showEdit && (
         <Stack direction="row" sx={{ alignItems: 'center' }}>
-          <TextField placeholder="Label" size="small" sx={{ flex: 1 }} />
-          <IconButton size="small">
+          <TextField
+            placeholder="Label"
+            value={internalLabel}
+            onChange={(e) => setInternalLabel(e.currentTarget.value)}
+            size="small"
+            sx={{ flex: 1 }}
+            onKeyUp={(e) => {
+              if (e.key === 'Enter') {
+                updateLabel()
+              } else if (e.key === 'Escape') {
+                cancelLabelChange()
+              }
+            }}
+          />
+          <IconButton size="small" onClick={updateLabel}>
             <CheckIcon />
-          </IconButton>{' '}
-          <IconButton size="small" onClick={() => setShowEdit(false)}>
+          </IconButton>
+          <IconButton size="small" onClick={cancelLabelChange}>
             <CloseIcon />
           </IconButton>
         </Stack>
