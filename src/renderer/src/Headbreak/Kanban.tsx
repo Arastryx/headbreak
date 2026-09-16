@@ -13,7 +13,6 @@ export interface KanbanProps {}
 
 export function Kanban({}: KanbanProps) {
   const { kanban, createColumn } = useKanban()
-  // const { callIpc: createColumn, isLoading } = useIpcCall(window.kanbanApi.createColumn, [])
 
   return (
     <DragDropProvider>

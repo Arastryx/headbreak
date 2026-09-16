@@ -19,6 +19,8 @@ import { CollisionPriority } from '@dnd-kit/abstract'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import { useKanban } from './KanbanProvider'
+import DragIcon from '@mui/icons-material/DragIndicator'
+import AutorenewIcon from '@mui/icons-material/Autorenew'
 
 export interface ColumnProps {
   column: Headbreak.Column
@@ -51,11 +53,28 @@ export function Column({ column }: ColumnProps) {
   return (
     <Box>
       {!showEdit && (
-        <ButtonBase sx={{ width: '100%' }} onClick={() => setShowEdit(true)}>
-          <Typography variant="h6" sx={{ textAlign: 'center' }}>
-            {column.label ?? 'Unnamed'}
-          </Typography>
-        </ButtonBase>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+          <Stack sx={{ justifyContent: 'center', cursor: 'grab', width: 30 }}>
+            <DragIcon />
+          </Stack>
+          <ButtonBase
+            onClick={() => setShowEdit(true)}
+            sx={{
+              flex: 1,
+              transition: '0.15s',
+              '&:hover': {
+                bgcolor: '#00000005'
+              }
+            }}
+          >
+            <Typography variant="h6" sx={{ textAlign: 'center' }}>
+              {column.label ?? 'Unnamed'}
+            </Typography>
+          </ButtonBase>
+          <Stack sx={{ justifyContent: 'center', width: 30 }}>
+            <AutorenewIcon />
+          </Stack>
+        </Stack>
       )}
       {showEdit && (
         <Stack direction="row" sx={{ alignItems: 'center' }}>
@@ -90,7 +109,8 @@ export function Column({ column }: ColumnProps) {
           width: 300,
           p: 1,
           borderRadius: 2,
-          overflow: 'auto'
+          overflow: 'auto',
+          mt: 1
         }}
       >
         {column.tasks
