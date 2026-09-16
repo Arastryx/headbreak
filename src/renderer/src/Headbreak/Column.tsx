@@ -5,12 +5,14 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  Icon,
   IconButton,
+  Popover,
   Stack,
   TextField,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import { TaskEditor } from './TaskEditor'
 import { TaskCard } from './TaskCard'
@@ -20,7 +22,7 @@ import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import { useKanban } from './KanbanProvider'
 import DragIcon from '@mui/icons-material/DragIndicator'
-import AutorenewIcon from '@mui/icons-material/Autorenew'
+import icons from './icon-names.json'
 
 export interface ColumnProps {
   column: Headbreak.Column
@@ -50,6 +52,9 @@ export function Column({ column }: ColumnProps) {
     setShowEdit(false)
   }
 
+  const [showIconSelector, setShowIconSelector] = useState(false)
+  const anchorRef = useRef<HTMLButtonElement>(null)
+
   return (
     <Box>
       {!showEdit && (
@@ -72,7 +77,7 @@ export function Column({ column }: ColumnProps) {
             </Typography>
           </ButtonBase>
           <Stack sx={{ justifyContent: 'center', width: 30 }}>
-            <AutorenewIcon />
+            <Icon>loop</Icon>
           </Stack>
         </Stack>
       )}
@@ -98,6 +103,28 @@ export function Column({ column }: ColumnProps) {
           <IconButton size="small" onClick={cancelLabelChange}>
             <CloseIcon />
           </IconButton>
+          <IconButton size="small" onClick={() => setShowIconSelector(true)} ref={anchorRef}>
+            <Icon>loop</Icon>
+          </IconButton>
+          <Popover
+            open={showIconSelector}
+            onClose={() => setShowIconSelector(false)}
+            anchorEl={anchorRef.current}
+            anchorOrigin={{
+              horizontal: 'center',
+              vertical: 'bottom'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center'
+            }}
+          >
+            <Box sx={{ width: 280, height: 300, overflowY: 'auto' }}>
+              {icons.map((i) => (
+                <Icon fontSize="large">{i}</Icon>
+              ))}
+            </Box>
+          </Popover>
         </Stack>
       )}
       <Stack
