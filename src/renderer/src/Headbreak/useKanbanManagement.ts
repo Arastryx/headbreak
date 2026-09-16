@@ -10,7 +10,7 @@ export interface TaskPayload {
   columnId: string
 }
 
-type DirtyRef = React.RefObject<boolean>
+type KanbanModifier = (modify: (kanban: Headbreak.Column[]) => void) => void
 
 export function useKanbanManagement() {
   const {
@@ -22,8 +22,21 @@ export function useKanbanManagement() {
 
   const dirtyRef = useRef(false)
 
-  const taskManagement = useTaskManagement(kanban, setKanban, dirtyRef)
-  const columnManagement = useColumnManagement(kanban, setKanban, dirtyRef)
+  const modifyKanban = useCallback(
+    (modify: (kanban: Headbreak.Column[]) => void) => {
+      if (!kanban) {
+        throw new Error('Attempted to modify kanban before it was loaded')
+      }
+
+      setKanban(produce(kanban, modify))
+
+      dirtyRef.current = true
+    },
+    [kanban]
+  )
+
+  const taskManagement = useTaskManagement(modifyKanban)
+  const columnManagement = useColumnManagement(modifyKanban)
 
   const { callIpc: sync, isLoading: isSyncing } = useIpcCall(window.kanbanApi.sync, [])
 
@@ -50,11 +63,7 @@ export function useKanbanManagement() {
   }
 }
 
-function useTaskManagement(
-  kanban: Headbreak.Column[] | undefined,
-  setKanban: (data?: Headbreak.Column[]) => void,
-  dirtyRef: DirtyRef
-) {
+function useTaskManagement(modify: KanbanModifier) {
   const createTask = useCallback(
     (payload: TaskPayload) => {
       const task: Headbreak.Task = {
@@ -64,78 +73,51 @@ function useTaskManagement(
         column: payload.columnId
       }
 
-      setKanban(
-        produce(kanban, (copy) => {
-          const targetColumn = copy?.find((c) => c.id === payload.columnId)
+      modify((copy) => {
+        const targetColumn = copy?.find((c) => c.id === payload.columnId)
 
-          if (!targetColumn) {
-            throw new Error(`Tried to add a task to non-existent column ${payload.columnId}`)
-          }
+        if (!targetColumn) {
+          throw new Error(`Tried to add a task to non-existent column ${payload.columnId}`)
+        }
 
-          targetColumn.tasks.push(task)
-        })
-      )
-
-      dirtyRef.current = true
+        targetColumn.tasks.push(task)
+      })
 
       return task
     },
-    [kanban]
+    [modify]
   )
 
   return { createTask }
 }
 
-function useColumnManagement(
-  kanban: Headbreak.Column[] | undefined,
-  setKanban: (data?: Headbreak.Column[]) => void,
-  dirtyRef: DirtyRef
-) {
+function useColumnManagement(modify: KanbanModifier) {
   const createColumn = useCallback(() => {
     const column: Headbreak.Column = {
       id: v4(),
       tasks: []
     }
 
-    setKanban(
-      produce(kanban, (copy) => {
-        if (copy == null) {
-          throw new Error(`Tried to create a column before the app initialized`)
-        }
-
-        copy.push(column)
-      })
-    )
-
-    dirtyRef.current = true
+    modify((copy) => {
+      copy.push(column)
+    })
 
     return column
-  }, [kanban])
+  }, [modify])
 
   const editColumn = useCallback(
     (id: string, label?: string) => {
-      const column: Headbreak.Column = {
-        id: v4(),
-        tasks: []
-      }
+      modify((copy) => {
+        const targetColumn = copy?.find((c) => c.id === id)
 
-      setKanban(
-        produce(kanban, (copy) => {
-          const targetColumn = copy?.find((c) => c.id === id)
+        if (!targetColumn) {
+          throw new Error(`Tried to add a task to non-existent column ${id}`)
+        }
 
-          if (!targetColumn) {
-            throw new Error(`Tried to add a task to non-existent column ${id}`)
-          }
-
-          targetColumn.label = label
-        })
-      )
-
-      dirtyRef.current = true
-
-      return column
+        targetColumn.label = label
+      })
     },
-    [kanban]
+    [modify]
   )
 
   return { createColumn, editColumn }
