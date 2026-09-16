@@ -8,12 +8,14 @@ declare global {
       id: string
       title: string
       description?: string
+      markForDeletion?: boolean
       column: string
     }
 
     interface Column {
       id: string
       label?: string
+      markForDeletion?: boolean
       tasks: Task[]
     }
 

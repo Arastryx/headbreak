@@ -93,9 +93,11 @@ export function Column({ column }: ColumnProps) {
           overflow: 'auto'
         }}
       >
-        {column.tasks?.map((t, index) => (
-          <TaskCard key={index} task={t} column={column.id} index={index} />
-        ))}
+        {column.tasks
+          ?.filter((t) => !t.markForDeletion)
+          .map((t, index) => (
+            <TaskCard key={index} task={t} column={column.id} index={index} />
+          ))}
         <Button sx={{ width: '100%' }} onClick={() => setShowCreate(true)}>
           <AddIcon />
         </Button>

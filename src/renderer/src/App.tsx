@@ -1,4 +1,5 @@
 import { Headbreak } from './Headbreak'
+import { ActiveContextMenuProvider } from './Headbreak/Common/ContextMenu/ActiveContextMenuProvider'
 import { NotificationProvider } from './Headbreak/Common/NotificationProvider'
 import { KanbanProvider } from './Headbreak/KanbanProvider'
 import { theme } from './theme'
@@ -9,8 +10,10 @@ function App(): React.JSX.Element {
     <NotificationProvider>
       <KanbanProvider>
         <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Headbreak />
+          <ActiveContextMenuProvider>
+            <CssBaseline />
+            <Headbreak />
+          </ActiveContextMenuProvider>
         </ThemeProvider>
       </KanbanProvider>
     </NotificationProvider>

@@ -88,7 +88,25 @@ function useTaskManagement(modify: KanbanModifier) {
     [modify]
   )
 
-  return { createTask }
+  const deleteTask = useCallback(
+    (id: string) => {
+      modify((copy) => {
+        for (const column of copy) {
+          for (const task of column.tasks) {
+            if (task.id === id) {
+              task.markForDeletion = true
+              return
+            }
+          }
+        }
+
+        throw new Error(`Could not find task with id ${id}`)
+      })
+    },
+    [modify]
+  )
+
+  return { createTask, deleteTask }
 }
 
 function useColumnManagement(modify: KanbanModifier) {

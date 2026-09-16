@@ -7,11 +7,13 @@ interface TaskPayload {
   id: string
   title: string
   description?: string
+  markForDeletion?: boolean
 }
 
 interface ColumnPayload {
   id: string
   label?: string
+  markForDeletion?: boolean
   tasks: TaskPayload[]
 }
 
@@ -34,16 +36,21 @@ export namespace KanbanManager {
 
     column.label = payload.label
 
-    await Promise.all(payload.tasks.map((t) => createUpdateTask(t, column, unit)))
+    await Promise.all(payload.tasks.map((t) => createUpdateDeleteTask(t, column, unit)))
   }
 
-  async function createUpdateTask(payload: TaskPayload, column: Column, unit: Fork) {
+  async function createUpdateDeleteTask(payload: TaskPayload, column: Column, unit: Fork) {
     let task = await unit.findOne(TaskSchema, payload.id)
 
     if (!task) {
       task = new Task()
       task.id = payload.id
       unit.persist(task)
+    }
+
+    if (payload.markForDeletion) {
+      unit.remove(task)
+      return
     }
 
     task.title = payload.title

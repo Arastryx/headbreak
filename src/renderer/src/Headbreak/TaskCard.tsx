@@ -11,6 +11,9 @@ import {
 import { useSortable } from '@dnd-kit/react/sortable'
 import { FadeOutText } from './Common/FadeOutText'
 import { useState } from 'react'
+import { ContextMenu } from './Common/ContextMenu'
+import DeleteIcon from '@mui/icons-material/Delete'
+import { useKanban } from './KanbanProvider'
 
 export interface TaskCardProps {
   task: Headbreak.Task
@@ -29,37 +32,52 @@ export function TaskCard({ task, index, column }: TaskCardProps) {
 
   const [showFullTask, setShowFullTask] = useState(false)
 
+  const { deleteTask } = useKanban()
+
   return (
     <>
-      <Card
-        elevation={1}
-        ref={ref}
-        onClick={() => setShowFullTask(true)}
-        sx={(theme) => ({
-          flexShrink: 0,
-          cursor: 'pointer',
-          '&:hover': {
-            boxShadow: 3
+      <ContextMenu
+        options={[
+          {
+            label: 'Delete',
+            danger: true,
+            icon: <DeleteIcon />,
+            onClick: () => deleteTask(task.id)
           }
-        })}
-      >
-        <CardHeader title={task.title} sx={{ pb: 1 }} />
-        {task.description && (
-          <CardContent
+        ]}
+        render={({ open }) => (
+          <Card
+            elevation={1}
+            ref={ref}
+            onClick={() => setShowFullTask(true)}
+            onContextMenu={open}
             sx={{
-              pt: 0,
-              '&:last-child': { pb: 2 }
+              flexShrink: 0,
+              cursor: 'pointer',
+              '&:hover': {
+                boxShadow: 3
+              }
             }}
           >
-            <FadeOutText
-              active={(task.description.length ?? 0) > 164}
-              sx={{ whiteSpace: 'pre-wrap', maxHeight: 90, overflow: 'hidden' }}
-            >
-              {task.description}
-            </FadeOutText>
-          </CardContent>
+            <CardHeader title={task.title} sx={{ pb: 1 }} />
+            {task.description && (
+              <CardContent
+                sx={{
+                  pt: 0,
+                  '&:last-child': { pb: 2 }
+                }}
+              >
+                <FadeOutText
+                  active={(task.description.length ?? 0) > 164}
+                  sx={{ whiteSpace: 'pre-wrap', maxHeight: 90, overflow: 'hidden' }}
+                >
+                  {task.description}
+                </FadeOutText>
+              </CardContent>
+            )}
+          </Card>
         )}
-      </Card>
+      ></ContextMenu>
       <Dialog open={showFullTask} onClose={() => setShowFullTask(false)}>
         <DialogTitle>{task.title}</DialogTitle>
         <DialogContent>
