@@ -22,7 +22,8 @@ import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import { useKanban } from './KanbanProvider'
 import DragIcon from '@mui/icons-material/DragIndicator'
-import icons from './icon-names.json'
+import { IconSelector } from './IconSelector'
+import { MaterialIcon } from 'material-icons'
 
 export interface ColumnProps {
   column: Headbreak.Column
@@ -55,11 +56,22 @@ export function Column({ column }: ColumnProps) {
   const [showIconSelector, setShowIconSelector] = useState(false)
   const anchorRef = useRef<HTMLButtonElement>(null)
 
+  const [icon, setIcon] = useState<MaterialIcon>('loop')
+
   return (
-    <Box>
+    <Box sx={{ '&:hover .drag-handle': { opacity: 1 } }}>
       {!showEdit && (
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-          <Stack sx={{ justifyContent: 'center', cursor: 'grab', width: 30 }}>
+          <Stack
+            className="drag-handle"
+            sx={{
+              justifyContent: 'center',
+              cursor: 'grab',
+              width: 30,
+              transition: '0.15s',
+              opacity: 0
+            }}
+          >
             <DragIcon />
           </Stack>
           <ButtonBase
@@ -73,11 +85,11 @@ export function Column({ column }: ColumnProps) {
             }}
           >
             <Typography variant="h6" sx={{ textAlign: 'center' }}>
-              {column.label ?? 'Unnamed'}
+              {column.label ? column.label : 'Unnamed'}
             </Typography>
           </ButtonBase>
           <Stack sx={{ justifyContent: 'center', width: 30 }}>
-            <Icon>loop</Icon>
+            <Icon>{icon}</Icon>
           </Stack>
         </Stack>
       )}
@@ -104,7 +116,7 @@ export function Column({ column }: ColumnProps) {
             <CloseIcon />
           </IconButton>
           <IconButton size="small" onClick={() => setShowIconSelector(true)} ref={anchorRef}>
-            <Icon>loop</Icon>
+            <Icon>{icon}</Icon>
           </IconButton>
           <Popover
             open={showIconSelector}
@@ -119,11 +131,12 @@ export function Column({ column }: ColumnProps) {
               horizontal: 'center'
             }}
           >
-            <Box sx={{ width: 280, height: 300, overflowY: 'auto' }}>
-              {icons.map((i) => (
-                <Icon fontSize="large">{i}</Icon>
-              ))}
-            </Box>
+            <IconSelector
+              onSelect={(i) => {
+                setIcon(i)
+                setShowIconSelector(false)
+              }}
+            />
           </Popover>
         </Stack>
       )}
