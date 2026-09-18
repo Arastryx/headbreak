@@ -7,10 +7,8 @@ import {
   Typography,
   MenuItem
 } from '@mui/material'
-import React from 'react'
-import CheckedIcon from '@mui/icons-material/CheckBox'
-import UncheckedIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import { ContextMenuOption } from './ContextMenu'
+import { Micon } from '../Micon'
 
 export interface ContextMenuListProps {
   options?: (ContextMenuOption | 'divider')[]
@@ -51,8 +49,10 @@ export function ContextMenuList({ options, onClose }: ContextMenuListProps) {
                     color: o.danger ? 'error.main' : undefined
                   }}
                 >
-                  {o.isChecked !== undefined && (o.isChecked ? <CheckedIcon /> : <UncheckedIcon />)}
-                  {o.isChecked === undefined && o.icon}
+                  {o.isChecked !== undefined && (
+                    <Micon icon={o.isChecked ? 'check_box' : 'check_box_outline_blank'} />
+                  )}
+                  {o.isChecked === undefined && o.icon && <Micon icon={o.icon} />}
                 </ListItemIcon>
               )}
               <ListItemText

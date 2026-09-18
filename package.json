@@ -32,7 +32,6 @@
     "@emotion/styled": "^11.14.1",
     "@mikro-orm/core": "^7.1.13",
     "@mikro-orm/sqlite": "^7.1.13",
-    "@mui/icons-material": "^9.3.1",
     "@mui/material": "^9.3.1",
     "immer": "^11.1.18",
     "material-icons": "^1.13.14",

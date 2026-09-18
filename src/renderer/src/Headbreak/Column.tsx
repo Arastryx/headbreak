@@ -1,10 +1,10 @@
 import { Button, Dialog, DialogContent, DialogTitle, Icon, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
-import AddIcon from '@mui/icons-material/Add'
 import { TaskEditor } from './TaskEditor'
 import { TaskCard } from './TaskCard'
 import { useDroppable } from '@dnd-kit/react'
 import { CollisionPriority } from '@dnd-kit/abstract'
+import { Micon } from './Common/Micon'
 
 export interface ColumnProps {
   column: Headbreak.Column
@@ -33,7 +33,7 @@ export function Column({ column }: ColumnProps) {
           {column.label ? column.label : 'Unnamed'}
         </Typography>
         <Stack sx={{ justifyContent: 'center', width: 30 }}>
-          <Icon>loop</Icon>
+          <Micon icon="loop" />
         </Stack>
       </Stack>
 
@@ -56,7 +56,7 @@ export function Column({ column }: ColumnProps) {
             <TaskCard key={index} task={t} column={column.id} index={index} />
           ))}
         <Button sx={{ width: '100%' }} onClick={() => setShowCreate(true)}>
-          <AddIcon />
+          <Micon icon="add" />
         </Button>
       </Stack>
       <Dialog open={showCreate} onClose={() => setShowCreate(false)}>

@@ -1,8 +1,7 @@
 import { Box, Button, Stack, TextField } from '@mui/material'
 import { useState } from 'react'
-import AddIcon from '@mui/icons-material/Add'
-import { v4 } from 'uuid'
 import { useKanban } from './KanbanProvider'
+import { Micon } from './Common/Micon'
 
 export interface TaskEditorProps {
   onSubmit: () => void
@@ -38,7 +37,7 @@ export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
       <Stack direction="row" spacing={2} sx={{ pt: 2, justifyContent: 'flex-end' }}>
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
+          startIcon={<Micon icon="add" />}
           onClick={async () => {
             createTask({ columnId, title, description })
             onSubmit()

@@ -12,8 +12,8 @@ import { useSortable } from '@dnd-kit/react/sortable'
 import { FadeOutText } from './Common/FadeOutText'
 import { useState } from 'react'
 import { ContextMenu } from './Common/ContextMenu'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { useKanban } from './KanbanProvider'
+import { Micon } from './Common/Micon'
 
 export interface TaskCardProps {
   task: Headbreak.Task
@@ -41,7 +41,7 @@ export function TaskCard({ task, index, column }: TaskCardProps) {
           {
             label: 'Delete',
             danger: true,
-            icon: <DeleteIcon />,
+            icon: 'delete',
             onClick: () => deleteTask(task.id)
           }
         ]}

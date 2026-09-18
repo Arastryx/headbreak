@@ -4,10 +4,11 @@ import { useContextMenu } from './useContextMenu'
 import { BetterPopper } from '../BetterPopper'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { ContextMenuList } from './ContextMenuList'
+import { MaterialIcon } from 'material-icons'
 
 export interface ContextMenuOption {
   label: React.ReactNode
-  icon?: React.ReactNode
+  icon?: MaterialIcon
   shortcut?: string
   disabled?: boolean
   hide?: boolean

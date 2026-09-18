@@ -1,18 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Kanban } from './Kanban'
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  IconButton,
-  Stack,
-  Typography
-} from '@mui/material'
-import SettingsIcon from '@mui/icons-material/Settings'
+import { Box, Dialog, DialogContent, IconButton, Stack } from '@mui/material'
 import { Settings } from './Settings'
-import CloseIcon from '@mui/icons-material/Close'
+import { Micon } from './Common/Micon'
 
 export interface HeadbreakProps {}
 
@@ -27,7 +17,7 @@ export function Headbreak({}: HeadbreakProps) {
         </Box>
         <Box sx={{ p: 1 }}>
           <IconButton onClick={() => setShowSettings(true)}>
-            <SettingsIcon />
+            <Micon icon="settings" />
           </IconButton>
         </Box>
       </Stack>
@@ -37,7 +27,7 @@ export function Headbreak({}: HeadbreakProps) {
           size="large"
           sx={{ position: 'absolute', top: 5, right: 5 }}
         >
-          <CloseIcon fontSize="inherit" />
+          <Micon icon="close" fontSize="inherit" />
         </IconButton>
         <DialogContent>
           <Settings />

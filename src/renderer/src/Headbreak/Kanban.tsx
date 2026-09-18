@@ -1,8 +1,8 @@
 import { Column } from './Column'
 import { Button, Stack } from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
-import AddIcon from '@mui/icons-material/Add'
 import { useKanban } from './KanbanProvider'
+import { Micon } from './Common/Micon'
 
 interface Column {
   id: number
@@ -25,7 +25,7 @@ export function Kanban({}: KanbanProps) {
             createColumn()
           }}
         >
-          <AddIcon />
+          <Micon icon="add" />
         </Button>
       </Stack>
     </DragDropProvider>
