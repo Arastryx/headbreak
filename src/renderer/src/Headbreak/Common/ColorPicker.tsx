@@ -23,7 +23,8 @@ export function ColorPicker({ color, onChange }: ColorPickerProps) {
           pointer: 'cursor',
           transition: '0.15s',
           borderRadius: '100%',
-          '&:hover': { opacity: 0.9 }
+          cursor: 'pointer',
+          '&:hover': { opacity: 0.8 }
         }}
       ></Box>
       <Popover

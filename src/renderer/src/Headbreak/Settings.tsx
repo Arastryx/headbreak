@@ -41,21 +41,25 @@ function ColumnEditor({ column }: ColumnEditorProps) {
           width: 30
         }}
       >
-        <Icon>drag_indicator</Icon>
+        <Icon sx={{ color: column.color }}>drag_indicator</Icon>
       </Stack>
       <TextField
         placeholder="Label"
         value={column.label}
         onChange={(e) => editColumn(column.id, { label: e.currentTarget.value })}
         sx={{ flex: 1 }}
+        slotProps={{ input: { sx: { color: column.color } } }}
       />
 
-      <ColorPicker
-        color={column.color ?? '#000'}
-        onChange={(c) => editColumn(column.id, { color: c })}
-      />
+      <Box sx={{ ml: 1, mr: 0.5 }}>
+        <ColorPicker
+          color={column.color ?? '#000'}
+          onChange={(c) => editColumn(column.id, { color: c })}
+        />
+      </Box>
       <IconSelector
         icon={column.icon ?? 'loop'}
+        color={column.color}
         onSelect={(icon) => editColumn(column.id, { icon })}
       />
       <IconButton color="error" onClick={() => deleteColumn(column.id)}>

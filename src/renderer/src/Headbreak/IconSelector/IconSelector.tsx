@@ -5,10 +5,11 @@ import { type MaterialIcon } from 'material-icons'
 
 export interface IconSelectorProps {
   icon: string
+  color?: string
   onSelect: (icon: MaterialIcon) => void
 }
 
-export function IconSelector({ icon, onSelect }: IconSelectorProps) {
+export function IconSelector({ icon, color, onSelect }: IconSelectorProps) {
   const [search, setSearch] = useState('')
   const splitSearch = search.split(' ')
 
@@ -17,7 +18,12 @@ export function IconSelector({ icon, onSelect }: IconSelectorProps) {
 
   return (
     <>
-      <IconButton size="small" onClick={() => setShowIconSelector(true)} ref={anchorRef}>
+      <IconButton
+        size="small"
+        onClick={() => setShowIconSelector(true)}
+        ref={anchorRef}
+        sx={{ color }}
+      >
         <Icon>{icon}</Icon>
       </IconButton>
       <Popover
@@ -54,7 +60,7 @@ export function IconSelector({ icon, onSelect }: IconSelectorProps) {
                 <Icon
                   key={i}
                   fontSize="large"
-                  sx={{ cursor: 'pointer', '&:hover': { opacity: 0.6 } }}
+                  sx={{ cursor: 'pointer', color, '&:hover': { opacity: 0.6 } }}
                   onClick={() => onSelect(i as MaterialIcon)}
                 >
                   {i}
