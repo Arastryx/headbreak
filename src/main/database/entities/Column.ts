@@ -1,4 +1,4 @@
-import { defineEntity, p } from '@mikro-orm/core'
+import { Cascade, defineEntity, p } from '@mikro-orm/core'
 import { TaskSchema } from './Task'
 
 export const ColumnSchema = defineEntity({

@@ -129,7 +129,7 @@ function useColumnManagement(modify: KanbanModifier) {
         const targetColumn = copy?.find((c) => c.id === id)
 
         if (!targetColumn) {
-          throw new Error(`Tried to add a task to non-existent column ${id}`)
+          throw new Error(`Tried to edit non-existent column ${id}`)
         }
 
         targetColumn.label = label
@@ -138,5 +138,20 @@ function useColumnManagement(modify: KanbanModifier) {
     [modify]
   )
 
-  return { createColumn, editColumn }
+  const deleteColumn = useCallback(
+    (id: string) => {
+      modify((copy) => {
+        const targetColumn = copy?.find((c) => c.id === id)
+
+        if (!targetColumn) {
+          throw new Error(`Tried to delete non-existent column ${id}`)
+        }
+
+        targetColumn.markForDeletion = true
+      })
+    },
+    [modify]
+  )
+
+  return { createColumn, editColumn, deleteColumn }
 }

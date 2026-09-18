@@ -34,6 +34,11 @@ export namespace KanbanManager {
       unit.persist(column)
     }
 
+    if (payload.markForDeletion) {
+      unit.remove(column)
+      return
+    }
+
     column.label = payload.label
 
     await Promise.all(payload.tasks.map((t) => createUpdateDeleteTask(t, column, unit)))

@@ -1,4 +1,4 @@
-import { defineEntity, p } from '@mikro-orm/core'
+import { Cascade, defineEntity, p } from '@mikro-orm/core'
 import { ColumnSchema } from './Column'
 
 export const TaskSchema = defineEntity({
@@ -7,7 +7,7 @@ export const TaskSchema = defineEntity({
     id: p.uuid().primary(),
     title: p.string().length(255),
     description: p.text().nullable(),
-    column: () => p.manyToOne(ColumnSchema)
+    column: () => p.manyToOne(ColumnSchema).deleteRule('cascade')
   }
 })
 

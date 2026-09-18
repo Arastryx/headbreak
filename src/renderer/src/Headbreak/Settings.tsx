@@ -21,9 +21,7 @@ interface ColumnEditorProps {
 }
 
 function ColumnEditor({ column }: ColumnEditorProps) {
-  const [internalLabel, setInternalLabel] = useState(column.label ?? '')
-
-  const { editColumn } = useKanban()
+  const { editColumn, deleteColumn } = useKanban()
 
   const { ref } = useDroppable({
     id: column.id,
@@ -50,11 +48,11 @@ function ColumnEditor({ column }: ColumnEditorProps) {
       </Stack>
       <TextField
         placeholder="Label"
-        value={internalLabel}
-        onChange={(e) => setInternalLabel(e.currentTarget.value)}
+        value={column.label}
+        onChange={(e) => editColumn(column.id, e.currentTarget.value)}
         sx={{ flex: 1 }}
       />
-      <IconButton color="error">
+      <IconButton color="error" onClick={() => deleteColumn(column.id)}>
         <Icon>delete</Icon>
       </IconButton>
       <IconButton size="small" onClick={() => setShowIconSelector(true)} ref={anchorRef}>
@@ -87,7 +85,7 @@ function ColumnEditor({ column }: ColumnEditorProps) {
 export interface SettingsProps {}
 
 export function Settings({}: SettingsProps) {
-  const { kanban } = useKanban()
+  const { kanban, createColumn } = useKanban()
 
   return (
     <Container>
@@ -95,10 +93,12 @@ export function Settings({}: SettingsProps) {
         Columns
       </Typography>
       <Stack spacing={1}>
-        {kanban?.map((c) => (
-          <ColumnEditor key={c.id} column={c} />
-        ))}
-        <Button>
+        {kanban
+          ?.filter((c) => !c.markForDeletion)
+          .map((c) => (
+            <ColumnEditor key={c.id} column={c} />
+          ))}
+        <Button onClick={createColumn}>
           <Icon>add</Icon>
         </Button>
       </Stack>
