@@ -1,4 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
+import { MaterialIcon } from 'material-icons'
 
 type Result<Payload> = Promise<Payload | Headbreak.Error>
 
@@ -15,6 +16,8 @@ declare global {
     interface Column {
       id: string
       label?: string
+      icon?: MaterialIcon
+      color?: string
       markForDeletion?: boolean
       tasks: Task[]
     }

@@ -6,6 +6,8 @@ export const ColumnSchema = defineEntity({
   properties: {
     id: p.uuid().primary(),
     label: p.string().length(255).nullable(),
+    icon: p.string().length(64).nullable(),
+    color: p.string().length(16).nullable(),
     tasks: () => p.oneToMany(TaskSchema).mappedBy('column')
   }
 })

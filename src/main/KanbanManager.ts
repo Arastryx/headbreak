@@ -13,6 +13,8 @@ interface TaskPayload {
 interface ColumnPayload {
   id: string
   label?: string
+  icon?: string
+  color?: string
   markForDeletion?: boolean
   tasks: TaskPayload[]
 }
@@ -40,6 +42,8 @@ export namespace KanbanManager {
     }
 
     column.label = payload.label
+    column.icon = payload.icon
+    column.color = payload.color
 
     await Promise.all(payload.tasks.map((t) => createUpdateDeleteTask(t, column, unit)))
   }

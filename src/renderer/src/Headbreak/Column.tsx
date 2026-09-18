@@ -29,11 +29,11 @@ export function Column({ column }: ColumnProps) {
           }}
         ></Stack>
 
-        <Typography variant="h6" sx={{ textAlign: 'center', flex: 1 }}>
+        <Typography variant="h6" sx={{ textAlign: 'center', flex: 1, color: column.color }}>
           {column.label ? column.label : 'Unnamed'}
         </Typography>
         <Stack sx={{ justifyContent: 'center', width: 30 }}>
-          <Micon icon="loop" />
+          <Micon icon={column.icon ?? 'loop'} sx={{ color: column.color }} />
         </Stack>
       </Stack>
 

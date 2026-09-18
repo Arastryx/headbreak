@@ -10,6 +10,8 @@ export interface TaskPayload {
   columnId: string
 }
 
+export type ColumnPayload = Omit<Headbreak.Column, 'id' | 'tasks' | 'markForDeletion'>
+
 type KanbanModifier = (modify: (kanban: Headbreak.Column[]) => void) => void
 
 export function useKanbanManagement() {
@@ -124,15 +126,15 @@ function useColumnManagement(modify: KanbanModifier) {
   }, [modify])
 
   const editColumn = useCallback(
-    (id: string, label?: string) => {
+    (id: string, payload: Partial<ColumnPayload>) => {
       modify((copy) => {
-        const targetColumn = copy?.find((c) => c.id === id)
+        const targetIndex = copy?.findIndex((c) => c.id === id)
 
-        if (!targetColumn) {
+        if (targetIndex == -1) {
           throw new Error(`Tried to edit non-existent column ${id}`)
         }
 
-        targetColumn.label = label
+        copy[targetIndex] = { ...copy[targetIndex], ...payload }
       })
     },
     [modify]

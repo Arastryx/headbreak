@@ -15,6 +15,8 @@ import { IconSelector } from './IconSelector'
 import { CollisionPriority } from '@dnd-kit/abstract'
 import { useDroppable } from '@dnd-kit/react'
 import { MaterialIcon } from 'material-icons'
+import { HexColorPicker } from 'react-colorful'
+import { ColorPicker } from './Common/ColorPicker'
 
 interface ColumnEditorProps {
   column: Headbreak.Column
@@ -30,11 +32,6 @@ function ColumnEditor({ column }: ColumnEditorProps) {
     collisionPriority: CollisionPriority.Low
   })
 
-  const [showIconSelector, setShowIconSelector] = useState(false)
-  const anchorRef = useRef<HTMLButtonElement>(null)
-
-  const [icon, setIcon] = useState<MaterialIcon>('loop')
-
   return (
     <Stack direction="row" sx={{ alignItems: 'center' }}>
       <Stack
@@ -49,35 +46,21 @@ function ColumnEditor({ column }: ColumnEditorProps) {
       <TextField
         placeholder="Label"
         value={column.label}
-        onChange={(e) => editColumn(column.id, e.currentTarget.value)}
+        onChange={(e) => editColumn(column.id, { label: e.currentTarget.value })}
         sx={{ flex: 1 }}
+      />
+
+      <ColorPicker
+        color={column.color ?? '#000'}
+        onChange={(c) => editColumn(column.id, { color: c })}
+      />
+      <IconSelector
+        icon={column.icon ?? 'loop'}
+        onSelect={(icon) => editColumn(column.id, { icon })}
       />
       <IconButton color="error" onClick={() => deleteColumn(column.id)}>
         <Icon>delete</Icon>
       </IconButton>
-      <IconButton size="small" onClick={() => setShowIconSelector(true)} ref={anchorRef}>
-        <Icon>{icon}</Icon>
-      </IconButton>
-      <Popover
-        open={showIconSelector}
-        onClose={() => setShowIconSelector(false)}
-        anchorEl={anchorRef.current}
-        anchorOrigin={{
-          horizontal: 'center',
-          vertical: 'bottom'
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center'
-        }}
-      >
-        <IconSelector
-          onSelect={(i) => {
-            setIcon(i)
-            setShowIconSelector(false)
-          }}
-        />
-      </Popover>
     </Stack>
   )
 }
