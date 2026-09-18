@@ -1,29 +1,10 @@
-import {
-  Box,
-  Button,
-  ButtonBase,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Icon,
-  IconButton,
-  Popover,
-  Stack,
-  TextField,
-  Typography
-} from '@mui/material'
-import { useRef, useState } from 'react'
+import { Button, Dialog, DialogContent, DialogTitle, Icon, Stack, Typography } from '@mui/material'
+import { useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import { TaskEditor } from './TaskEditor'
 import { TaskCard } from './TaskCard'
 import { useDroppable } from '@dnd-kit/react'
 import { CollisionPriority } from '@dnd-kit/abstract'
-import CheckIcon from '@mui/icons-material/Check'
-import CloseIcon from '@mui/icons-material/Close'
-import { useKanban } from './KanbanProvider'
-import DragIcon from '@mui/icons-material/DragIndicator'
-import { IconSelector } from './IconSelector'
-import { MaterialIcon } from 'material-icons'
 
 export interface ColumnProps {
   column: Headbreak.Column
@@ -31,10 +12,6 @@ export interface ColumnProps {
 
 export function Column({ column }: ColumnProps) {
   const [showCreate, setShowCreate] = useState(false)
-  const [showEdit, setShowEdit] = useState(false)
-  const [internalLabel, setInternalLabel] = useState(column.label ?? '')
-
-  const { editColumn } = useKanban()
 
   const { ref } = useDroppable({
     id: column.id,
@@ -43,108 +20,28 @@ export function Column({ column }: ColumnProps) {
     collisionPriority: CollisionPriority.Low
   })
 
-  const updateLabel = () => {
-    editColumn(column.id, internalLabel)
-    setShowEdit(false)
-  }
-
-  const cancelLabelChange = () => {
-    setInternalLabel(column.label ?? '')
-    setShowEdit(false)
-  }
-
-  const [showIconSelector, setShowIconSelector] = useState(false)
-  const anchorRef = useRef<HTMLButtonElement>(null)
-
-  const [icon, setIcon] = useState<MaterialIcon>('loop')
-
   return (
-    <Box sx={{ '&:hover .drag-handle': { opacity: 1 } }}>
-      {!showEdit && (
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-          <Stack
-            className="drag-handle"
-            sx={{
-              justifyContent: 'center',
-              cursor: 'grab',
-              width: 30,
-              transition: '0.15s',
-              opacity: 0
-            }}
-          >
-            <DragIcon />
-          </Stack>
-          <ButtonBase
-            onClick={() => setShowEdit(true)}
-            sx={{
-              flex: 1,
-              transition: '0.15s',
-              '&:hover': {
-                bgcolor: '#00000005'
-              }
-            }}
-          >
-            <Typography variant="h6" sx={{ textAlign: 'center' }}>
-              {column.label ? column.label : 'Unnamed'}
-            </Typography>
-          </ButtonBase>
-          <Stack sx={{ justifyContent: 'center', width: 30 }}>
-            <Icon>{icon}</Icon>
-          </Stack>
+    <Stack sx={{ '&:hover .drag-handle': { opacity: 1 } }}>
+      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+        <Stack
+          sx={{
+            width: 30
+          }}
+        ></Stack>
+
+        <Typography variant="h6" sx={{ textAlign: 'center', flex: 1 }}>
+          {column.label ? column.label : 'Unnamed'}
+        </Typography>
+        <Stack sx={{ justifyContent: 'center', width: 30 }}>
+          <Icon>loop</Icon>
         </Stack>
-      )}
-      {showEdit && (
-        <Stack direction="row" sx={{ alignItems: 'center' }}>
-          <TextField
-            placeholder="Label"
-            value={internalLabel}
-            onChange={(e) => setInternalLabel(e.currentTarget.value)}
-            size="small"
-            sx={{ flex: 1 }}
-            onKeyUp={(e) => {
-              if (e.key === 'Enter') {
-                updateLabel()
-              } else if (e.key === 'Escape') {
-                cancelLabelChange()
-              }
-            }}
-          />
-          <IconButton size="small" onClick={updateLabel}>
-            <CheckIcon />
-          </IconButton>
-          <IconButton size="small" onClick={cancelLabelChange}>
-            <CloseIcon />
-          </IconButton>
-          <IconButton size="small" onClick={() => setShowIconSelector(true)} ref={anchorRef}>
-            <Icon>{icon}</Icon>
-          </IconButton>
-          <Popover
-            open={showIconSelector}
-            onClose={() => setShowIconSelector(false)}
-            anchorEl={anchorRef.current}
-            anchorOrigin={{
-              horizontal: 'center',
-              vertical: 'bottom'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'center'
-            }}
-          >
-            <IconSelector
-              onSelect={(i) => {
-                setIcon(i)
-                setShowIconSelector(false)
-              }}
-            />
-          </Popover>
-        </Stack>
-      )}
+      </Stack>
+
       <Stack
         ref={ref}
         spacing={1}
         sx={{
-          height: '100%',
+          flex: 1,
           bgcolor: '#f2f1f3',
           width: 300,
           p: 1,
@@ -173,6 +70,6 @@ export function Column({ column }: ColumnProps) {
           />
         </DialogContent>
       </Dialog>
-    </Box>
+    </Stack>
   )
 }

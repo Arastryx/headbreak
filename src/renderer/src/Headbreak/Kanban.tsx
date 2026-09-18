@@ -16,12 +16,11 @@ export function Kanban({}: KanbanProps) {
 
   return (
     <DragDropProvider>
-      <Stack direction={'row'} spacing={2} sx={{ height: '100vh', p: 2 }}>
+      <Stack direction={'row'} spacing={2} sx={{ height: '100%', p: 2 }}>
         {kanban?.map((c) => (
           <Column key={c.id} column={c} />
         ))}
         <Button
-          // loading={isLoading}
           onClick={async () => {
             createColumn()
           }}
