@@ -1,10 +1,12 @@
 import { Button, Dialog, DialogContent, DialogTitle, Icon, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
 import { TaskEditor } from './TaskEditor'
-import { TaskCard } from './TaskCard'
+import { TASK_TYPE, TaskCard } from './TaskCard'
 import { useDroppable } from '@dnd-kit/react'
 import { CollisionPriority } from '@dnd-kit/abstract'
 import { Micon } from './Common/Micon'
+
+export const COLUMN_TYPE = 'column'
 
 export interface ColumnProps {
   column: Headbreak.Column
@@ -15,13 +17,13 @@ export function Column({ column }: ColumnProps) {
 
   const { ref } = useDroppable({
     id: column.id,
-    type: 'column',
-    accept: 'item',
+    type: COLUMN_TYPE,
+    accept: TASK_TYPE,
     collisionPriority: CollisionPriority.Low
   })
 
   return (
-    <Stack sx={{ '&:hover .drag-handle': { opacity: 1 } }}>
+    <Stack>
       <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
         <Stack
           sx={{
@@ -53,7 +55,7 @@ export function Column({ column }: ColumnProps) {
         {column.tasks
           ?.filter((t) => !t.markForDeletion)
           .map((t, index) => (
-            <TaskCard key={index} task={t} column={column.id} index={index} />
+            <TaskCard key={t.id} task={t} columnId={column.id} index={index} />
           ))}
         <Button sx={{ width: '100%' }} onClick={() => setShowCreate(true)}>
           <Micon icon="add" />

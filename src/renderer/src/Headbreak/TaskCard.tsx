@@ -6,7 +6,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  darken
+  darken,
+  Box
 } from '@mui/material'
 import { useSortable } from '@dnd-kit/react/sortable'
 import { FadeOutText } from './Common/FadeOutText'
@@ -15,19 +16,21 @@ import { ContextMenu } from './Common/ContextMenu'
 import { useKanban } from './KanbanProvider'
 import { Micon } from './Common/Micon'
 
+export const TASK_TYPE = 'task'
+
 export interface TaskCardProps {
   task: Headbreak.Task
   index: number
-  column: string
+  columnId: string
 }
 
-export function TaskCard({ task, index, column }: TaskCardProps) {
+export function TaskCard({ task, index, columnId }: TaskCardProps) {
   const { ref, isDragging } = useSortable({
     id: task.id,
     index,
-    type: 'item',
-    accept: 'item',
-    group: column
+    type: TASK_TYPE,
+    accept: TASK_TYPE,
+    group: columnId
   })
 
   const [showFullTask, setShowFullTask] = useState(false)
@@ -35,7 +38,7 @@ export function TaskCard({ task, index, column }: TaskCardProps) {
   const { deleteTask } = useKanban()
 
   return (
-    <>
+    <Box ref={ref}>
       <ContextMenu
         options={[
           {
@@ -47,15 +50,14 @@ export function TaskCard({ task, index, column }: TaskCardProps) {
         ]}
         render={({ open }) => (
           <Card
-            elevation={1}
-            ref={ref}
+            elevation={isDragging ? 6 : 1}
             onClick={() => setShowFullTask(true)}
             onContextMenu={open}
             sx={{
               flexShrink: 0,
               cursor: 'pointer',
               '&:hover': {
-                boxShadow: 3
+                boxShadow: isDragging ? 6 : 3
               }
             }}
           >
@@ -84,6 +86,6 @@ export function TaskCard({ task, index, column }: TaskCardProps) {
           <Typography sx={{ whiteSpace: 'pre-wrap' }}>{task.description}</Typography>
         </DialogContent>
       </Dialog>
-    </>
+    </Box>
   )
 }

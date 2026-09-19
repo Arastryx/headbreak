@@ -46,10 +46,17 @@ export namespace KanbanManager {
     column.color = payload.color
     column.order = index
 
-    await Promise.all(payload.tasks.map((t) => createUpdateDeleteTask(t, column, unit)))
+    await Promise.all(
+      payload.tasks.map((t, index) => createUpdateDeleteTask(t, index, column, unit))
+    )
   }
 
-  async function createUpdateDeleteTask(payload: TaskPayload, column: Column, unit: Fork) {
+  async function createUpdateDeleteTask(
+    payload: TaskPayload,
+    index: number,
+    column: Column,
+    unit: Fork
+  ) {
     let task = await unit.findOne(TaskSchema, payload.id)
 
     if (!task) {
@@ -66,6 +73,7 @@ export namespace KanbanManager {
     task.title = payload.title
     task.description = payload.description
     task.column = column
+    task.order = index
   }
 
   export async function get() {
@@ -73,6 +81,7 @@ export namespace KanbanManager {
 
     const result = await unit.findAll(ColumnSchema, {
       populate: ['tasks'],
+      populateOrderBy: { tasks: { order: 'ASC' } },
       orderBy: { order: 'ASC' }
     })
     return normalize(result)

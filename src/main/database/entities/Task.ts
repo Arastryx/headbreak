@@ -7,6 +7,7 @@ export const TaskSchema = defineEntity({
     id: p.uuid().primary(),
     title: p.string().length(255),
     description: p.text().nullable(),
+    order: p.integer(),
     column: () => p.manyToOne(ColumnSchema).deleteRule('cascade')
   }
 })
