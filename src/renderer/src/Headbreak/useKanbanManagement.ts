@@ -3,6 +3,7 @@ import { useRef, useCallback } from 'react'
 import { v4 } from 'uuid'
 import { useDebounceEffect } from './Common/useDebounceEffect'
 import { useIpcCall, useIpcData } from './Common/useIpcCall'
+import { arrayMoveMutable } from 'array-move'
 
 export interface TaskPayload {
   title: string
@@ -140,6 +141,22 @@ function useColumnManagement(modify: KanbanModifier) {
     [modify]
   )
 
+  const reorderColumn = useCallback(
+    (movedId: string, targetId: string) => {
+      modify((copy) => {
+        const movedIndex = copy?.findIndex((c) => c.id === movedId)
+        const targetIndex = copy?.findIndex((c) => c.id === targetId)
+
+        if (targetIndex == -1 || movedIndex == -1) {
+          throw new Error(`Either the moved column or target column does not exist`)
+        }
+
+        arrayMoveMutable(copy, movedIndex, targetIndex)
+      })
+    },
+    [modify]
+  )
+
   const deleteColumn = useCallback(
     (id: string) => {
       modify((copy) => {
@@ -155,5 +172,5 @@ function useColumnManagement(modify: KanbanModifier) {
     [modify]
   )
 
-  return { createColumn, editColumn, deleteColumn }
+  return { createColumn, editColumn, deleteColumn, reorderColumn }
 }

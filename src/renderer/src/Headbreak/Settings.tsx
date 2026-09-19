@@ -1,4 +1,3 @@
-import React, { useRef, useState } from 'react'
 import { useKanban } from './KanbanProvider'
 import {
   Box,
@@ -6,40 +5,38 @@ import {
   Container,
   Icon,
   IconButton,
-  Popover,
   Stack,
   TextField,
   Typography
 } from '@mui/material'
 import { IconSelector } from './IconSelector'
-import { CollisionPriority } from '@dnd-kit/abstract'
-import { useDroppable } from '@dnd-kit/react'
-import { MaterialIcon } from 'material-icons'
-import { HexColorPicker } from 'react-colorful'
+import { DragDropProvider } from '@dnd-kit/react'
+import { move } from '@dnd-kit/helpers'
 import { ColorPicker } from './Common/ColorPicker'
+import { useSortable } from '@dnd-kit/react/sortable'
 
 interface ColumnEditorProps {
   column: Headbreak.Column
+  index: number
 }
 
-function ColumnEditor({ column }: ColumnEditorProps) {
+function ColumnEditor({ column, index }: ColumnEditorProps) {
   const { editColumn, deleteColumn } = useKanban()
 
-  const { ref } = useDroppable({
+  const { ref, handleRef } = useSortable({
     id: column.id,
-    type: 'column',
-    accept: 'item',
-    collisionPriority: CollisionPriority.Low
+    index
   })
 
   return (
-    <Stack direction="row" sx={{ alignItems: 'center' }}>
+    <Stack direction="row" sx={{ alignItems: 'center' }} ref={ref}>
       <Stack
         sx={{
           justifyContent: 'center',
           cursor: 'grab',
           width: 30
         }}
+        ref={handleRef}
       >
         <Icon sx={{ color: column.color }}>drag_indicator</Icon>
       </Stack>
@@ -72,23 +69,31 @@ function ColumnEditor({ column }: ColumnEditorProps) {
 export interface SettingsProps {}
 
 export function Settings({}: SettingsProps) {
-  const { kanban, createColumn } = useKanban()
+  const { kanban, createColumn, reorderColumn } = useKanban()
 
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
         Columns
       </Typography>
-      <Stack spacing={1}>
-        {kanban
-          ?.filter((c) => !c.markForDeletion)
-          .map((c) => (
-            <ColumnEditor key={c.id} column={c} />
-          ))}
-        <Button onClick={createColumn}>
-          <Icon>add</Icon>
-        </Button>
-      </Stack>
+      <DragDropProvider
+        onDragOver={({ operation: e }) => {
+          if (e.source?.id && e.target?.id && e.source.id != e.target.id) {
+            reorderColumn(e.source.id as string, e.target.id as string)
+          }
+        }}
+      >
+        <Stack spacing={1}>
+          {kanban
+            ?.filter((c) => !c.markForDeletion)
+            .map((c, index) => (
+              <ColumnEditor key={c.id} column={c} index={index} />
+            ))}
+          <Button onClick={createColumn}>
+            <Icon>add</Icon>
+          </Button>
+        </Stack>
+      </DragDropProvider>
     </Container>
   )
 }

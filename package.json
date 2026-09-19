@@ -33,6 +33,7 @@
     "@mikro-orm/core": "^7.1.13",
     "@mikro-orm/sqlite": "^7.1.13",
     "@mui/material": "^9.3.1",
+    "array-move": "^4.0.0",
     "immer": "^11.1.18",
     "material-icons": "^1.13.14",
     "react-colorful": "^5.8.1",

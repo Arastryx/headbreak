@@ -1,4 +1,4 @@
-import { Cascade, defineEntity, p } from '@mikro-orm/core'
+import { defineEntity, p } from '@mikro-orm/core'
 import { TaskSchema } from './Task'
 
 export const ColumnSchema = defineEntity({
@@ -8,6 +8,7 @@ export const ColumnSchema = defineEntity({
     label: p.string().length(255).nullable(),
     icon: p.string().length(64).nullable(),
     color: p.string().length(16).nullable(),
+    order: p.integer(),
     tasks: () => p.oneToMany(TaskSchema).mappedBy('column')
   }
 })
