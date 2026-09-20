@@ -27,10 +27,19 @@ export const theme = createTheme({
       fontSize: 11.5
     },
     caption: {
-      fontSize: 10
+      fontSize: 10,
+      color: '#999'
     }
   },
   components: {
+    MuiTypography: {
+      styleOverrides: {
+        gutterBottom: {
+          marginBottom: 16
+        }
+      }
+    },
+
     MuiTextField: {
       defaultProps: {
         variant: 'standard'

@@ -25,7 +25,8 @@ try {
 
   contextBridge.exposeInMainWorld('kanbanApi', {
     sync: generateEndpoint('kanban/sync'),
-    get: generateEndpoint('kanban/get')
+    get: generateEndpoint('kanban/get'),
+    getChanges: generateEndpoint('kanban/get-changes')
   })
 } catch (error) {
   console.error(error)

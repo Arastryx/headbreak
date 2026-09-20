@@ -27,6 +27,40 @@ declare global {
       tasks: Task[]
     }
 
+    interface ChangeLog extends Auditable {
+      id: number
+      content: Change
+    }
+
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+    //Change Types
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+
+    export interface LogColumn {
+      label?: string | null
+      color?: string | null
+      icon?: MaterialIcon | null
+    }
+
+    export interface LogTask {
+      title: string | null
+      description?: string | null
+    }
+
+    export interface ColumnMove {
+      type: 'columnMove'
+      from: LogColumn
+      to: LogColumn
+    }
+
+    export interface TaskEdit {
+      type: 'taskEdit'
+      prev: LogTask
+      next: LogTask
+    }
+
+    export type Change = ColumnMove | TaskEdit
+
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
     //MISC
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
@@ -45,6 +79,7 @@ declare global {
     kanbanApi: {
       sync: (kanban: Headbreak.Column[]) => Result<void>
       get: () => Result<Headbreak.Column[]>
+      getChanges: (taskId: string) => Result<Headbreak.ChangeLog[]>
     }
   }
 }

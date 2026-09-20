@@ -14,6 +14,7 @@ import { useState } from 'react'
 import { ContextMenu } from './Common/ContextMenu'
 import { useKanban } from './KanbanProvider'
 import dayjs from 'dayjs'
+import { TaskDetails } from './TaskDetails'
 
 export const TASK_TYPE = 'task'
 
@@ -89,9 +90,8 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
         )}
       ></ContextMenu>
       <Dialog open={showFullTask} onClose={() => setShowFullTask(false)}>
-        <DialogTitle>{task.title}</DialogTitle>
         <DialogContent>
-          <Typography sx={{ whiteSpace: 'pre-wrap' }}>{task.description}</Typography>
+          <TaskDetails task={task} />
         </DialogContent>
       </Dialog>
     </Box>
