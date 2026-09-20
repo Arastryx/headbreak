@@ -24,7 +24,8 @@ function ChangeDisplay({ change }: ChangeDisplayProps) {
   if (change.type === 'columnMove') {
     return (
       <Typography>
-        Moved from <ColumnLabel column={change.from} /> to <ColumnLabel column={change.to} />
+        Moved from <ColumnLabel column={change.from} sx={{ fontWeight: '500' }} /> to{' '}
+        <ColumnLabel column={change.to} sx={{ fontWeight: '500' }} />
       </Typography>
     )
   }

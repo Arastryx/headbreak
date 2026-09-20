@@ -1,6 +1,7 @@
 import { createTheme } from '@mui/material'
 
 export const theme = createTheme({
+  cssVariables: true,
   palette: {
     primary: {
       main: '#302e33'
@@ -14,14 +15,18 @@ export const theme = createTheme({
     }
   },
   typography: {
+    fontFamily: 'Geist Variable',
     h5: {
-      fontSize: 19
+      fontSize: 19,
+      fontFamily: 'Open Sans Variable'
     },
     h6: {
-      fontSize: 16
+      fontSize: 16,
+      fontFamily: 'Open Sans Variable'
     },
     body1: {
-      fontSize: 13
+      fontSize: 13,
+      fontWeight: '300'
     },
     body2: {
       fontSize: 11.5
