@@ -8,6 +8,9 @@ export const theme = createTheme({
     background: {
       default: '#f7f7f7',
       paper: '#f9f9f9'
+    },
+    text: {
+      secondary: '#999'
     }
   },
   typography: {
@@ -19,6 +22,12 @@ export const theme = createTheme({
     },
     body1: {
       fontSize: 13
+    },
+    body2: {
+      fontSize: 11.5
+    },
+    caption: {
+      fontSize: 10
     }
   },
   components: {

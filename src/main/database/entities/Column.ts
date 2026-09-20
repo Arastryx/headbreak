@@ -1,8 +1,10 @@
 import { defineEntity, p } from '@mikro-orm/core'
 import { TaskSchema } from './Task'
+import { AuditableSchema } from './Auditable'
 
 export const ColumnSchema = defineEntity({
   name: 'Column',
+  extends: AuditableSchema,
   properties: {
     id: p.uuid().primary(),
     label: p.string().length(255).nullable(),

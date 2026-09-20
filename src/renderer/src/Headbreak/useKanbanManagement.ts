@@ -90,7 +90,9 @@ function useTaskManagement(modify: KanbanModifier) {
         id: v4(),
         title: payload.title,
         description: payload.description,
-        column: payload.columnId
+        column: payload.columnId,
+        updatedAt: new Date(),
+        createdAt: new Date()
       }
 
       modify((copy) => {
@@ -171,7 +173,9 @@ function useColumnManagement(modify: KanbanModifier) {
   const createColumn = useCallback(() => {
     const column: Headbreak.Column = {
       id: v4(),
-      tasks: []
+      tasks: [],
+      createdAt: new Date(),
+      updatedAt: new Date()
     }
 
     modify((copy) => {

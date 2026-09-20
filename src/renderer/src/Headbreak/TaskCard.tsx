@@ -6,7 +6,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  darken,
   Box
 } from '@mui/material'
 import { useSortable } from '@dnd-kit/react/sortable'
@@ -14,7 +13,7 @@ import { FadeOutText } from './Common/FadeOutText'
 import { useState } from 'react'
 import { ContextMenu } from './Common/ContextMenu'
 import { useKanban } from './KanbanProvider'
-import { Micon } from './Common/Micon'
+import dayjs from 'dayjs'
 
 export const TASK_TYPE = 'task'
 
@@ -37,6 +36,8 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
 
   const { deleteTask } = useKanban()
 
+  const createdThisYear = dayjs(task.createdAt).year() === dayjs().year()
+
   return (
     <Box ref={ref}>
       <ContextMenu
@@ -54,6 +55,7 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
             onClick={() => setShowFullTask(true)}
             onContextMenu={open}
             sx={{
+              position: 'relative',
               flexShrink: 0,
               cursor: 'pointer',
               '&:hover': {
@@ -61,12 +63,11 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
               }
             }}
           >
-            <CardHeader title={task.title} sx={{ pb: 1 }} />
+            <CardHeader title={task.title} sx={{ pb: task.description ? 1 : undefined }} />
             {task.description && (
               <CardContent
                 sx={{
-                  pt: 0,
-                  '&:last-child': { pb: 2 }
+                  pt: 0
                 }}
               >
                 <FadeOutText
@@ -77,6 +78,13 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
                 </FadeOutText>
               </CardContent>
             )}
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              sx={{ position: 'absolute', bottom: 0, right: 2 }}
+            >
+              Created {dayjs(task.createdAt).format(createdThisYear ? 'MMM D' : 'll')}
+            </Typography>
           </Card>
         )}
       ></ContextMenu>

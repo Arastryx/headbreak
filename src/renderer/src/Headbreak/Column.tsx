@@ -23,7 +23,11 @@ export function Column({ column }: ColumnProps) {
   })
 
   return (
-    <Stack>
+    <Stack
+      sx={{
+        width: 400
+      }}
+    >
       <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
         <Stack
           sx={{
@@ -45,7 +49,6 @@ export function Column({ column }: ColumnProps) {
         sx={{
           flex: 1,
           bgcolor: '#f2f1f3',
-          width: 300,
           p: 1,
           borderRadius: 2,
           overflow: 'auto',

@@ -23,7 +23,8 @@ export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
           value={title}
           onChange={(e) => setTitle(e.currentTarget.value)}
           slotProps={{
-            input: { sx: { fontSize: 30 } }
+            input: { sx: { fontSize: 30 } },
+            htmlInput: { maxLength: 127 }
           }}
         />
         <TextField

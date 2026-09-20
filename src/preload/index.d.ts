@@ -5,7 +5,12 @@ type Result<Payload> = Promise<Payload | Headbreak.Error>
 
 declare global {
   namespace Headbreak {
-    interface Task {
+    interface Auditable {
+      createdAt: Date
+      updatedAt: Date
+    }
+
+    interface Task extends Auditable {
       id: string
       title: string
       description?: string
@@ -13,7 +18,7 @@ declare global {
       column: string
     }
 
-    interface Column {
+    interface Column extends Auditable {
       id: string
       label?: string
       icon?: MaterialIcon
@@ -21,10 +26,6 @@ declare global {
       markForDeletion?: boolean
       tasks: Task[]
     }
-
-    interface CreateTaskParams extends Task {}
-
-    type TaskSet = Record<number, Task[]>
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
     //MISC
