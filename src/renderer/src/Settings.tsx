@@ -9,10 +9,10 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { IconSelector } from './IconSelector'
 import { DragDropProvider } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
 import { ColorPicker } from './Common/Components/ColorPicker'
+import { IconSelector } from './Common/Components/IconSelector'
 
 interface ColumnEditorProps {
   column: Headbreak.Column
