@@ -26,10 +26,12 @@ function TaskContent({ task, onEditClicked }: TaskContentProps) {
       </Stack>
 
       {task.description && (
-        <Typography sx={{ whiteSpace: 'pre-wrap' }}>{task.description}</Typography>
+        <Typography sx={{ whiteSpace: 'pre-wrap' }} gutterBottom>
+          {task.description}
+        </Typography>
       )}
       {!task.description && (
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }} gutterBottom>
           No description given
         </Typography>
       )}

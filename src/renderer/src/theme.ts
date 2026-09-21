@@ -40,7 +40,7 @@ export const theme = createTheme({
     MuiTypography: {
       styleOverrides: {
         gutterBottom: {
-          marginBottom: 16
+          marginBottom: 8
         }
       }
     },
