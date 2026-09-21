@@ -2,6 +2,7 @@ import { useKanban } from '../KanbanProvider/KanbanProvider'
 import { Button, Container, Icon, Stack, Typography } from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
 import { ColumnEditor } from './ColumnEditor'
+import { Micon } from '@renderer/Common/Components/Micon'
 
 export interface SettingsProps {}
 
@@ -27,7 +28,7 @@ export function Settings({}: SettingsProps) {
               <ColumnEditor key={c.id} column={c} index={index} />
             ))}
           <Button onClick={createColumn}>
-            <Icon>add</Icon>
+            <Micon icon="add" />
           </Button>
         </Stack>
       </DragDropProvider>

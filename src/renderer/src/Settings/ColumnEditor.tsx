@@ -32,7 +32,7 @@ export function ColumnEditor({ column, index }: ColumnEditorProps) {
         }}
         ref={handleRef}
       >
-        <Icon sx={{ color: column.color }}>drag_indicator</Icon>
+        <Micon icon="drag_indicator" sx={{ color: column.color }} />
       </Stack>
       <TextField
         placeholder="Label"

@@ -1,26 +1,16 @@
 import {
   Button,
-  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   DialogProps,
   DialogTitle,
-  FormControlLabel,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Stack,
-  TextField,
   Typography
 } from '@mui/material'
 import { Micon } from '@renderer/Common/Components/Micon'
 import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
 import { useEffect, useState } from 'react'
-
-type Decision = 'move' | 'delete'
+import { Decision, TaskDecision } from './TaskDecision'
 
 export interface DeleteColumnDialogProps extends Omit<DialogProps, 'onClose'> {
   onClose: () => void
@@ -38,67 +28,38 @@ export function DeleteColumnDialog({ columnId, onClose, ...props }: DeleteColumn
     }
   }, [decision])
 
-  const renderOption = (c: Headbreak.Column) => (
-    <Stack direction="row" spacing={1} sx={{ alignItems: 'center', color: c.color }}>
-      <Micon icon={c.icon ?? 'loop'} />
-      <Typography> {c.label}</Typography>
-    </Stack>
-  )
+  const otherColumns = kanban?.filter((c) => c.id != columnId) ?? []
 
   return (
-    <Dialog {...props}>
+    <Dialog onClose={onClose} {...props}>
       <DialogTitle>Delete Column</DialogTitle>
       <DialogContent>
         <Typography gutterBottom>
-          This column has existing tasks. Should those tasks be moved or deleted as well?
+          This column has existing tasks.{' '}
+          {otherColumns.length >= 1
+            ? 'Should those tasks be moved or deleted as well?'
+            : 'If you delete this column, all associated tasks will be deleted as well'}
         </Typography>
-        <RadioGroup
-          value={decision}
-          onChange={(e) => setDecision(e.currentTarget.value as Decision)}
-          row
-        >
-          <FormControlLabel value="delete" control={<Radio />} label="Delete tasks" />
-          <FormControlLabel value="move" control={<Radio />} label="Move to another column" />
-        </RadioGroup>
-        <Collapse in={decision == 'move'}>
-          <TextField
-            placeholder="Target Column"
-            select
-            size="small"
-            value={targetColumnId}
-            onChange={(e) => setTargetColumnId(e.target.value)}
-            slotProps={{
-              select: {
-                displayEmpty: true,
-                renderValue: (value: unknown) => {
-                  const target = kanban?.find((c) => c.id === value)
-
-                  if (!target) {
-                    return <Typography color="textSecotendary">Selected Column</Typography>
-                  }
-                  return renderOption(target)
-                }
-              }
+        {otherColumns.length >= 1 && (
+          <TaskDecision
+            otherColumns={otherColumns}
+            decision={decision}
+            targetColumnId={targetColumnId}
+            onChange={(d, id) => {
+              setDecision(d)
+              setTargetColumnId(id)
             }}
-            sx={{ mt: 1 }}
-            fullWidth
-          >
-            {kanban?.map((c) => (
-              <MenuItem key={c.id} value={c.id}>
-                {renderOption(c)}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Collapse>
+          />
+        )}
       </DialogContent>
       <DialogActions>
         <Button
           startIcon={<Micon icon="delete" />}
           color="error"
           variant="contained"
-          disabled={decision === 'move' && targetColumnId == ''}
+          disabled={decision === 'move' && targetColumnId == '' && otherColumns.length > 0}
           onClick={() => {
-            if (decision == 'delete') {
+            if (decision == 'delete' || otherColumns.length == 0) {
               deleteColumn(columnId)
             } else {
               deleteColumn(columnId, targetColumnId)
