@@ -4,15 +4,35 @@ import { useKanban } from './KanbanProvider'
 import { Micon } from './Common/Micon'
 
 export interface TaskEditorProps {
-  onSubmit: () => void
   columnId: string
+  task?: Headbreak.Task
+  onSubmit?: () => void
+  onClose?: () => void
 }
 
-export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
+export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProps) {
+  const [title, setTitle] = useState(task?.title ?? '')
+  const [description, setDescription] = useState(task?.description ?? '')
 
-  const { createTask } = useKanban()
+  const { createTask, editTask } = useKanban()
+
+  const submit = () => {
+    if (task) {
+      editTask(task.id, {
+        title,
+        description
+      })
+    } else {
+      createTask({
+        description,
+        title,
+        columnId
+      })
+    }
+
+    onSubmit?.()
+    onClose?.()
+  }
 
   return (
     <Box sx={{ width: 400 }}>
@@ -23,7 +43,7 @@ export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
           value={title}
           onChange={(e) => setTitle(e.currentTarget.value)}
           slotProps={{
-            input: { sx: { fontSize: 30 } },
+            input: { sx: { fontSize: 19, fontFamily: 'Open Sans Variable', fontWeight: '400' } },
             htmlInput: { maxLength: 127 }
           }}
         />
@@ -36,15 +56,13 @@ export function TaskEditor({ columnId, onSubmit }: TaskEditorProps) {
         />
       </Stack>
       <Stack direction="row" spacing={2} sx={{ pt: 2, justifyContent: 'flex-end' }}>
+        <Button onClick={onClose}>Cancel</Button>
         <Button
           variant="contained"
-          startIcon={<Micon icon="add" />}
-          onClick={async () => {
-            createTask({ columnId, title, description })
-            onSubmit()
-          }}
+          startIcon={<Micon icon={task ? 'save' : 'add'} />}
+          onClick={submit}
         >
-          Create
+          {task ? 'Save' : 'Create'}
         </Button>
       </Stack>
     </Box>

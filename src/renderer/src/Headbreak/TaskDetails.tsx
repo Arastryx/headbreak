@@ -1,50 +1,30 @@
-import { Box, Stack, Typography, TypographyProps } from '@mui/material'
+import { Box, IconButton, Stack, Typography } from '@mui/material'
 import { useIpcData } from './Common/useIpcCall'
 import dayjs from 'dayjs'
 import { Micon } from './Common/Micon'
+import { useState } from 'react'
+import { TaskEditor } from './TaskEditor'
+import { ChangeDisplay } from './ChangeDisplay'
 
-interface ColumnLabelProps extends Omit<TypographyProps, 'children'> {
-  column: Headbreak.LogColumn
-}
-
-function ColumnLabel({ column, ...props }: ColumnLabelProps) {
-  return (
-    <Typography component="span" {...props} sx={{ color: column.color, ...props.sx }}>
-      {column.label ?? 'Unnamed'}{' '}
-      <Micon fontSize="inherit" icon={column.icon ?? 'loop'} sx={{ verticalAlign: 'middle' }} />
-    </Typography>
-  )
-}
-
-interface ChangeDisplayProps {
-  change: Headbreak.Change
-}
-
-function ChangeDisplay({ change }: ChangeDisplayProps) {
-  if (change.type === 'columnMove') {
-    return (
-      <Typography>
-        Moved from <ColumnLabel column={change.from} sx={{ fontWeight: '500' }} /> to{' '}
-        <ColumnLabel column={change.to} sx={{ fontWeight: '500' }} />
-      </Typography>
-    )
-  }
-
-  return '[WIP]'
-}
-
-export interface TaskDetailsProps {
+interface TaskContentProps {
   task: Headbreak.Task
+  onEditClicked: () => void
 }
 
-export function TaskDetails({ task }: TaskDetailsProps) {
-  const { data: changes } = useIpcData(() => window.kanbanApi.getChanges(task.id), [task.id])
-
+function TaskContent({ task, onEditClicked }: TaskContentProps) {
   return (
-    <Box>
-      <Typography variant="h5" gutterBottom>
-        {task.title}
-      </Typography>
+    <>
+      <Stack
+        direction={'row'}
+        spacing={2}
+        sx={{ mb: 2, justifyContent: 'space-between', alignItems: 'flex-start' }}
+      >
+        <Typography variant="h5">{task.title}</Typography>
+        <IconButton size="small" onClick={onEditClicked}>
+          <Micon icon="edit" fontSize="inherit" />
+        </IconButton>
+      </Stack>
+
       {task.description && (
         <Typography sx={{ whiteSpace: 'pre-wrap' }}>{task.description}</Typography>
       )}
@@ -53,6 +33,29 @@ export function TaskDetails({ task }: TaskDetailsProps) {
           No description given
         </Typography>
       )}
+    </>
+  )
+}
+
+export interface TaskDetailsProps {
+  task: Headbreak.Task
+}
+
+export function TaskDetails({ task }: TaskDetailsProps) {
+  const { data: changes } = useIpcData(() => window.kanbanApi.getChanges(task.id), [task.id])
+  const [editMode, setEditMode] = useState(false)
+
+  const createdThisYear = dayjs(task.createdAt).year() === dayjs().year()
+  return (
+    <Box sx={{ minWidth: 300 }}>
+      <Typography variant="caption">
+        Created {dayjs(task.createdAt).format(createdThisYear ? 'MMM D' : 'll')}
+      </Typography>
+      {!editMode && <TaskContent task={task} onEditClicked={() => setEditMode(true)} />}
+      {editMode && (
+        <TaskEditor columnId={task.column} task={task} onClose={() => setEditMode(false)} />
+      )}
+
       <Stack spacing={0.5} sx={{ pt: 2 }}>
         {changes?.map((c) => (
           <Stack

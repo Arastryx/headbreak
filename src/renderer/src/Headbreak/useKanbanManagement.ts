@@ -110,6 +110,18 @@ function useTaskManagement(modify: KanbanModifier) {
     [modify]
   )
 
+  const editTask = useCallback(
+    (id: string, payload: Omit<TaskPayload, 'columnId'>) => {
+      modify((copy) => {
+        const task = getTask(copy, id)
+
+        task.title = payload.title
+        task.description = payload.description
+      })
+    },
+    [modify]
+  )
+
   const moveTaskToColumn = useCallback(
     (taskId: string, columnId: string) => {
       modify((copy) => {
@@ -166,7 +178,7 @@ function useTaskManagement(modify: KanbanModifier) {
     [modify]
   )
 
-  return { createTask, deleteTask, moveTaskToColumn, reorderTasks }
+  return { createTask, editTask, deleteTask, moveTaskToColumn, reorderTasks }
 }
 
 function useColumnManagement(modify: KanbanModifier) {

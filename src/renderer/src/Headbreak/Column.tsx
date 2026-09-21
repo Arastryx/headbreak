@@ -67,12 +67,7 @@ export function Column({ column }: ColumnProps) {
       <Dialog open={showCreate} onClose={() => setShowCreate(false)}>
         <DialogTitle>Create Task</DialogTitle>
         <DialogContent>
-          <TaskEditor
-            onSubmit={() => {
-              setShowCreate(false)
-            }}
-            columnId={column.id}
-          />
+          <TaskEditor onClose={() => setShowCreate(false)} columnId={column.id} />
         </DialogContent>
       </Dialog>
     </Stack>
