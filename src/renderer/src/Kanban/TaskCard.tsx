@@ -9,12 +9,12 @@ import {
   Box
 } from '@mui/material'
 import { useSortable } from '@dnd-kit/react/sortable'
-import { FadeOutText } from './Common/FadeOutText'
 import { useState } from 'react'
-import { ContextMenu } from './Common/ContextMenu'
-import { useKanban } from './KanbanProvider'
+import { useKanban } from '../KanbanProvider/KanbanProvider'
 import dayjs from 'dayjs'
 import { TaskDetails } from './TaskDetails'
+import { ContextMenu } from '../Common/Components/ContextMenu'
+import { FadeOutText } from '../Common/Components/FadeOutText'
 
 export const TASK_TYPE = 'task'
 

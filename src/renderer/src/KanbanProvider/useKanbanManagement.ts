@@ -1,8 +1,8 @@
 import { produce } from 'immer'
 import { useRef, useCallback } from 'react'
 import { v4 } from 'uuid'
-import { useDebounceEffect } from './Common/useDebounceEffect'
-import { useIpcCall, useIpcData } from './Common/useIpcCall'
+import { useDebounceEffect } from '../Common/Hooks/useDebounceEffect'
+import { useIpcCall, useIpcData } from '../Common/Hooks/useIpcCall'
 import { arrayMoveMutable } from 'array-move'
 
 export interface TaskPayload {

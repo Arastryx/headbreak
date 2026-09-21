@@ -1,4 +1,4 @@
-import { useKanban } from './KanbanProvider'
+import { useKanban } from './KanbanProvider/KanbanProvider'
 import {
   Box,
   Button,
@@ -11,9 +11,8 @@ import {
 } from '@mui/material'
 import { IconSelector } from './IconSelector'
 import { DragDropProvider } from '@dnd-kit/react'
-import { move } from '@dnd-kit/helpers'
-import { ColorPicker } from './Common/ColorPicker'
 import { useSortable } from '@dnd-kit/react/sortable'
+import { ColorPicker } from './Common/Components/ColorPicker'
 
 interface ColumnEditorProps {
   column: Headbreak.Column

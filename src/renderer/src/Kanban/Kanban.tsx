@@ -1,7 +1,7 @@
 import { Column, COLUMN_TYPE } from './Column'
 import { Stack } from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
-import { useKanban } from './KanbanProvider'
+import { useKanban } from '../KanbanProvider/KanbanProvider'
 
 interface Column {
   id: number

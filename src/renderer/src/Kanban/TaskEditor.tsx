@@ -1,7 +1,7 @@
 import { Box, Button, Stack, TextField } from '@mui/material'
 import { useState } from 'react'
-import { useKanban } from './KanbanProvider'
-import { Micon } from './Common/Micon'
+import { useKanban } from '../KanbanProvider/KanbanProvider'
+import { Micon } from '../Common/Components/Micon'
 
 export interface TaskEditorProps {
   columnId: string

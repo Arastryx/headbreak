@@ -4,7 +4,7 @@ import { TaskEditor } from './TaskEditor'
 import { TASK_TYPE, TaskCard } from './TaskCard'
 import { useDroppable } from '@dnd-kit/react'
 import { CollisionPriority } from '@dnd-kit/abstract'
-import { Micon } from './Common/Micon'
+import { Micon } from '../Common/Components/Micon'
 
 export const COLUMN_TYPE = 'column'
 

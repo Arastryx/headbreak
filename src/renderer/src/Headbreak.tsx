@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Kanban } from './Kanban'
+import { Kanban } from './Kanban/Kanban'
 import { Box, Dialog, DialogContent, IconButton, Stack } from '@mui/material'
 import { Settings } from './Settings'
-import { Micon } from './Common/Micon'
+import { Micon } from './Common/Components/Micon'
 
 export interface HeadbreakProps {}
 

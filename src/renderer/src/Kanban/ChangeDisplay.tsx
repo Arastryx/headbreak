@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material'
-import { ColumnLabel } from './Common/ColumnLabel'
+import { ColumnLabel } from '../Common/Components/ColumnLabel'
 
 function andify(list: React.ReactNode[]) {
   const result = list.flatMap((l) => [l, ', ']).slice(0, -1)

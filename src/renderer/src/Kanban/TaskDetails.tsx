@@ -1,10 +1,10 @@
 import { Box, IconButton, Stack, Typography } from '@mui/material'
-import { useIpcData } from './Common/useIpcCall'
+import { useIpcData } from '../Common/Hooks/useIpcCall'
 import dayjs from 'dayjs'
-import { Micon } from './Common/Micon'
 import { useState } from 'react'
 import { TaskEditor } from './TaskEditor'
 import { ChangeDisplay } from './ChangeDisplay'
+import { Micon } from '../Common/Components/Micon'
 
 interface TaskContentProps {
   task: Headbreak.Task
