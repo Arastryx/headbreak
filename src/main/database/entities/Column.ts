@@ -11,6 +11,7 @@ export const ColumnSchema = defineEntity({
     icon: p.string().length(64).nullable(),
     color: p.string().length(16).nullable(),
     order: p.integer(),
+    hideDelay: p.integer().nullable(),
     tasks: () => p.oneToMany(TaskSchema).mappedBy('column')
   }
 })

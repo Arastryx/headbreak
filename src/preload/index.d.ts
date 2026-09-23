@@ -6,8 +6,8 @@ type Result<Payload> = Promise<Payload | Headbreak.Error>
 declare global {
   namespace Headbreak {
     interface Auditable {
-      createdAt: Date
-      updatedAt: Date
+      createdAt: string
+      updatedAt: string
     }
 
     interface Syncable extends Auditable {
@@ -19,6 +19,7 @@ declare global {
       title: string
       description?: string
       column: string
+      lastMoved: string
       comments: Comment[]
     }
 
@@ -26,6 +27,7 @@ declare global {
       label?: string
       icon?: MaterialIcon
       color?: string
+      hideDelay?: number
       tasks: Task[]
     }
 

@@ -17,6 +17,7 @@ export interface CommentPayload extends Syncable {
 export interface TaskPayload extends Syncable {
   title: string
   description?: string
+  lastMoved: string
   comments: CommentPayload[]
 }
 
@@ -24,6 +25,7 @@ export interface ColumnPayload extends Syncable {
   label?: string
   icon?: string
   color?: string
+  hideDelay?: number
   tasks: TaskPayload[]
 }
 
@@ -50,6 +52,7 @@ export namespace KanbanManager {
     column.label = payload.label
     column.icon = payload.icon
     column.color = payload.color
+    column.hideDelay = payload.hideDelay
     column.order = index
 
     await Promise.all(
@@ -88,6 +91,7 @@ export namespace KanbanManager {
     task.description = payload.description
     task.column = column
     task.order = index
+    task.lastMoved = payload.lastMoved
 
     await Promise.all(payload.comments.map((c) => createUpdateDeleteComment(c, task, unit)))
   }

@@ -1,10 +1,29 @@
-import { Button, Dialog, DialogContent, DialogTitle, Icon, Stack, Typography } from '@mui/material'
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Icon,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography
+} from '@mui/material'
 import { useState } from 'react'
 import { TaskEditor } from './TaskEditor'
 import { TASK_TYPE, TaskCard } from './TaskCard'
 import { useDroppable } from '@dnd-kit/react'
 import { CollisionPriority } from '@dnd-kit/abstract'
 import { Micon } from '../Common/Components/Micon'
+import dayjs from 'dayjs'
+
+function isStale(lastMoved: string, hideDelay?: number) {
+  if (!hideDelay) {
+    return false
+  }
+
+  return dayjs().diff(dayjs(lastMoved), 'days') > hideDelay
+}
 
 export const COLUMN_TYPE = 'column'
 
@@ -14,6 +33,7 @@ export interface ColumnProps {
 
 export function Column({ column }: ColumnProps) {
   const [showCreate, setShowCreate] = useState(false)
+  const [showStale, setShowStale] = useState(false)
 
   const { ref } = useDroppable({
     id: column.id,
@@ -33,8 +53,15 @@ export function Column({ column }: ColumnProps) {
           sx={{
             width: 30
           }}
-        ></Stack>
-
+        >
+          {column.hideDelay && (
+            <Tooltip title="Show/hide stale tasks">
+              <IconButton size="small" onClick={() => setShowStale(!showStale)}>
+                <Micon icon={showStale ? 'visibility' : 'visibility_off'} fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Stack>
         <Typography variant="h6" sx={{ textAlign: 'center', flex: 1, color: column.color }}>
           {column.label ? column.label : 'Unnamed'}
         </Typography>
@@ -56,7 +83,9 @@ export function Column({ column }: ColumnProps) {
         }}
       >
         {column.tasks
-          ?.filter((t) => !t.markForDeletion)
+          ?.filter(
+            (t) => !t.markForDeletion && (showStale || !isStale(t.lastMoved, column.hideDelay))
+          )
           .map((t, index) => (
             <TaskCard key={t.id} task={t} columnId={column.id} index={index} />
           ))}

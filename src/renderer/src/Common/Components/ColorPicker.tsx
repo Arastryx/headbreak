@@ -4,10 +4,11 @@ import { HexColorPicker } from 'react-colorful'
 
 export interface ColorPickerProps {
   color: string
+  size?: number
   onChange?: (color: string) => void
 }
 
-export function ColorPicker({ color, onChange }: ColorPickerProps) {
+export function ColorPicker({ color, onChange, size = 32 }: ColorPickerProps) {
   const [show, setShow] = useState(false)
   const iconRef = useRef<HTMLDivElement>(null)
 
@@ -17,8 +18,8 @@ export function ColorPicker({ color, onChange }: ColorPickerProps) {
         onClick={() => setShow(true)}
         ref={iconRef}
         sx={{
-          width: 32,
-          height: 32,
+          width: size,
+          height: size,
           bgcolor: color ?? '#000',
           pointer: 'cursor',
           transition: '0.15s',

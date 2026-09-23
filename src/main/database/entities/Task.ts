@@ -12,6 +12,7 @@ export const TaskSchema = defineEntity({
     title: p.string().length(127),
     description: p.text().nullable(),
     order: p.integer(),
+    lastMoved: p.date(),
     column: () => p.manyToOne(ColumnSchema).deleteRule('cascade'),
     changes: () => p.oneToMany(ChangeLogSchema).mappedBy('task'),
     comments: () => p.oneToMany(CommentSchema).mappedBy('task')

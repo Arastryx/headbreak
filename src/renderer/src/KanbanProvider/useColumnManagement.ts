@@ -2,6 +2,7 @@ import { arrayMoveMutable } from 'array-move'
 import { useCallback } from 'react'
 import { v4 } from 'uuid'
 import { KanbanModifier, ColumnPayload } from './useKanbanManagement'
+import dayjs from 'dayjs'
 
 function findColumnIndex(copy: Headbreak.Column[], id: string) {
   const targetIndex = copy?.findIndex((c) => c.id === id)
@@ -22,8 +23,8 @@ export function useColumnManagement(modify: KanbanModifier) {
     const column: Headbreak.Column = {
       id: v4(),
       tasks: [],
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: dayjs().toISOString(),
+      updatedAt: dayjs().toISOString()
     }
 
     modify((copy) => {

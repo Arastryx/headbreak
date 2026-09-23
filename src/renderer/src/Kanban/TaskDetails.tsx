@@ -56,7 +56,7 @@ export function TaskDetails({ task }: TaskDetailsProps) {
   const createdThisYear = dayjs(task.createdAt).year() === dayjs().year()
 
   const history = [...task.comments.filter((c) => !c.markForDeletion), ...(changes ?? [])].sort(
-    (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+    (a, b) => dayjs(a.createdAt).diff(b.createdAt)
   )
 
   return (

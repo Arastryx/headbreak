@@ -2,6 +2,7 @@ import { arrayMoveMutable } from 'array-move'
 import { useCallback } from 'react'
 import { v4 } from 'uuid'
 import { KanbanModifier, TaskPayload } from './useKanbanManagement'
+import dayjs from 'dayjs'
 
 export function getTaskIndex(columns: Headbreak.Column[], taskId: string) {
   for (let c = 0; c < columns.length; c++) {
@@ -23,13 +24,16 @@ export function getTask(columns: Headbreak.Column[], taskId: string) {
 export function useTaskManagement(modify: KanbanModifier) {
   const createTask = useCallback(
     (payload: TaskPayload) => {
+      const now = dayjs().toISOString()
+
       const task: Headbreak.Task = {
         id: v4(),
         title: payload.title,
         description: payload.description,
+        lastMoved: now,
         column: payload.columnId,
-        updatedAt: new Date(),
-        createdAt: new Date(),
+        updatedAt: now,
+        createdAt: now,
         comments: []
       }
 

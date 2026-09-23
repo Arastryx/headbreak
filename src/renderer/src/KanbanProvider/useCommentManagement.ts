@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { KanbanModifier } from './useKanbanManagement'
 import { v4 } from 'uuid'
 import { getTask } from './useTaskManagement'
+import dayjs from 'dayjs'
 
 function getComment(kanban: Headbreak.Column[], commentId: string) {
   for (const column of kanban) {
@@ -23,8 +24,8 @@ export function useCommentManagement(modify: KanbanModifier) {
       const comment: Headbreak.Comment = {
         id: v4(),
         content: text,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: dayjs().toISOString(),
+        updatedAt: dayjs().toISOString(),
         task: taskId
       }
 
