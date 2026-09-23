@@ -49,6 +49,15 @@ export const theme = createTheme({
       defaultProps: {
         variant: 'standard'
       }
+    },
+
+    MuiIconButton: {
+      styleOverrides: {
+        sizeSmall: {
+          padding: 4,
+          fontSize: '1rem'
+        }
+      }
     }
   }
 })

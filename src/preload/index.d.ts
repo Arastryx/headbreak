@@ -36,6 +36,7 @@ declare global {
 
     interface Comment extends Syncable {
       content: string
+      task: string
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*

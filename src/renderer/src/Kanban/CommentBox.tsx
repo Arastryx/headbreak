@@ -1,24 +1,32 @@
-import { TextField, IconButton } from '@mui/material'
+import { TextField, IconButton, Stack } from '@mui/material'
 import { Micon } from '@renderer/Common/Components/Micon'
 import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
 import React, { useState } from 'react'
 
 export interface CommentBoxProps {
   taskId: string
+  comment?: Headbreak.Comment
+  onClose?: () => void
 }
 
-export function CommentBox({ taskId }: CommentBoxProps) {
-  const { createComment } = useKanban()
+export function CommentBox({ taskId, comment, onClose }: CommentBoxProps) {
+  const { createComment, editComment } = useKanban()
 
-  const [commentText, setCommentText] = useState('')
+  const [commentText, setCommentText] = useState(comment?.content ?? '')
 
   const submitComment = () => {
     if (commentText == '') {
       return
     }
 
-    createComment(taskId, commentText)
+    if (comment) {
+      editComment(comment.id, commentText)
+    } else {
+      createComment(taskId, commentText)
+    }
+
     setCommentText('')
+    onClose?.()
   }
 
   return (
@@ -32,19 +40,31 @@ export function CommentBox({ taskId }: CommentBoxProps) {
       onKeyDown={(e) => {
         if (e.key == 'Enter' && e.shiftKey) {
           submitComment()
+        } else if (e.key == 'Escape') {
+          onClose?.()
         }
       }}
       slotProps={{
         input: {
           endAdornment: (
-            <IconButton disabled={commentText == ''} onClick={submitComment}>
-              <Micon icon="send" />
-            </IconButton>
+            <Stack direction={'row'}>
+              {comment && (
+                <IconButton onClick={onClose} size="small">
+                  <Micon icon="close" fontSize="inherit" />
+                </IconButton>
+              )}
+              <IconButton
+                disabled={commentText == ''}
+                onClick={submitComment}
+                size={comment ? 'small' : 'medium'}
+              >
+                <Micon icon="send" fontSize="inherit" />
+              </IconButton>
+            </Stack>
           ),
           sx: { alignItems: 'flex-end' }
         }
       }}
-      sx={{ mt: 2 }}
     />
   )
 }

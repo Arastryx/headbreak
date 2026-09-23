@@ -1,11 +1,10 @@
-import { Box, Card, IconButton, Stack, TextField, Typography } from '@mui/material'
+import { Box, IconButton, Stack, Typography } from '@mui/material'
 import { useIpcData } from '../Common/Hooks/useIpcCall'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { TaskEditor } from './TaskEditor'
 import { ChangeDisplay } from './ChangeDisplay'
 import { Micon } from '../Common/Components/Micon'
-import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
 import { CommentCard } from './CommentCard'
 import { CommentBox } from './CommentBox'
 
@@ -56,7 +55,7 @@ export function TaskDetails({ task }: TaskDetailsProps) {
 
   const createdThisYear = dayjs(task.createdAt).year() === dayjs().year()
 
-  const history = [...task.comments, ...(changes ?? [])].sort(
+  const history = [...task.comments.filter((c) => !c.markForDeletion), ...(changes ?? [])].sort(
     (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
   )
 
@@ -70,7 +69,7 @@ export function TaskDetails({ task }: TaskDetailsProps) {
         <TaskEditor columnId={task.column} task={task} onClose={() => setEditMode(false)} />
       )}
 
-      <Stack useFlexGap spacing={0.5} sx={{ pt: 2 }}>
+      <Stack useFlexGap spacing={0.5} sx={{ py: 2 }}>
         {history?.map((c) => (
           <>
             {isComment(c) && <CommentCard comment={c} />}

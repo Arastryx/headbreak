@@ -18,13 +18,8 @@ export function IconSelector({ icon, color, onSelect }: IconSelectorProps) {
 
   return (
     <>
-      <IconButton
-        size="small"
-        onClick={() => setShowIconSelector(true)}
-        ref={anchorRef}
-        sx={{ color }}
-      >
-        <Icon>{icon}</Icon>
+      <IconButton onClick={() => setShowIconSelector(true)} ref={anchorRef} sx={{ color }}>
+        <Icon fontSize="inherit">{icon}</Icon>
       </IconButton>
       <Popover
         open={showIconSelector}
