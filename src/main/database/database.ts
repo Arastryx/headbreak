@@ -2,12 +2,13 @@ import { defineConfig, MikroORM } from '@mikro-orm/sqlite'
 import { TaskSchema } from './entities/Task'
 import { app } from 'electron'
 import { ColumnSchema } from './entities/Column'
+import { CommentSchema } from './entities/Comment'
 
 const path = app.getPath('userData')
 
 const config = defineConfig({
   dbName: `${path}/${import.meta.env.DEV ? 'dev' : 'app'}Db.sqlite`,
-  entities: [TaskSchema, ColumnSchema],
+  entities: [TaskSchema, ColumnSchema, CommentSchema],
   debug: import.meta.env.DEV
 })
 

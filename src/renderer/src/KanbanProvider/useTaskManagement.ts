@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import { v4 } from 'uuid'
 import { KanbanModifier, TaskPayload } from './useKanbanManagement'
 
-function getTaskIndex(columns: Headbreak.Column[], taskId: string) {
+export function getTaskIndex(columns: Headbreak.Column[], taskId: string) {
   for (let c = 0; c < columns.length; c++) {
     for (let t = 0; t < columns[c].tasks.length; t++) {
       if (columns[c].tasks[t].id === taskId) {
@@ -15,7 +15,7 @@ function getTaskIndex(columns: Headbreak.Column[], taskId: string) {
   throw new Error(`Could not find task with id ${taskId}`)
 }
 
-function getTask(columns: Headbreak.Column[], taskId: string) {
+export function getTask(columns: Headbreak.Column[], taskId: string) {
   const { columnIndex, taskIndex } = getTaskIndex(columns, taskId)
   return columns[columnIndex].tasks[taskIndex]
 }
@@ -29,7 +29,8 @@ export function useTaskManagement(modify: KanbanModifier) {
         description: payload.description,
         column: payload.columnId,
         updatedAt: new Date(),
-        createdAt: new Date()
+        createdAt: new Date(),
+        comments: []
       }
 
       modify((copy) => {

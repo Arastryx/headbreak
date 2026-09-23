@@ -1,11 +1,10 @@
 import { produce } from 'immer'
 import { useRef, useCallback } from 'react'
-import { v4 } from 'uuid'
 import { useDebounceEffect } from '../Common/Hooks/useDebounceEffect'
 import { useIpcCall, useIpcData } from '../Common/Hooks/useIpcCall'
-import { arrayMoveMutable } from 'array-move'
 import { useTaskManagement } from './useTaskManagement'
 import { useColumnManagement } from './useColumnManagement'
+import { useCommentManagement } from './useCommentManagement'
 
 export interface TaskPayload {
   title: string
@@ -42,6 +41,7 @@ export function useKanbanManagement() {
 
   const taskManagement = useTaskManagement(modifyKanban)
   const columnManagement = useColumnManagement(modifyKanban)
+  const commentManagement = useCommentManagement(modifyKanban)
 
   const { callIpc: sync, isLoading: isSyncing } = useIpcCall(window.kanbanApi.sync, [])
 
@@ -64,6 +64,7 @@ export function useKanbanManagement() {
     isLoading,
     isSyncing,
     ...taskManagement,
-    ...columnManagement
+    ...columnManagement,
+    ...commentManagement
   }
 }

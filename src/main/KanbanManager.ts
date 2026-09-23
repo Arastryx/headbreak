@@ -3,20 +3,27 @@ import { Column, ColumnSchema } from './database/entities/Column'
 import { Task, TaskSchema } from './database/entities/Task'
 import { ChangeLogManager } from './ChangeLogManager'
 import { normalizeEntities } from './normalize'
+import { CommentSchema, TaskComment } from './database/entities/Comment'
 
-export interface TaskPayload {
+interface Syncable {
   id: string
-  title: string
-  description?: string
   markForDeletion?: boolean
 }
 
-export interface ColumnPayload {
-  id: string
+export interface CommentPayload extends Syncable {
+  content: string
+}
+
+export interface TaskPayload extends Syncable {
+  title: string
+  description?: string
+  comments: CommentPayload[]
+}
+
+export interface ColumnPayload extends Syncable {
   label?: string
   icon?: string
   color?: string
-  markForDeletion?: boolean
   tasks: TaskPayload[]
 }
 
@@ -35,9 +42,7 @@ export namespace KanbanManager {
       column = new Column()
       column.id = payload.id
       unit.persist(column)
-    }
-
-    if (payload.markForDeletion) {
+    } else if (payload.markForDeletion) {
       unit.remove(column)
       return
     }
@@ -83,13 +88,34 @@ export namespace KanbanManager {
     task.description = payload.description
     task.column = column
     task.order = index
+
+    await Promise.all(payload.comments.map((c) => createUpdateDeleteComment(c, task, unit)))
+  }
+
+  async function createUpdateDeleteComment(payload: CommentPayload, task: Task, unit: Fork) {
+    let comment = await unit.findOne(CommentSchema, payload.id)
+
+    if (!comment) {
+      comment = new TaskComment()
+      comment.id = payload.id
+
+      //You can't move a comment to another task, so we might as well set this on
+      // creation only
+      comment.task = task
+
+      unit.persist(comment)
+    } else if (payload.markForDeletion) {
+      unit.remove(comment)
+    }
+
+    comment.content = payload.content
   }
 
   export async function get() {
     const unit = unitOfWork()
 
     const result = await unit.findAll(ColumnSchema, {
-      populate: ['tasks'],
+      populate: ['tasks.comments'],
       populateOrderBy: { tasks: { order: 'ASC' } },
       orderBy: { order: 'ASC' }
     })

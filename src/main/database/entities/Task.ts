@@ -2,6 +2,7 @@ import { defineEntity, p } from '@mikro-orm/core'
 import { ColumnSchema } from './Column'
 import { AuditableSchema } from './Auditable'
 import { ChangeLogSchema } from './ChangeLog'
+import { CommentSchema } from './Comment'
 
 export const TaskSchema = defineEntity({
   name: 'Task',
@@ -12,7 +13,8 @@ export const TaskSchema = defineEntity({
     description: p.text().nullable(),
     order: p.integer(),
     column: () => p.manyToOne(ColumnSchema).deleteRule('cascade'),
-    changes: () => p.oneToMany(ChangeLogSchema).mappedBy('task')
+    changes: () => p.oneToMany(ChangeLogSchema).mappedBy('task'),
+    comments: () => p.oneToMany(CommentSchema).mappedBy('task')
   }
 })
 

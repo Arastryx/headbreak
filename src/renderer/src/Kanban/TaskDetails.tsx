@@ -1,10 +1,13 @@
-import { Box, IconButton, Stack, Typography } from '@mui/material'
+import { Box, Card, IconButton, Stack, TextField, Typography } from '@mui/material'
 import { useIpcData } from '../Common/Hooks/useIpcCall'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { TaskEditor } from './TaskEditor'
 import { ChangeDisplay } from './ChangeDisplay'
 import { Micon } from '../Common/Components/Micon'
+import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
+import { CommentCard } from './CommentCard'
+import { CommentBox } from './CommentBox'
 
 interface TaskContentProps {
   task: Headbreak.Task
@@ -39,6 +42,10 @@ function TaskContent({ task, onEditClicked }: TaskContentProps) {
   )
 }
 
+function isComment(c: Headbreak.Comment | Headbreak.ChangeLog): c is Headbreak.Comment {
+  return typeof c.content === 'string'
+}
+
 export interface TaskDetailsProps {
   task: Headbreak.Task
 }
@@ -48,6 +55,11 @@ export function TaskDetails({ task }: TaskDetailsProps) {
   const [editMode, setEditMode] = useState(false)
 
   const createdThisYear = dayjs(task.createdAt).year() === dayjs().year()
+
+  const history = [...task.comments, ...(changes ?? [])].sort(
+    (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+  )
+
   return (
     <Box sx={{ minWidth: 300 }}>
       <Typography variant="caption">
@@ -58,20 +70,26 @@ export function TaskDetails({ task }: TaskDetailsProps) {
         <TaskEditor columnId={task.column} task={task} onClose={() => setEditMode(false)} />
       )}
 
-      <Stack spacing={0.5} sx={{ pt: 2 }}>
-        {changes?.map((c) => (
-          <Stack
-            direction="row"
-            spacing={2}
-            sx={{ justifyContent: 'space-between', alignItems: 'center' }}
-          >
-            <ChangeDisplay key={c.id} change={c.content} />
-            <Typography variant="caption">
-              {dayjs.duration(dayjs(c.createdAt).diff(dayjs()), 'milliseconds').humanize(true)}
-            </Typography>
-          </Stack>
+      <Stack useFlexGap spacing={0.5} sx={{ pt: 2 }}>
+        {history?.map((c) => (
+          <>
+            {isComment(c) && <CommentCard comment={c} />}
+            {!isComment(c) && (
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{ justifyContent: 'space-between', alignItems: 'center', px: 1 }}
+              >
+                <ChangeDisplay key={c.id} change={c.content} />
+                <Typography variant="caption">
+                  {dayjs.duration(dayjs(c.createdAt).diff(dayjs()), 'milliseconds').humanize(true)}
+                </Typography>
+              </Stack>
+            )}
+          </>
         ))}
       </Stack>
+      <CommentBox taskId={task.id} />
     </Box>
   )
 }

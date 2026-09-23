@@ -10,26 +10,32 @@ declare global {
       updatedAt: Date
     }
 
-    interface Task extends Auditable {
+    interface Syncable extends Auditable {
       id: string
-      title: string
-      description?: string
       markForDeletion?: boolean
-      column: string
     }
 
-    interface Column extends Auditable {
-      id: string
+    interface Task extends Syncable {
+      title: string
+      description?: string
+      column: string
+      comments: Comment[]
+    }
+
+    interface Column extends Syncable {
       label?: string
       icon?: MaterialIcon
       color?: string
-      markForDeletion?: boolean
       tasks: Task[]
     }
 
     interface ChangeLog extends Auditable {
       id: number
       content: Change
+    }
+
+    interface Comment extends Syncable {
+      content: string
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*

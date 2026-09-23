@@ -24,8 +24,7 @@ export async function handleError<T>(func: () => T | Promise<T>): Promise<T | He
       }
     }
 
-    //TODO: Reenable Logging
-    // logger.error(e)
+    console.error(e)
     return error
   }
 }
