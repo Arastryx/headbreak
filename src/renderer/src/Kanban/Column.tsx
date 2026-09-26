@@ -97,7 +97,7 @@ export function Column({ column }: ColumnProps) {
           <Micon icon="add" />
         </Button>
       </Stack>
-      <Dialog open={showCreate} onClose={() => setShowCreate(false)}>
+      <Dialog open={showCreate} onClose={() => setShowCreate(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Create Task</DialogTitle>
         <DialogContent>
           <TaskEditor onClose={() => setShowCreate(false)} columnId={column.id} />

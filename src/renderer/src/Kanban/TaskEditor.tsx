@@ -2,7 +2,7 @@ import { Box, Button, Stack, TextField } from '@mui/material'
 import { useState } from 'react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
 import { Micon } from '../Common/Components/Micon'
-import { TaskAutomationField } from './TaskDetails/TaskAutomationField'
+import { TaskMoverFields, TaskMoverPayload } from './TaskMoverFields'
 
 export interface TaskEditorProps {
   columnId: string
@@ -14,6 +14,9 @@ export interface TaskEditorProps {
 export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProps) {
   const [title, setTitle] = useState(task?.title ?? '')
   const [description, setDescription] = useState(task?.description ?? '')
+  const [mover, setMover] = useState<TaskMoverPayload>({})
+
+  console.log(mover)
 
   const { createTask, editTask } = useKanban()
 
@@ -55,7 +58,7 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
           value={description}
           onChange={(e) => setDescription(e.currentTarget.value)}
         />
-        <TaskAutomationField />
+        <TaskMoverFields mover={mover} onChange={setMover} />
       </Stack>
       <Stack direction="row" spacing={2} sx={{ pt: 2, justifyContent: 'flex-end' }}>
         <Button onClick={onClose}>Cancel</Button>
