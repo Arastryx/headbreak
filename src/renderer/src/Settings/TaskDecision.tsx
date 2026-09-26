@@ -8,6 +8,7 @@ import {
   Stack,
   MenuItem
 } from '@mui/material'
+import { ColumnSelect } from '@renderer/Common/Components/ColumnSelect'
 import { Micon } from '@renderer/Common/Components/Micon'
 
 export type Decision = 'move' | 'delete'
@@ -15,16 +16,11 @@ export type Decision = 'move' | 'delete'
 export interface TaskDecisionProps {
   decision: Decision
   targetColumnId: string
-  otherColumns: Headbreak.Column[]
+  columnId: string
   onChange: (d: Decision, id: string) => void
 }
 
-export function TaskDecision({
-  decision,
-  targetColumnId,
-  otherColumns,
-  onChange
-}: TaskDecisionProps) {
+export function TaskDecision({ decision, targetColumnId, columnId, onChange }: TaskDecisionProps) {
   const renderOption = (c: Headbreak.Column) => (
     <Stack direction="row" spacing={1} sx={{ alignItems: 'center', color: c.color }}>
       <Micon icon={c.icon ?? 'loop'} />
@@ -43,34 +39,15 @@ export function TaskDecision({
         <FormControlLabel value="move" control={<Radio />} label="Move to another column" />
       </RadioGroup>
       <Collapse in={decision == 'move'}>
-        <TextField
+        <ColumnSelect
           placeholder="Target Column"
-          select
           size="small"
+          omit={(c) => c.id == columnId}
           value={targetColumnId}
-          onChange={(e) => onChange(decision, e.target.value)}
-          slotProps={{
-            select: {
-              displayEmpty: true,
-              renderValue: (value: unknown) => {
-                const target = otherColumns?.find((c) => c.id === value)
-
-                if (!target) {
-                  return <Typography color="textSecotendary">Selected Column</Typography>
-                }
-                return renderOption(target)
-              }
-            }
-          }}
+          onChange={(value) => onChange(decision, value)}
           sx={{ mt: 1 }}
           fullWidth
-        >
-          {otherColumns.map((c) => (
-            <MenuItem key={c.id} value={c.id}>
-              {renderOption(c)}
-            </MenuItem>
-          ))}
-        </TextField>
+        />
       </Collapse>
     </>
   )

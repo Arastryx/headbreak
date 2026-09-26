@@ -56,7 +56,11 @@ export function Column({ column }: ColumnProps) {
         >
           {column.hideDelay && (
             <Tooltip title="Show/hide stale tasks">
-              <IconButton size="small" onClick={() => setShowStale(!showStale)}>
+              <IconButton
+                size="small"
+                onClick={() => setShowStale(!showStale)}
+                sx={{ color: column.color }}
+              >
                 <Micon icon={showStale ? 'visibility' : 'visibility_off'} fontSize="inherit" />
               </IconButton>
             </Tooltip>

@@ -1,12 +1,22 @@
-import { Box, IconButton, Stack, Typography } from '@mui/material'
-import { useIpcData } from '../Common/Hooks/useIpcCall'
+import {
+  alpha,
+  Box,
+  ButtonBase,
+  Divider,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography
+} from '@mui/material'
+import { useIpcData } from '../../Common/Hooks/useIpcCall'
 import dayjs from 'dayjs'
 import { useState } from 'react'
-import { TaskEditor } from './TaskEditor'
-import { ChangeDisplay } from './ChangeDisplay'
-import { Micon } from '../Common/Components/Micon'
+import { TaskEditor } from '../TaskEditor'
+import { Micon } from '../../Common/Components/Micon'
 import { CommentCard } from './CommentCard'
+import { ChangeDisplay } from './ChangeDisplay'
 import { CommentBox } from './CommentBox'
+import { TaskAutomation } from './TaskAutomation'
 
 interface TaskContentProps {
   task: Headbreak.Task
@@ -21,22 +31,21 @@ function TaskContent({ task, onEditClicked }: TaskContentProps) {
         spacing={2}
         sx={{ mb: 2, justifyContent: 'space-between', alignItems: 'flex-start' }}
       >
-        <Typography variant="h5">{task.title}</Typography>
+        <Typography contentEditable={true} variant="h5">
+          {task.title}
+        </Typography>
         <IconButton size="small" onClick={onEditClicked}>
           <Micon icon="edit" fontSize="inherit" />
         </IconButton>
       </Stack>
-
       {task.description && (
         <Typography sx={{ whiteSpace: 'pre-wrap' }} gutterBottom>
           {task.description}
         </Typography>
       )}
-      {!task.description && (
-        <Typography variant="body2" sx={{ color: 'text.secondary' }} gutterBottom>
-          No description given
-        </Typography>
-      )}
+      <Box sx={{ ml: -1 }}>
+        <TaskAutomation />
+      </Box>
     </>
   )
 }
@@ -69,15 +78,20 @@ export function TaskDetails({ task }: TaskDetailsProps) {
         <TaskEditor columnId={task.column} task={task} onClose={() => setEditMode(false)} />
       )}
 
+      <Divider sx={{ mx: -1, mt: 1 }} />
       <Stack useFlexGap spacing={0.5} sx={{ py: 2 }}>
         {history?.map((c) => (
           <>
-            {isComment(c) && <CommentCard comment={c} />}
+            {isComment(c) && (
+              <Box sx={{ mx: -1 }}>
+                <CommentCard comment={c} />
+              </Box>
+            )}
             {!isComment(c) && (
               <Stack
                 direction="row"
                 spacing={2}
-                sx={{ justifyContent: 'space-between', alignItems: 'center', px: 1 }}
+                sx={{ justifyContent: 'space-between', alignItems: 'center' }}
               >
                 <ChangeDisplay key={c.id} change={c.content} />
                 <Typography variant="caption">

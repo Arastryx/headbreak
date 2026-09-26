@@ -14,22 +14,28 @@ import { theme } from './theme'
 import { Headbreak } from './Headbreak'
 import { ActiveContextMenuProvider } from './Common/Components/ContextMenu/ActiveContextMenuProvider'
 import { NotificationProvider } from './Common/Contexts/NotificationProvider'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import AdvancedFormat from 'dayjs/plugin/advancedFormat'
 
 dayjs.extend(LocalizedFormat)
 dayjs.extend(Duration)
 dayjs.extend(RelativeTime)
+dayjs.extend(AdvancedFormat)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <NotificationProvider>
-      <KanbanProvider>
-        <ThemeProvider theme={theme}>
-          <ActiveContextMenuProvider>
-            <CssBaseline />
-            <Headbreak />
-          </ActiveContextMenuProvider>
-        </ThemeProvider>
-      </KanbanProvider>
-    </NotificationProvider>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <NotificationProvider>
+        <KanbanProvider>
+          <ThemeProvider theme={theme}>
+            <ActiveContextMenuProvider>
+              <CssBaseline />
+              <Headbreak />
+            </ActiveContextMenuProvider>
+          </ThemeProvider>
+        </KanbanProvider>
+      </NotificationProvider>
+    </LocalizationProvider>
   </StrictMode>
 )

@@ -43,7 +43,7 @@ export function CommentCard({ comment }: CommentCardProps) {
           <Typography sx={{ p: 1, pb: 1.5, whiteSpace: 'pre-wrap' }}>
             {comment.content.trim()}
           </Typography>
-          <Typography variant="caption" sx={{ position: 'absolute', bottom: 0, right: 2 }}>
+          <Typography variant="caption" sx={{ position: 'absolute', bottom: 0, right: 8 }}>
             {dayjs.duration(dayjs(comment.createdAt).diff(dayjs()), 'milliseconds').humanize(true)}
           </Typography>
         </>

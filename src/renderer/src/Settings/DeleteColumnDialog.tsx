@@ -42,7 +42,7 @@ export function DeleteColumnDialog({ columnId, onClose, ...props }: DeleteColumn
         </Typography>
         {otherColumns.length >= 1 && (
           <TaskDecision
-            otherColumns={otherColumns}
+            columnId={columnId}
             decision={decision}
             targetColumnId={targetColumnId}
             onChange={(d, id) => {

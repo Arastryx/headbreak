@@ -12,7 +12,7 @@ import { useSortable } from '@dnd-kit/react/sortable'
 import { useState } from 'react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
 import dayjs from 'dayjs'
-import { TaskDetails } from './TaskDetails'
+import { TaskDetails } from './TaskDetails/TaskDetails'
 import { ContextMenu } from '../Common/Components/ContextMenu'
 import { FadeOutText } from '../Common/Components/FadeOutText'
 
@@ -89,7 +89,7 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
           </Card>
         )}
       ></ContextMenu>
-      <Dialog open={showFullTask} onClose={() => setShowFullTask(false)}>
+      <Dialog open={showFullTask} onClose={() => setShowFullTask(false)} maxWidth="sm" fullWidth>
         <DialogContent>
           <TaskDetails task={task} />
         </DialogContent>
