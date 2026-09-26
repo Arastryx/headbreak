@@ -21,6 +21,7 @@ declare global {
       column: string
       lastMoved: string
       comments: Comment[]
+      mover?: TaskMover
     }
 
     interface Column extends Syncable {
@@ -38,6 +39,14 @@ declare global {
 
     interface Comment extends Syncable {
       content: string
+      task: string
+    }
+
+    interface TaskMover extends Syncable {
+      policy: string
+      policyType: 'cron' | 'interval'
+      sourceColumnId: string
+      destinationColumnId: string
       task: string
     }
 

@@ -4,10 +4,19 @@ import { Task, TaskSchema } from './database/entities/Task'
 import { ChangeLogManager } from './ChangeLogManager'
 import { normalizeEntities } from './normalize'
 import { CommentSchema, TaskComment } from './database/entities/Comment'
+import { TaskMover, TaskMoverSchema } from './database/entities/TaskMover'
+import { rel } from '@mikro-orm/core'
 
 interface Syncable {
   id: string
   markForDeletion?: boolean
+}
+
+export interface TaskMoverPayload extends Syncable {
+  policy: string
+  policyType: 'cron' | 'interval'
+  sourceColumnId: string
+  destinationColumnId: string
 }
 
 export interface CommentPayload extends Syncable {
@@ -19,6 +28,7 @@ export interface TaskPayload extends Syncable {
   description?: string
   lastMoved: string
   comments: CommentPayload[]
+  mover?: TaskMoverPayload
 }
 
 export interface ColumnPayload extends Syncable {
@@ -93,7 +103,10 @@ export namespace KanbanManager {
     task.order = index
     task.lastMoved = payload.lastMoved
 
-    await Promise.all(payload.comments.map((c) => createUpdateDeleteComment(c, task, unit)))
+    await Promise.all([
+      ...payload.comments.map((c) => createUpdateDeleteComment(c, task, unit)),
+      ...(payload.mover ? [createUpdateDeleteTaskMover(payload.mover, task, unit)] : [])
+    ])
   }
 
   async function createUpdateDeleteComment(payload: CommentPayload, task: Task, unit: Fork) {
@@ -115,11 +128,33 @@ export namespace KanbanManager {
     comment.content = payload.content
   }
 
+  async function createUpdateDeleteTaskMover(payload: TaskMoverPayload, task: Task, unit: Fork) {
+    let mover = await unit.findOne(TaskMoverSchema, payload.id)
+
+    if (!mover) {
+      mover = new TaskMover()
+      mover.id = payload.id
+
+      //You can't move a mover to another task, so we might as well set this on
+      // creation only
+      mover.task = task
+
+      unit.persist(mover)
+    } else if (payload.markForDeletion) {
+      unit.remove(mover)
+    }
+
+    mover.policy = payload.policy
+    mover.policyType = payload.policyType
+    mover.sourceColumn = rel(Column, payload.sourceColumnId)
+    mover.destinationColumn = rel(Column, payload.destinationColumnId)
+  }
+
   export async function get() {
     const unit = unitOfWork()
 
     const result = await unit.findAll(ColumnSchema, {
-      populate: ['tasks.comments'],
+      populate: ['tasks.comments', 'tasks.mover'],
       populateOrderBy: { tasks: { order: 'ASC' } },
       orderBy: { order: 'ASC' }
     })

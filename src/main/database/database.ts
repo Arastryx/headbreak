@@ -3,12 +3,14 @@ import { TaskSchema } from './entities/Task'
 import { app } from 'electron'
 import { ColumnSchema } from './entities/Column'
 import { CommentSchema } from './entities/Comment'
+import { ChangeLogSchema } from './entities/ChangeLog'
+import { TaskMoverSchema } from './entities/TaskMover'
 
 const path = app.getPath('userData')
 
 const config = defineConfig({
   dbName: `${path}/${import.meta.env.DEV ? 'dev' : 'app'}Db.sqlite`,
-  entities: [TaskSchema, ColumnSchema, CommentSchema],
+  entities: [TaskSchema, ColumnSchema, CommentSchema, ChangeLogSchema, TaskMoverSchema],
   debug: import.meta.env.DEV
 })
 
