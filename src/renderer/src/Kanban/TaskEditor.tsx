@@ -2,6 +2,7 @@ import { Box, Button, Stack, TextField } from '@mui/material'
 import { useState } from 'react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
 import { Micon } from '../Common/Components/Micon'
+import { TaskAutomationField } from './TaskDetails/TaskAutomationField'
 
 export interface TaskEditorProps {
   columnId: string
@@ -35,7 +36,7 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
   }
 
   return (
-    <Box sx={{ width: 400 }}>
+    <Box sx={{ minWidth: 400 }}>
       <Stack spacing={4}>
         <TextField
           placeholder="Title"
@@ -54,6 +55,7 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
           value={description}
           onChange={(e) => setDescription(e.currentTarget.value)}
         />
+        <TaskAutomationField />
       </Stack>
       <Stack direction="row" spacing={2} sx={{ pt: 2, justifyContent: 'flex-end' }}>
         <Button onClick={onClose}>Cancel</Button>

@@ -42,9 +42,11 @@ declare global {
       task: string
     }
 
+    type PolicyType = 'cron' | 'interval'
+
     interface TaskMover extends Syncable {
       policy: string
-      policyType: 'cron' | 'interval'
+      policyType: PolicyType
       sourceColumnId: string
       destinationColumnId: string
       task: string

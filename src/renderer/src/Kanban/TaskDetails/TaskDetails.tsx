@@ -1,13 +1,4 @@
-import {
-  alpha,
-  Box,
-  ButtonBase,
-  Divider,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography
-} from '@mui/material'
+import { Box, Divider, IconButton, Stack, Typography } from '@mui/material'
 import { useIpcData } from '../../Common/Hooks/useIpcCall'
 import dayjs from 'dayjs'
 import { useState } from 'react'
@@ -16,7 +7,6 @@ import { Micon } from '../../Common/Components/Micon'
 import { CommentCard } from './CommentCard'
 import { ChangeDisplay } from './ChangeDisplay'
 import { CommentBox } from './CommentBox'
-import { TaskAutomation } from './TaskAutomation'
 
 interface TaskContentProps {
   task: Headbreak.Task
@@ -43,9 +33,6 @@ function TaskContent({ task, onEditClicked }: TaskContentProps) {
           {task.description}
         </Typography>
       )}
-      <Box sx={{ ml: -1 }}>
-        <TaskAutomation />
-      </Box>
     </>
   )
 }
