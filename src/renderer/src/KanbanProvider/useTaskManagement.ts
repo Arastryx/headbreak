@@ -1,8 +1,40 @@
 import { arrayMoveMutable } from 'array-move'
 import { useCallback } from 'react'
 import { v4 } from 'uuid'
-import { KanbanModifier, TaskPayload } from './useKanbanManagement'
+import { KanbanModifier, TaskMoverPayload, TaskPayload } from './useKanbanManagement'
 import dayjs from 'dayjs'
+
+function processMover(
+  taskId: string,
+  mover?: Headbreak.TaskMover,
+  payload?: TaskMoverPayload
+): Headbreak.TaskMover | undefined {
+  if (!mover) {
+    if (!payload) {
+      return undefined
+    } else {
+      return {
+        id: v4(),
+        policy: payload.policy,
+        policyType: payload.policyType,
+        sourceColumnId: payload.sourceColumnId,
+        destinationColumnId: payload.destinationColumnId,
+        task: taskId,
+        createdAt: dayjs().toISOString(),
+        updatedAt: dayjs().toISOString()
+      }
+    }
+  }
+
+  if (!payload) {
+    mover.markForDeletion = true
+  } else {
+    mover.policy = payload.policy
+    mover.policyType = payload.policyType
+    mover.sourceColumnId = payload.sourceColumnId
+    mover.destinationColumnId = payload.destinationColumnId
+  }
+}
 
 export function getTaskIndex(columns: Headbreak.Column[], taskId: string) {
   for (let c = 0; c < columns.length; c++) {
@@ -26,10 +58,13 @@ export function useTaskManagement(modify: KanbanModifier) {
     (payload: TaskPayload) => {
       const now = dayjs().toISOString()
 
+      const id = v4()
+
       const task: Headbreak.Task = {
-        id: v4(),
+        id: id,
         title: payload.title,
         description: payload.description,
+        mover: processMover(id, undefined, payload.mover),
         lastMoved: now,
         column: payload.columnId,
         updatedAt: now,
@@ -59,6 +94,7 @@ export function useTaskManagement(modify: KanbanModifier) {
 
         task.title = payload.title
         task.description = payload.description
+        task.mover = processMover(task.id, task.mover, payload.mover)
       })
     },
     [modify]

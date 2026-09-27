@@ -13,15 +13,12 @@ import { Micon } from '@renderer/Common/Components/Micon'
 import { useState } from 'react'
 import { IntervalSelector } from './IntervalSelector/IntervalSelector'
 import { Emphasize } from '@renderer/Common/Components/Emphasize'
-
-export type TaskMoverPayload = Partial<
-  Pick<Headbreak.TaskMover, 'sourceColumnId' | 'destinationColumnId' | 'policy' | 'policyType'>
->
+import { TaskMoverPayload } from '@renderer/KanbanProvider/useKanbanManagement'
 
 export interface TaskMoverFieldsProps {
-  mover?: TaskMoverPayload
+  mover?: Partial<TaskMoverPayload>
   highlightErrors?: boolean
-  onChange: (m?: TaskMoverPayload) => void
+  onChange: (m?: Partial<TaskMoverPayload>) => void
 }
 
 export function TaskMoverFields({ mover, onChange, highlightErrors }: TaskMoverFieldsProps) {

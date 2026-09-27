@@ -6,6 +6,7 @@ import { normalizeEntities } from './normalize'
 import { CommentSchema, TaskComment } from './database/entities/Comment'
 import { TaskMover, TaskMoverSchema } from './database/entities/TaskMover'
 import { rel } from '@mikro-orm/core'
+import dayjs from 'dayjs'
 
 interface Syncable {
   id: string
@@ -81,6 +82,7 @@ export namespace KanbanManager {
     if (!task) {
       task = new Task()
       task.id = payload.id
+      task.lastMoved = dayjs().toISOString()
       unit.persist(task)
     } else {
       if (payload.markForDeletion) {
@@ -90,6 +92,7 @@ export namespace KanbanManager {
 
       if (task.column != null && column.id != task.column.id) {
         ChangeLogManager.recordColumnMove(task, column)
+        task.lastMoved = dayjs().toISOString()
       }
 
       if (task.title != payload.title || task.description != payload.description) {
@@ -101,7 +104,6 @@ export namespace KanbanManager {
     task.description = payload.description
     task.column = column
     task.order = index
-    task.lastMoved = payload.lastMoved
 
     await Promise.all([
       ...payload.comments.map((c) => createUpdateDeleteComment(c, task, unit)),

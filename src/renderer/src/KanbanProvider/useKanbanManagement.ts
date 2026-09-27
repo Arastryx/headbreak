@@ -6,10 +6,16 @@ import { useTaskManagement } from './useTaskManagement'
 import { useColumnManagement } from './useColumnManagement'
 import { useCommentManagement } from './useCommentManagement'
 
+export type TaskMoverPayload = Pick<
+  Headbreak.TaskMover,
+  'sourceColumnId' | 'destinationColumnId' | 'policy' | 'policyType'
+>
+
 export interface TaskPayload {
   title: string
   description?: string
   columnId: string
+  mover?: TaskMoverPayload
 }
 
 export type ColumnPayload = Omit<Headbreak.Column, 'id' | 'tasks' | 'markForDeletion'>

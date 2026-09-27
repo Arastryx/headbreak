@@ -2,8 +2,20 @@ import { Box, Button, Stack, TextField } from '@mui/material'
 import { useState } from 'react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
 import { Micon } from '../Common/Components/Micon'
-import { TaskMoverFields, TaskMoverPayload } from './TaskMoverFields'
+import { TaskMoverFields } from './TaskMoverFields'
 import { Emphasize } from '@renderer/Common/Components/Emphasize'
+import { TaskMoverPayload } from '@renderer/KanbanProvider/useKanbanManagement'
+
+function isPopulated(payload: Partial<TaskMoverPayload>): payload is TaskMoverPayload {
+  const populated = (s?: string) => s != null && s != ''
+
+  return (
+    populated(payload.destinationColumnId) &&
+    populated(payload.sourceColumnId) &&
+    populated(payload.policy) &&
+    populated(payload.policyType)
+  )
+}
 
 export interface TaskEditorProps {
   columnId: string
@@ -15,7 +27,7 @@ export interface TaskEditorProps {
 export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProps) {
   const [title, setTitle] = useState(task?.title ?? '')
   const [description, setDescription] = useState(task?.description ?? '')
-  const [mover, setMover] = useState<TaskMoverPayload>()
+  const [mover, setMover] = useState<Partial<TaskMoverPayload | undefined>>(task?.mover)
 
   const { createTask, editTask } = useKanban()
 
@@ -30,15 +42,21 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
   }
 
   const submit = () => {
+    if (mover && !isPopulated(mover)) {
+      throw new Error('Tried to submit a task with only a partially filled out Task Mover')
+    }
+
     if (task) {
       editTask(task.id, {
         title,
-        description
+        description,
+        mover
       })
     } else {
       createTask({
         description,
         title,
+        mover,
         columnId
       })
     }
@@ -52,7 +70,7 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
       <Stack spacing={4}>
         <Emphasize color="error" show={showErrorHighlighting && !title}>
           <TextField
-            placeholder="Title *"
+            placeholder="Title"
             fullWidth
             value={title}
             error={showErrorHighlighting && !title}
