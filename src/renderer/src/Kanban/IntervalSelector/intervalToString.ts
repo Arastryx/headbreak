@@ -28,7 +28,17 @@ function withOrdinalSuffix(i: number) {
   return i + 'th'
 }
 
-export function intervalToString(interval: string) {
+export function intervalToString(interval: string, upperCase: boolean = true) {
+  const result = toString(interval)
+
+  if (!upperCase) {
+    return result[0].toLowerCase() + result.slice(1)
+  }
+
+  return result
+}
+
+function toString(interval: string) {
   if (!interval.includes('*')) {
     return `After ${interval} day${interval != '1' ? 's' : ''}`
   }

@@ -7,6 +7,8 @@ import { Micon } from '../../Common/Components/Micon'
 import { CommentCard } from './CommentCard'
 import { ChangeDisplay } from './ChangeDisplay'
 import { CommentBox } from './CommentBox'
+import { intervalToString } from '../IntervalSelector/intervalToString'
+import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
 
 interface TaskContentProps {
   task: Headbreak.Task
@@ -31,6 +33,19 @@ function TaskContent({ task, onEditClicked }: TaskContentProps) {
       {task.description && (
         <Typography sx={{ whiteSpace: 'pre-wrap' }} gutterBottom>
           {task.description}
+        </Typography>
+      )}
+      {task.mover && (
+        <Typography variant="caption">
+          This task moves from{' '}
+          <ColumnLabel variant="caption" column={task.mover.sourceColumn} sx={{ opacity: 0.7 }} />{' '}
+          to{' '}
+          <ColumnLabel
+            variant="caption"
+            column={task.mover.destinationColumn}
+            sx={{ opacity: 0.7 }}
+          />{' '}
+          {intervalToString(task.mover.policy, false)}
         </Typography>
       )}
     </>
