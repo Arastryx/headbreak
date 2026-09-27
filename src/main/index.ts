@@ -5,6 +5,7 @@ import icon from '../../resources/icon.png?asset'
 import { setupKanbanApi } from './kanbanApi'
 import { initDatabase, unitOfWork } from './database/database'
 import { TaskSchema } from './database/entities/Task'
+import { checkAutomatedMovements } from './checkAutomatedMovements'
 
 const isDev = !app.isPackaged
 
@@ -68,6 +69,7 @@ app.whenReady().then(async () => {
   })
 
   await initDatabase()
+  await checkAutomatedMovements()
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
