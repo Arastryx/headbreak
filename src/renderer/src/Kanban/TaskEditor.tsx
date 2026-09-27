@@ -14,9 +14,7 @@ export interface TaskEditorProps {
 export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProps) {
   const [title, setTitle] = useState(task?.title ?? '')
   const [description, setDescription] = useState(task?.description ?? '')
-  const [mover, setMover] = useState<TaskMoverPayload>({})
-
-  console.log(mover)
+  const [mover, setMover] = useState<TaskMoverPayload>()
 
   const { createTask, editTask } = useKanban()
 

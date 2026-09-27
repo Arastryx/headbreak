@@ -65,31 +65,37 @@ export function TaskDetails({ task }: TaskDetailsProps) {
         <TaskEditor columnId={task.column} task={task} onClose={() => setEditMode(false)} />
       )}
 
-      <Divider sx={{ mx: -1, mt: 1 }} />
-      <Stack useFlexGap spacing={0.5} sx={{ py: 2 }}>
-        {history?.map((c) => (
-          <>
-            {isComment(c) && (
-              <Box sx={{ mx: -1 }}>
-                <CommentCard comment={c} />
-              </Box>
-            )}
-            {!isComment(c) && (
-              <Stack
-                direction="row"
-                spacing={2}
-                sx={{ justifyContent: 'space-between', alignItems: 'center' }}
-              >
-                <ChangeDisplay key={c.id} change={c.content} />
-                <Typography variant="caption">
-                  {dayjs.duration(dayjs(c.createdAt).diff(dayjs()), 'milliseconds').humanize(true)}
-                </Typography>
-              </Stack>
-            )}
-          </>
-        ))}
-      </Stack>
-      <CommentBox taskId={task.id} />
+      {!editMode && (
+        <>
+          <Divider sx={{ mx: -1, mt: 1 }} />
+          <Stack useFlexGap spacing={0.5} sx={{ py: 2 }}>
+            {history?.map((c) => (
+              <>
+                {isComment(c) && (
+                  <Box sx={{ mx: -1 }}>
+                    <CommentCard comment={c} />
+                  </Box>
+                )}
+                {!isComment(c) && (
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ justifyContent: 'space-between', alignItems: 'center' }}
+                  >
+                    <ChangeDisplay key={c.id} change={c.content} />
+                    <Typography variant="caption">
+                      {dayjs
+                        .duration(dayjs(c.createdAt).diff(dayjs()), 'milliseconds')
+                        .humanize(true)}
+                    </Typography>
+                  </Stack>
+                )}
+              </>
+            ))}
+          </Stack>
+          <CommentBox taskId={task.id} />
+        </>
+      )}
     </Box>
   )
 }

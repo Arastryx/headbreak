@@ -16,6 +16,7 @@ export function IntervalField({ value, onChange }: TimingFieldProps) {
         size="small"
         width={100}
         value={Number(value)}
+        min={1}
         onValueChange={(value) => onChange(value?.toString() ?? '1')}
       />
       <Typography>days</Typography>
@@ -34,13 +35,13 @@ export function DayOfWeekField({ value, onChange }: TimingFieldProps) {
         onChange={(e) => onChange(e.target.value)}
         sx={{ minWidth: 100 }}
       >
-        <MenuItem value="* * * * 0">Sunday</MenuItem>
-        <MenuItem value="* * * * 1">Monday</MenuItem>
-        <MenuItem value="* * * * 2">Tuesday</MenuItem>
-        <MenuItem value="* * * * 3">Wednesday</MenuItem>
-        <MenuItem value="* * * * 4">Thursday</MenuItem>
-        <MenuItem value="* * * * 5">Friday</MenuItem>
-        <MenuItem value="* * * * 6">Saturday</MenuItem>
+        <MenuItem value="0 0 * * 0">Sunday</MenuItem>
+        <MenuItem value="0 0 * * 1">Monday</MenuItem>
+        <MenuItem value="0 0 * * 2">Tuesday</MenuItem>
+        <MenuItem value="0 0 * * 3">Wednesday</MenuItem>
+        <MenuItem value="0 0 * * 4">Thursday</MenuItem>
+        <MenuItem value="0 0 * * 5">Friday</MenuItem>
+        <MenuItem value="0 0 * * 6">Saturday</MenuItem>
       </TextField>
     </Stack>
   )
@@ -59,7 +60,7 @@ export function DayOfMonthField({ value, onChange }: TimingFieldProps) {
           value={day}
           min={1}
           max={31}
-          onValueChange={(value) => onChange(`* * ${value} * *`)}
+          onValueChange={(value) => onChange(`0 0 ${value} * *`)}
         />
         <Typography>of month</Typography>
       </Stack>
@@ -83,7 +84,7 @@ export function DayOfYearField({ value, onChange }: TimingFieldProps) {
       <DatePicker
         format="MMMM Do"
         value={dateValue}
-        onChange={(d) => onChange(`* * ${d?.date()} ${d?.month()} *`)}
+        onChange={(d) => onChange(`0 0 ${d?.date()} ${d?.month()} *`)}
         slotProps={{ textField: { variant: 'standard' } }}
         sx={{ width: 170 }}
       />

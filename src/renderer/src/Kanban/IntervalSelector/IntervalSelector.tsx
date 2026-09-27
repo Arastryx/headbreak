@@ -1,92 +1,29 @@
-import {
-  TextField,
-  IconButton,
-  Popover,
-  Box,
-  MenuItem,
-  Stack,
-  Collapse,
-  Typography
-} from '@mui/material'
-import { DatePicker } from '@mui/x-date-pickers'
+import { TextField, IconButton, Popover, Box, MenuItem, Stack } from '@mui/material'
 import { Micon } from '@renderer/Common/Components/Micon'
-import NumberField from '@renderer/Common/Components/NumberField'
-import React, { useRef, useState } from 'react'
-import {
-  DayOfMonthField,
-  DayOfWeekField,
-  DayOfYearField,
-  IntervalField,
-  TimingFieldProps
-} from './TimingFields'
-
-type IntervalType = 'interval' | 'dayOfWeek' | 'dayOfMonth' | 'dayOfYear'
-
-interface IntervalOption {
-  type: IntervalType
-  label: string
-  FieldComponent: (props: TimingFieldProps) => React.ReactNode
-  defaultValue: string
-}
-
-const options: IntervalOption[] = [
-  { type: 'interval', label: 'Interval', FieldComponent: IntervalField, defaultValue: '7' },
-  {
-    type: 'dayOfWeek',
-    label: 'Day of Week',
-    FieldComponent: DayOfWeekField,
-    defaultValue: '* * * * 0'
-  },
-  {
-    type: 'dayOfMonth',
-    label: 'Day of Month',
-    FieldComponent: DayOfMonthField,
-    defaultValue: '* * 1 * *'
-  },
-  {
-    type: 'dayOfYear',
-    label: 'Day of Year',
-    FieldComponent: DayOfYearField,
-    defaultValue: '* * 1 0 *'
-  }
-]
+import { useEffect, useRef, useState } from 'react'
+import { intervalToString } from './intervalToString'
+import { getIntervalType, intervalOptions, IntervalType } from './intervalTypes'
 
 export interface IntervalSelectorProps {
   value?: string
   onChange: (value?: string, type?: Headbreak.PolicyType) => void
 }
 
-function getInitialIntervalType(value?: string): IntervalType | undefined {
-  if (!value) {
-    return
-  }
-
-  if (!value.includes('*')) {
-    return 'interval'
-  }
-
-  const split = value.split(' ')
-
-  if (split[4] != '*') {
-    return 'dayOfWeek'
-  }
-
-  return split[3] != '*' ? 'dayOfYear' : 'dayOfMonth'
-}
-
 export function IntervalSelector({ value, onChange }: IntervalSelectorProps) {
   const inputRef = useRef<HTMLDivElement>(null)
   const [showPolicyEditor, setShowPolicyEditor] = useState(false)
 
-  const [intervalType, setIntervalType] = useState<IntervalType | undefined>(
-    getInitialIntervalType(value)
-  )
+  const [intervalType, setIntervalType] = useState<IntervalType | undefined>(getIntervalType(value))
+
+  useEffect(() => {
+    setIntervalType(getIntervalType(value))
+  }, [value])
 
   const toPolicyType = (type?: IntervalType): Headbreak.PolicyType | undefined =>
     type === undefined ? undefined : type === 'interval' ? 'interval' : 'cron'
 
   const updateInterval = (nextType: IntervalType) => {
-    const selectedOption = options.find((o) => o.type == nextType)
+    const selectedOption = intervalOptions.find((o) => o.type == nextType)
 
     if (!selectedOption) {
       throw new Error('Attempted to select an invalid interval option type')
@@ -96,15 +33,14 @@ export function IntervalSelector({ value, onChange }: IntervalSelectorProps) {
     onChange(selectedOption.defaultValue, toPolicyType(nextType))
   }
 
-  const FieldComponent = options.find((t) => t.type === intervalType)?.FieldComponent
+  const FieldComponent = intervalOptions.find((t) => t.type === intervalType)?.FieldComponent
 
   return (
     <>
       <TextField
-        variant="outlined"
         size="small"
-        label="Interval"
-        value={'Every sunday'}
+        placeholder="Interval"
+        value={value ? intervalToString(value) : ''}
         onClick={() => setShowPolicyEditor(true)}
         slotProps={{
           input: {
@@ -141,7 +77,7 @@ export function IntervalSelector({ value, onChange }: IntervalSelectorProps) {
             onChange={(e) => updateInterval(e.target.value as IntervalType)}
             sx={{ minWidth: 201 }}
           >
-            {options.map((t) => (
+            {intervalOptions.map((t) => (
               <MenuItem key={t.type} value={t.type}>
                 {t.label}
               </MenuItem>

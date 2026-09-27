@@ -18,28 +18,29 @@ export type TaskMoverPayload = Partial<
 >
 
 export interface TaskMoverFieldsProps {
-  mover: TaskMoverPayload
-  onChange: (m: TaskMoverPayload) => void
+  mover?: TaskMoverPayload
+  onChange: (m?: TaskMoverPayload) => void
 }
 
 export function TaskMoverFields({ mover, onChange }: TaskMoverFieldsProps) {
-  const [showEditor, setShowEditor] = useState(false)
-
   return (
     <Box>
       <FormControlLabel
         control={
-          <Switch checked={showEditor} onChange={(e) => setShowEditor(e.currentTarget.checked)} />
+          <Switch
+            checked={mover != null}
+            onChange={(e) => onChange(e.currentTarget.checked ? {} : undefined)}
+          />
         }
         label="Recurring Task"
       />
-      <Collapse in={showEditor}>
+      <Collapse in={mover != null}>
         <Stack spacing={1.5} sx={{ flex: 1 }}>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <Typography sx={{ pt: 1 }}>Move from</Typography>
             <ColumnSelect
               label="Start Column"
-              value={mover.sourceColumnId ?? ''}
+              value={mover?.sourceColumnId ?? ''}
               onChange={(value) => onChange({ ...mover, sourceColumnId: value })}
               sx={{ minWidth: 130, flex: 1 }}
               size="small"
@@ -47,14 +48,14 @@ export function TaskMoverFields({ mover, onChange }: TaskMoverFieldsProps) {
             <Typography sx={{ pt: 1 }}>to</Typography>
             <ColumnSelect
               label="Destination"
-              value={mover.destinationColumnId ?? ''}
+              value={mover?.destinationColumnId ?? ''}
               onChange={(value) => onChange({ ...mover, destinationColumnId: value })}
               sx={{ minWidth: 130, flex: 1 }}
               size="small"
             />
           </Stack>
           <IntervalSelector
-            value={mover.policy}
+            value={mover?.policy}
             onChange={(v, type) => onChange({ ...mover, policy: v, policyType: type })}
           />
         </Stack>
