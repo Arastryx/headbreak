@@ -41,5 +41,5 @@ export function intervalToString(interval: string) {
 
   return month == '*'
     ? `Every ${withOrdinalSuffix(Number(date))} of the month`
-    : `Every ${dayjs().date(Number(date)).month(Number(month)).format('MMM D')}`
+    : `Every ${dayjs().date(Number(date)).month(Number(month)).format('MMMM Do')}`
 }

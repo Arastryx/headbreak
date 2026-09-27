@@ -53,6 +53,7 @@ export function IntervalSelector({ value, onChange }: IntervalSelectorProps) {
           htmlInput: { readOnly: true }
         }}
         ref={inputRef}
+        fullWidth
       />
       <Popover
         open={showPolicyEditor}

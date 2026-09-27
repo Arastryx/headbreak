@@ -1,4 +1,6 @@
-import { createTheme } from '@mui/material'
+import { alpha, createTheme } from '@mui/material'
+
+const error = '#e31e63'
 
 export const theme = createTheme({
   cssVariables: true,
@@ -12,6 +14,9 @@ export const theme = createTheme({
     },
     text: {
       secondary: '#999'
+    },
+    error: {
+      main: error
     }
   },
   typography: {
@@ -57,6 +62,12 @@ export const theme = createTheme({
           padding: 4,
           fontSize: '1rem'
         }
+      }
+    },
+
+    MuiStack: {
+      defaultProps: {
+        useFlexGap: true
       }
     }
   }

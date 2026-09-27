@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
 import { Micon } from '../Common/Components/Micon'
 import { TaskMoverFields, TaskMoverPayload } from './TaskMoverFields'
+import { Emphasize } from '@renderer/Common/Components/Emphasize'
 
 export interface TaskEditorProps {
   columnId: string
@@ -17,6 +18,16 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
   const [mover, setMover] = useState<TaskMoverPayload>()
 
   const { createTask, editTask } = useKanban()
+
+  const [showErrorHighlighting, setShowErrorHighlighting] = useState(false)
+
+  const shouldDisableSubmit = () => {
+    return (
+      title == '' ||
+      (mover &&
+        (!mover.sourceColumnId || !mover.destinationColumnId || !mover.policy || !mover.policyType))
+    )
+  }
 
   const submit = () => {
     if (task) {
@@ -39,16 +50,19 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
   return (
     <Box sx={{ minWidth: 400 }}>
       <Stack spacing={4}>
-        <TextField
-          placeholder="Title"
-          fullWidth
-          value={title}
-          onChange={(e) => setTitle(e.currentTarget.value)}
-          slotProps={{
-            input: { sx: { fontSize: 19, fontFamily: 'Open Sans Variable', fontWeight: '400' } },
-            htmlInput: { maxLength: 127 }
-          }}
-        />
+        <Emphasize color="error" show={showErrorHighlighting && !title}>
+          <TextField
+            placeholder="Title *"
+            fullWidth
+            value={title}
+            error={showErrorHighlighting && !title}
+            onChange={(e) => setTitle(e.currentTarget.value)}
+            slotProps={{
+              input: { sx: { fontSize: 19, fontFamily: 'Open Sans Variable', fontWeight: '400' } },
+              htmlInput: { maxLength: 127 }
+            }}
+          />
+        </Emphasize>
         <TextField
           placeholder="Description"
           multiline
@@ -56,17 +70,27 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
           value={description}
           onChange={(e) => setDescription(e.currentTarget.value)}
         />
-        <TaskMoverFields mover={mover} onChange={setMover} />
+        <TaskMoverFields
+          mover={mover}
+          onChange={setMover}
+          highlightErrors={showErrorHighlighting}
+        />
       </Stack>
       <Stack direction="row" spacing={2} sx={{ pt: 2, justifyContent: 'flex-end' }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button
-          variant="contained"
-          startIcon={<Micon icon={task ? 'save' : 'add'} />}
-          onClick={submit}
+        <Box
+          onMouseEnter={() => setShowErrorHighlighting(true)}
+          onMouseLeave={() => setShowErrorHighlighting(false)}
         >
-          {task ? 'Save' : 'Create'}
-        </Button>
+          <Button
+            variant="contained"
+            disabled={shouldDisableSubmit()}
+            startIcon={<Micon icon={task ? 'save' : 'add'} />}
+            onClick={submit}
+          >
+            {task ? 'Save' : 'Create'}
+          </Button>
+        </Box>
       </Stack>
     </Box>
   )

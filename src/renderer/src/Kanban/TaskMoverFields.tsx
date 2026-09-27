@@ -12,6 +12,7 @@ import { ColumnSelect } from '@renderer/Common/Components/ColumnSelect'
 import { Micon } from '@renderer/Common/Components/Micon'
 import { useState } from 'react'
 import { IntervalSelector } from './IntervalSelector/IntervalSelector'
+import { Emphasize } from '@renderer/Common/Components/Emphasize'
 
 export type TaskMoverPayload = Partial<
   Pick<Headbreak.TaskMover, 'sourceColumnId' | 'destinationColumnId' | 'policy' | 'policyType'>
@@ -19,10 +20,11 @@ export type TaskMoverPayload = Partial<
 
 export interface TaskMoverFieldsProps {
   mover?: TaskMoverPayload
+  highlightErrors?: boolean
   onChange: (m?: TaskMoverPayload) => void
 }
 
-export function TaskMoverFields({ mover, onChange }: TaskMoverFieldsProps) {
+export function TaskMoverFields({ mover, onChange, highlightErrors }: TaskMoverFieldsProps) {
   return (
     <Box>
       <FormControlLabel
@@ -38,26 +40,42 @@ export function TaskMoverFields({ mover, onChange }: TaskMoverFieldsProps) {
         <Stack spacing={1.5} sx={{ flex: 1 }}>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <Typography sx={{ pt: 1 }}>Move from</Typography>
-            <ColumnSelect
-              label="Start Column"
-              value={mover?.sourceColumnId ?? ''}
-              onChange={(value) => onChange({ ...mover, sourceColumnId: value })}
-              sx={{ minWidth: 130, flex: 1 }}
-              size="small"
-            />
+            <Emphasize
+              color="error"
+              show={highlightErrors && !mover?.sourceColumnId}
+              sx={{ flex: 1 }}
+            >
+              <ColumnSelect
+                label="Start Column"
+                value={mover?.sourceColumnId ?? ''}
+                onChange={(value) => onChange({ ...mover, sourceColumnId: value })}
+                sx={{ minWidth: 130 }}
+                size="small"
+                fullWidth
+              />
+            </Emphasize>
             <Typography sx={{ pt: 1 }}>to</Typography>
-            <ColumnSelect
-              label="Destination"
-              value={mover?.destinationColumnId ?? ''}
-              onChange={(value) => onChange({ ...mover, destinationColumnId: value })}
-              sx={{ minWidth: 130, flex: 1 }}
-              size="small"
-            />
+            <Emphasize
+              color="error"
+              show={highlightErrors && !mover?.destinationColumnId}
+              sx={{ flex: 1 }}
+            >
+              <ColumnSelect
+                label="Destination"
+                value={mover?.destinationColumnId ?? ''}
+                onChange={(value) => onChange({ ...mover, destinationColumnId: value })}
+                sx={{ minWidth: 130 }}
+                size="small"
+                fullWidth
+              />
+            </Emphasize>
           </Stack>
-          <IntervalSelector
-            value={mover?.policy}
-            onChange={(v, type) => onChange({ ...mover, policy: v, policyType: type })}
-          />
+          <Emphasize color="error" show={highlightErrors && (!mover?.policy || !mover.policyType)}>
+            <IntervalSelector
+              value={mover?.policy}
+              onChange={(v, type) => onChange({ ...mover, policy: v, policyType: type })}
+            />
+          </Emphasize>
         </Stack>
       </Collapse>
     </Box>
