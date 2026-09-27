@@ -10,8 +10,8 @@ function isPopulated(payload: Partial<TaskMoverPayload>): payload is TaskMoverPa
   const populated = (s?: string) => s != null && s != ''
 
   return (
-    populated(payload.destinationColumnId) &&
-    populated(payload.sourceColumnId) &&
+    populated(payload.destinationColumn) &&
+    populated(payload.sourceColumn) &&
     populated(payload.policy) &&
     populated(payload.policyType)
   )
@@ -37,7 +37,7 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
     return (
       title == '' ||
       (mover &&
-        (!mover.sourceColumnId || !mover.destinationColumnId || !mover.policy || !mover.policyType))
+        (!mover.sourceColumn || !mover.destinationColumn || !mover.policy || !mover.policyType))
     )
   }
 

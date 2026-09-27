@@ -8,7 +8,7 @@ import { useCommentManagement } from './useCommentManagement'
 
 export type TaskMoverPayload = Pick<
   Headbreak.TaskMover,
-  'sourceColumnId' | 'destinationColumnId' | 'policy' | 'policyType'
+  'sourceColumn' | 'destinationColumn' | 'policy' | 'policyType'
 >
 
 export interface TaskPayload {

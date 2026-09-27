@@ -47,8 +47,8 @@ declare global {
     interface TaskMover extends Syncable {
       policy: string
       policyType: PolicyType
-      sourceColumnId: string
-      destinationColumnId: string
+      sourceColumn: string
+      destinationColumn: string
       task: string
     }
 

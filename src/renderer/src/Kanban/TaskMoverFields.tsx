@@ -1,16 +1,5 @@
-import {
-  Typography,
-  alpha,
-  Stack,
-  IconButton,
-  FormControlLabel,
-  Switch,
-  Box,
-  Collapse
-} from '@mui/material'
+import { Typography, Stack, FormControlLabel, Switch, Box, Collapse } from '@mui/material'
 import { ColumnSelect } from '@renderer/Common/Components/ColumnSelect'
-import { Micon } from '@renderer/Common/Components/Micon'
-import { useState } from 'react'
 import { IntervalSelector } from './IntervalSelector/IntervalSelector'
 import { Emphasize } from '@renderer/Common/Components/Emphasize'
 import { TaskMoverPayload } from '@renderer/KanbanProvider/useKanbanManagement'
@@ -39,13 +28,13 @@ export function TaskMoverFields({ mover, onChange, highlightErrors }: TaskMoverF
             <Typography sx={{ pt: 1 }}>Move from</Typography>
             <Emphasize
               color="error"
-              show={highlightErrors && !mover?.sourceColumnId}
+              show={highlightErrors && !mover?.sourceColumn}
               sx={{ flex: 1 }}
             >
               <ColumnSelect
                 label="Start Column"
-                value={mover?.sourceColumnId ?? ''}
-                onChange={(value) => onChange({ ...mover, sourceColumnId: value })}
+                value={mover?.sourceColumn ?? ''}
+                onChange={(value) => onChange({ ...mover, sourceColumn: value })}
                 sx={{ minWidth: 130 }}
                 size="small"
                 fullWidth
@@ -54,13 +43,13 @@ export function TaskMoverFields({ mover, onChange, highlightErrors }: TaskMoverF
             <Typography sx={{ pt: 1 }}>to</Typography>
             <Emphasize
               color="error"
-              show={highlightErrors && !mover?.destinationColumnId}
+              show={highlightErrors && !mover?.destinationColumn}
               sx={{ flex: 1 }}
             >
               <ColumnSelect
                 label="Destination"
-                value={mover?.destinationColumnId ?? ''}
-                onChange={(value) => onChange({ ...mover, destinationColumnId: value })}
+                value={mover?.destinationColumn ?? ''}
+                onChange={(value) => onChange({ ...mover, destinationColumn: value })}
                 sx={{ minWidth: 130 }}
                 size="small"
                 fullWidth

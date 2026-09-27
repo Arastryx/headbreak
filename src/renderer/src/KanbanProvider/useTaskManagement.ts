@@ -17,8 +17,8 @@ function processMover(
         id: v4(),
         policy: payload.policy,
         policyType: payload.policyType,
-        sourceColumnId: payload.sourceColumnId,
-        destinationColumnId: payload.destinationColumnId,
+        sourceColumn: payload.sourceColumn,
+        destinationColumn: payload.destinationColumn,
         task: taskId,
         createdAt: dayjs().toISOString(),
         updatedAt: dayjs().toISOString()
@@ -31,9 +31,11 @@ function processMover(
   } else {
     mover.policy = payload.policy
     mover.policyType = payload.policyType
-    mover.sourceColumnId = payload.sourceColumnId
-    mover.destinationColumnId = payload.destinationColumnId
+    mover.sourceColumn = payload.sourceColumn
+    mover.destinationColumn = payload.destinationColumn
   }
+
+  return mover
 }
 
 export function getTaskIndex(columns: Headbreak.Column[], taskId: string) {

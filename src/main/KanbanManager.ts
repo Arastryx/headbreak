@@ -16,8 +16,8 @@ interface Syncable {
 export interface TaskMoverPayload extends Syncable {
   policy: string
   policyType: 'cron' | 'interval'
-  sourceColumnId: string
-  destinationColumnId: string
+  sourceColumn: string
+  destinationColumn: string
 }
 
 export interface CommentPayload extends Syncable {
@@ -148,8 +148,8 @@ export namespace KanbanManager {
 
     mover.policy = payload.policy
     mover.policyType = payload.policyType
-    mover.sourceColumn = rel(Column, payload.sourceColumnId)
-    mover.destinationColumn = rel(Column, payload.destinationColumnId)
+    mover.sourceColumn = rel(Column, payload.sourceColumn)
+    mover.destinationColumn = rel(Column, payload.destinationColumn)
   }
 
   export async function get() {
