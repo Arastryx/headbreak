@@ -79,11 +79,14 @@ export namespace KanbanManager {
   ) {
     let task = await unit.findOne(TaskSchema, payload.id, { populate: ['column'] })
 
+    let taskIsNew = false
+
     if (!task) {
       task = new Task()
       task.id = payload.id
       task.lastMoved = dayjs().toISOString()
       unit.persist(task)
+      taskIsNew = true
     } else {
       if (payload.markForDeletion) {
         unit.remove(task)
@@ -107,7 +110,7 @@ export namespace KanbanManager {
 
     await Promise.all([
       ...payload.comments.map((c) => createUpdateDeleteComment(c, task, unit)),
-      ...(payload.mover ? [createUpdateDeleteTaskMover(payload.mover, task, unit)] : [])
+      ...(payload.mover ? [createUpdateDeleteTaskMover(payload.mover, task, unit, taskIsNew)] : [])
     ])
   }
 
@@ -130,7 +133,12 @@ export namespace KanbanManager {
     comment.content = payload.content
   }
 
-  async function createUpdateDeleteTaskMover(payload: TaskMoverPayload, task: Task, unit: Fork) {
+  async function createUpdateDeleteTaskMover(
+    payload: TaskMoverPayload,
+    task: Task,
+    unit: Fork,
+    skipLogging: boolean = false
+  ) {
     let mover = await unit.findOne(TaskMoverSchema, payload.id)
 
     if (!mover) {
@@ -142,14 +150,28 @@ export namespace KanbanManager {
       mover.task = task
 
       unit.persist(mover)
-    } else if (payload.markForDeletion) {
-      unit.remove(mover)
+
+      if (!skipLogging) {
+        ChangeLogManager.recordRecurringChange(task, 'add')
+      }
     }
 
-    mover.policy = payload.policy
-    mover.policyType = payload.policyType
-    mover.sourceColumn = rel(Column, payload.sourceColumn)
-    mover.destinationColumn = rel(Column, payload.destinationColumn)
+    if (payload.markForDeletion) {
+      unit.remove(mover)
+
+      if (!skipLogging) {
+        ChangeLogManager.recordRecurringChange(task, 'delete')
+      }
+    } else {
+      mover.policy = payload.policy
+      mover.policyType = payload.policyType
+      mover.sourceColumn = rel(Column, payload.sourceColumn)
+      mover.destinationColumn = rel(Column, payload.destinationColumn)
+
+      if (!skipLogging) {
+        ChangeLogManager.recordRecurringChange(task, 'edit')
+      }
+    }
   }
 
   export async function get() {

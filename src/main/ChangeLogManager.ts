@@ -1,4 +1,4 @@
-import { ColumnMove, LogColumn, LogTask, TaskEdit } from './database/changeTypes'
+import { ColumnMove, LogColumn, LogTask, RecurringChange, TaskEdit } from './database/changeTypes'
 import { unitOfWork } from './database/database'
 import { ChangeLog, ChangeLogSchema } from './database/entities/ChangeLog'
 import { Column } from './database/entities/Column'
@@ -7,11 +7,12 @@ import { TaskPayload } from './KanbanManager'
 import { normalizeEntities } from './normalize'
 
 export namespace ChangeLogManager {
-  export function recordColumnMove(task: Task, column: Column) {
+  export function recordColumnMove(task: Task, column: Column, automatic?: boolean) {
     const change: ColumnMove = {
       type: 'columnMove',
       from: mapToLogColumn(task.column),
-      to: mapToLogColumn(column)
+      to: mapToLogColumn(column),
+      automatic
     }
 
     const log = new ChangeLog()
@@ -28,6 +29,18 @@ export namespace ChangeLogManager {
         title: payload.title,
         description: payload.description
       }
+    }
+
+    const log = new ChangeLog()
+
+    log.content = change
+    task.changes.add(log)
+  }
+
+  export function recordRecurringChange(task: Task, recurringChange: RecurringChange['change']) {
+    const change: RecurringChange = {
+      type: 'recurringChange',
+      change: recurringChange
     }
 
     const log = new ChangeLog()

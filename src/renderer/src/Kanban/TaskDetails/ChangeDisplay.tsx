@@ -19,10 +19,22 @@ export function ChangeDisplay({ change }: ChangeDisplayProps) {
   if (change.type === 'columnMove') {
     return (
       <Typography>
-        Moved from <ColumnLabel column={change.from} sx={{ fontWeight: '500' }} /> to{' '}
+        {change.automatic ? 'Automatically moved' : 'Moved'} from{' '}
+        <ColumnLabel column={change.from} sx={{ fontWeight: '500' }} /> to{' '}
         <ColumnLabel column={change.to} sx={{ fontWeight: '500' }} />
       </Typography>
     )
+  }
+
+  if (change.type === 'recurringChange') {
+    switch (change.change) {
+      case 'add':
+        return <Typography>The task was made recurring</Typography>
+      case 'edit':
+        return <Typography>The recurring task settings were changed</Typography>
+      case 'delete':
+        return <Typography>The task was made no longer recurring</Typography>
+    }
   }
 
   const updated: string[] = []

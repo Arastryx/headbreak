@@ -13,6 +13,7 @@ export interface ColumnMove {
   type: 'columnMove'
   from: LogColumn
   to: LogColumn
+  automatic?: boolean
 }
 
 export interface TaskEdit {
@@ -21,4 +22,9 @@ export interface TaskEdit {
   next: LogTask
 }
 
-export type Change = ColumnMove | TaskEdit
+export interface RecurringChange {
+  type: 'recurringChange'
+  change: 'add' | 'edit' | 'delete'
+}
+
+export type Change = ColumnMove | TaskEdit | RecurringChange

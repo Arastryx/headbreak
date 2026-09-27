@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import { unitOfWork } from './database/database'
 import { TaskSchema } from './database/entities/Task'
 import { parseCronExpression } from 'cron-schedule'
+import { ChangeLogManager } from './ChangeLogManager'
 
 export async function checkAutomatedMovements() {
   const unit = unitOfWork()
@@ -34,6 +35,8 @@ export async function checkAutomatedMovements() {
     }
 
     if (shouldMove) {
+      ChangeLogManager.recordColumnMove(task, task.mover.destinationColumn, true)
+
       task.column = task.mover.destinationColumn
       task.lastMoved = dayjs().toISOString()
     }
