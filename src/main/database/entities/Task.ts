@@ -4,6 +4,7 @@ import { AuditableSchema } from './Auditable'
 import { ChangeLogSchema } from './ChangeLog'
 import { CommentSchema } from './Comment'
 import { TaskMoverSchema } from './TaskMover'
+import { TagSchema } from './Tag'
 
 export const TaskSchema = defineEntity({
   name: 'Task',
@@ -15,6 +16,7 @@ export const TaskSchema = defineEntity({
     order: p.integer(),
     lastMoved: p.date(),
     column: () => p.manyToOne(ColumnSchema).deleteRule('cascade'),
+    tags: () => p.manyToMany(TagSchema).inversedBy('tasks'),
 
     mover: () => p.oneToOne(TaskMoverSchema).mappedBy('task'),
     changes: () => p.oneToMany(ChangeLogSchema).mappedBy('task'),

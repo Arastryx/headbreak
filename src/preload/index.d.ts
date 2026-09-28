@@ -52,6 +52,12 @@ declare global {
       task: string
     }
 
+    interface Tag extends Syncable {
+      label?: string
+      icon?: MaterialIcon
+      color?: string
+    }
+
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
     //Change Types
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
@@ -88,6 +94,15 @@ declare global {
     export type Change = ColumnMove | TaskEdit | RecurringChange
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+    //Payloads
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+
+    export interface Kanban {
+      columns: Column[]
+      tags: Tag[]
+    }
+
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
     //MISC
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
@@ -103,8 +118,8 @@ declare global {
     api: unknown
 
     kanbanApi: {
-      sync: (kanban: Headbreak.Column[]) => Result<void>
-      get: () => Result<Headbreak.Column[]>
+      sync: (columns: Headbreak.Column[], tags: Headbreak.Tag[]) => Result<void>
+      get: () => Result<Kanban>
       getChanges: (taskId: string) => Result<Headbreak.ChangeLog[]>
     }
   }

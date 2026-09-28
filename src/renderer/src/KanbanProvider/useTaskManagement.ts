@@ -75,7 +75,7 @@ export function useTaskManagement(modify: KanbanModifier) {
       }
 
       modify((copy) => {
-        const targetColumn = copy?.find((c) => c.id === payload.columnId)
+        const targetColumn = copy.columns?.find((c) => c.id === payload.columnId)
 
         if (!targetColumn) {
           throw new Error(`Tried to add a task to non-existent column ${payload.columnId}`)
@@ -92,7 +92,7 @@ export function useTaskManagement(modify: KanbanModifier) {
   const editTask = useCallback(
     (id: string, payload: Omit<TaskPayload, 'columnId'>) => {
       modify((copy) => {
-        const task = getTask(copy, id)
+        const task = getTask(copy.columns, id)
 
         task.title = payload.title
         task.description = payload.description
@@ -105,20 +105,20 @@ export function useTaskManagement(modify: KanbanModifier) {
   const moveTaskToColumn = useCallback(
     (taskId: string, columnId: string) => {
       modify((copy) => {
-        const targetColumn = copy?.find((c) => c.id === columnId)
+        const targetColumn = copy.columns?.find((c) => c.id === columnId)
 
         if (!targetColumn) {
           throw new Error(`Tried to add a task to non-existent column ${columnId}`)
         }
 
-        const { columnIndex, taskIndex } = getTaskIndex(copy, taskId)
+        const { columnIndex, taskIndex } = getTaskIndex(copy.columns, taskId)
 
-        if (copy[columnIndex].id === columnId) {
+        if (copy.columns[columnIndex].id === columnId) {
           //Same column
           return
         }
 
-        const [movedTask] = copy[columnIndex].tasks.splice(taskIndex, 1)
+        const [movedTask] = copy.columns[columnIndex].tasks.splice(taskIndex, 1)
 
         targetColumn.tasks.push(movedTask)
       })
@@ -130,19 +130,19 @@ export function useTaskManagement(modify: KanbanModifier) {
     (movedId: string, targetId: string) => {
       modify((copy) => {
         const { columnIndex: sourceColumnIndex, taskIndex: sourceTaskIndex } = getTaskIndex(
-          copy,
+          copy.columns,
           movedId
         )
         const { columnIndex: targetColumnIndex, taskIndex: targetTaskIndex } = getTaskIndex(
-          copy,
+          copy.columns,
           targetId
         )
 
         if (sourceColumnIndex === targetColumnIndex) {
-          arrayMoveMutable(copy[sourceColumnIndex].tasks, sourceTaskIndex, targetTaskIndex)
+          arrayMoveMutable(copy.columns[sourceColumnIndex].tasks, sourceTaskIndex, targetTaskIndex)
         } else {
-          const [movedTask] = copy[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1)
-          copy[targetColumnIndex].tasks.splice(targetTaskIndex, 0, movedTask)
+          const [movedTask] = copy.columns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1)
+          copy.columns[targetColumnIndex].tasks.splice(targetTaskIndex, 0, movedTask)
         }
       })
     },
@@ -152,7 +152,7 @@ export function useTaskManagement(modify: KanbanModifier) {
   const deleteTask = useCallback(
     (id: string) => {
       modify((copy) => {
-        getTask(copy, id).markForDeletion = true
+        getTask(copy.columns, id).markForDeletion = true
       })
     },
     [modify]

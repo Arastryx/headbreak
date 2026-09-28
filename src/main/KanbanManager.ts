@@ -7,6 +7,7 @@ import { CommentSchema, TaskComment } from './database/entities/Comment'
 import { TaskMover, TaskMoverSchema } from './database/entities/TaskMover'
 import { rel } from '@mikro-orm/core'
 import dayjs from 'dayjs'
+import { Tag, TagSchema } from './database/entities/Tag'
 
 interface Syncable {
   id: string
@@ -40,11 +41,20 @@ export interface ColumnPayload extends Syncable {
   tasks: TaskPayload[]
 }
 
+export interface TagPayload extends Syncable {
+  label?: string
+  icon?: string
+  color?: string
+}
+
 export namespace KanbanManager {
-  export async function sync(payload: ColumnPayload[]) {
+  export async function sync(columns: ColumnPayload[], tags: TagPayload[]) {
     const unit = unitOfWork()
 
-    await Promise.all(payload.map((c, index) => createUpdateColumn(c, index, unit)))
+    await Promise.all([
+      ...columns.map((c, index) => createUpdateColumn(c, index, unit)),
+      ...tags.map((t) => createUpdateDeleteTag(t, unit))
+    ])
     await unit.flush()
   }
 
@@ -174,15 +184,35 @@ export namespace KanbanManager {
     }
   }
 
+  async function createUpdateDeleteTag(payload: TagPayload, unit: Fork) {
+    let tag = await unit.findOne(TagSchema, payload.id)
+
+    if (!tag) {
+      tag = new Tag()
+      tag.id = payload.id
+      unit.persist(tag)
+    } else if (payload.markForDeletion) {
+      unit.remove(tag)
+      return
+    }
+
+    tag.label = payload.label
+    tag.icon = payload.icon
+    tag.color = payload.color
+  }
+
   export async function get() {
     const unit = unitOfWork()
 
-    const result = await unit.findAll(ColumnSchema, {
-      populate: ['tasks.comments', 'tasks.mover'],
-      populateOrderBy: { tasks: { order: 'ASC' } },
-      orderBy: { order: 'ASC' }
-    })
+    const [columns, tags] = await Promise.all([
+      unit.findAll(ColumnSchema, {
+        populate: ['tasks.comments', 'tasks.mover'],
+        populateOrderBy: { tasks: { order: 'ASC' } },
+        orderBy: { order: 'ASC' }
+      }),
+      unit.findAll(TagSchema)
+    ])
 
-    return normalizeEntities(result)
+    return { columns: normalizeEntities(columns), tags: normalizeEntities(tags) }
   }
 }

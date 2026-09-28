@@ -30,7 +30,7 @@ export function useCommentManagement(modify: KanbanModifier) {
       }
 
       modify((copy) => {
-        const task = getTask(copy, taskId)
+        const task = getTask(copy.columns, taskId)
         task.comments.push(comment)
       })
 
@@ -42,7 +42,7 @@ export function useCommentManagement(modify: KanbanModifier) {
   const editComment = useCallback(
     (commentId: string, text: string) => {
       modify((copy) => {
-        getComment(copy, commentId).content = text
+        getComment(copy.columns, commentId).content = text
       })
     },
     [modify]
@@ -51,7 +51,7 @@ export function useCommentManagement(modify: KanbanModifier) {
   const deleteComment = useCallback(
     (commentId: string) => {
       modify((copy) => {
-        getComment(copy, commentId).markForDeletion = true
+        getComment(copy.columns, commentId).markForDeletion = true
       })
     },
     [modify]

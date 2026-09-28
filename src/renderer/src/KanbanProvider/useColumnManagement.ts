@@ -28,7 +28,7 @@ export function useColumnManagement(modify: KanbanModifier) {
     }
 
     modify((copy) => {
-      copy.push(column)
+      copy.columns.push(column)
     })
 
     return column
@@ -37,8 +37,8 @@ export function useColumnManagement(modify: KanbanModifier) {
   const editColumn = useCallback(
     (id: string, payload: Partial<ColumnPayload>) => {
       modify((copy) => {
-        const targetIndex = findColumnIndex(copy, id)
-        copy[targetIndex] = { ...copy[targetIndex], ...payload }
+        const targetIndex = findColumnIndex(copy.columns, id)
+        copy.columns[targetIndex] = { ...copy.columns[targetIndex], ...payload }
       })
     },
     [modify]
@@ -47,10 +47,10 @@ export function useColumnManagement(modify: KanbanModifier) {
   const reorderColumn = useCallback(
     (movedId: string, targetId: string) => {
       modify((copy) => {
-        const movedIndex = findColumnIndex(copy, movedId)
-        const targetIndex = findColumnIndex(copy, targetId)
+        const movedIndex = findColumnIndex(copy.columns, movedId)
+        const targetIndex = findColumnIndex(copy.columns, targetId)
 
-        arrayMoveMutable(copy, movedIndex, targetIndex)
+        arrayMoveMutable(copy.columns, movedIndex, targetIndex)
       })
     },
     [modify]
@@ -59,10 +59,10 @@ export function useColumnManagement(modify: KanbanModifier) {
   const deleteColumn = useCallback(
     (id: string, moveTasksToColumn?: string) => {
       modify((copy) => {
-        const targetColumn = findColumn(copy, id)
+        const targetColumn = findColumn(copy.columns, id)
 
         if (moveTasksToColumn) {
-          const taskTarget = findColumn(copy, moveTasksToColumn)
+          const taskTarget = findColumn(copy.columns, moveTasksToColumn)
           taskTarget.tasks = taskTarget.tasks.concat(targetColumn.tasks)
           targetColumn.tasks = []
         }

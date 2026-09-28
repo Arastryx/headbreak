@@ -20,25 +20,28 @@ export interface TaskPayload {
 
 export type ColumnPayload = Omit<Headbreak.Column, 'id' | 'tasks' | 'markForDeletion'>
 
-export type KanbanModifier = (modify: (kanban: Headbreak.Column[]) => void) => void
+export type KanbanModifier = (modify: (kanban: Headbreak.Kanban) => void) => void
 
 export function useKanbanManagement() {
   const {
-    data: kanban,
+    data,
     setData: setKanban,
     isLoading,
     reload
   } = useIpcData(() => window.kanbanApi.get(), [])
 
+  const kanban = data?.columns
+  const tags = data?.tags
+
   const dirtyRef = useRef(false)
 
   const modifyKanban = useCallback(
-    (modify: (kanban: Headbreak.Column[]) => void) => {
+    (modify: (kanban: Headbreak.Kanban) => void) => {
       if (!kanban) {
         throw new Error('Attempted to modify kanban before it was loaded')
       }
 
-      setKanban(produce(kanban, modify))
+      setKanban(produce(data, modify))
 
       dirtyRef.current = true
     },
@@ -53,16 +56,16 @@ export function useKanbanManagement() {
 
   useDebounceEffect(
     () => {
-      if (dirtyRef.current && !isSyncing && kanban) {
+      if (dirtyRef.current && !isSyncing && kanban && tags) {
         ;(async () => {
-          await sync(kanban)
+          await sync(kanban, tags)
           dirtyRef.current = false
           reload()
         })()
       }
     },
     1000,
-    [kanban, isSyncing, sync]
+    [kanban, tags, isSyncing, sync]
   )
 
   return {

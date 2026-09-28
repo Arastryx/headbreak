@@ -5,12 +5,13 @@ import { ColumnSchema } from './entities/Column'
 import { CommentSchema } from './entities/Comment'
 import { ChangeLogSchema } from './entities/ChangeLog'
 import { TaskMoverSchema } from './entities/TaskMover'
+import { TagSchema } from './entities/Tag'
 
 const path = app.getPath('userData')
 
 const config = defineConfig({
   dbName: `${path}/${import.meta.env.DEV ? 'dev' : 'app'}Db.sqlite`,
-  entities: [TaskSchema, ColumnSchema, CommentSchema, ChangeLogSchema, TaskMoverSchema],
+  entities: [TaskSchema, ColumnSchema, CommentSchema, ChangeLogSchema, TaskMoverSchema, TagSchema],
   debug: import.meta.env.DEV
 })
 
