@@ -5,7 +5,7 @@ import { ChangeLogManager } from './ChangeLogManager'
 import { normalizeEntities } from './normalize'
 import { CommentSchema, TaskComment } from './database/entities/Comment'
 import { TaskMover, TaskMoverSchema } from './database/entities/TaskMover'
-import { rel } from '@mikro-orm/core'
+import { rel, wrap } from '@mikro-orm/core'
 import dayjs from 'dayjs'
 import { Tag, TagSchema } from './database/entities/Tag'
 
@@ -62,6 +62,10 @@ export namespace KanbanManager {
     let column = await unit.findOne(ColumnSchema, payload.id)
 
     if (!column) {
+      if (payload.markForDeletion) {
+        return
+      }
+
       column = new Column()
       column.id = payload.id
       unit.persist(column)
@@ -92,6 +96,10 @@ export namespace KanbanManager {
     let taskIsNew = false
 
     if (!task) {
+      if (payload.markForDeletion) {
+        return
+      }
+
       task = new Task()
       task.id = payload.id
       task.lastMoved = dayjs().toISOString()
@@ -128,6 +136,9 @@ export namespace KanbanManager {
     let comment = await unit.findOne(CommentSchema, payload.id)
 
     if (!comment) {
+      if (payload.markForDeletion) {
+        return
+      }
       comment = new TaskComment()
       comment.id = payload.id
 
@@ -149,7 +160,11 @@ export namespace KanbanManager {
     unit: Fork,
     skipLogging: boolean = false
   ) {
-    let mover = await unit.findOne(TaskMoverSchema, payload.id)
+    let mover = await unit.findOne(TaskMoverSchema, payload.id, {
+      populate: ['sourceColumn', 'destinationColumn']
+    })
+
+    let created = false
 
     if (!mover) {
       mover = new TaskMover()
@@ -160,27 +175,34 @@ export namespace KanbanManager {
       mover.task = task
 
       unit.persist(mover)
+      created = true
 
       if (!skipLogging) {
         ChangeLogManager.recordRecurringChange(task, 'add')
       }
-    }
-
-    if (payload.markForDeletion) {
+    } else if (payload.markForDeletion) {
       unit.remove(mover)
 
       if (!skipLogging) {
         ChangeLogManager.recordRecurringChange(task, 'delete')
       }
-    } else {
-      mover.policy = payload.policy
-      mover.policyType = payload.policyType
-      mover.sourceColumn = rel(Column, payload.sourceColumn)
-      mover.destinationColumn = rel(Column, payload.destinationColumn)
 
-      if (!skipLogging) {
-        ChangeLogManager.recordRecurringChange(task, 'edit')
-      }
+      return
+    }
+
+    let isDifferent =
+      mover.policy != payload.policy ||
+      mover.policyType != payload.policyType ||
+      mover.sourceColumn.id != payload.sourceColumn ||
+      mover.destinationColumn.id != payload.destinationColumn
+
+    mover.policy = payload.policy
+    mover.policyType = payload.policyType
+    mover.sourceColumn = rel(Column, payload.sourceColumn)
+    mover.destinationColumn = rel(Column, payload.destinationColumn)
+
+    if (!skipLogging && !created && isDifferent) {
+      ChangeLogManager.recordRecurringChange(task, 'edit')
     }
   }
 
@@ -188,6 +210,10 @@ export namespace KanbanManager {
     let tag = await unit.findOne(TagSchema, payload.id)
 
     if (!tag) {
+      if (payload.markForDeletion) {
+        return
+      }
+
       tag = new Tag()
       tag.id = payload.id
       unit.persist(tag)

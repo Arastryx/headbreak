@@ -12,7 +12,7 @@ export const TaskMoverSchema = defineEntity({
     policyType: p.enum(['cron', 'interval']),
     sourceColumn: () => p.manyToOne(ColumnSchema),
     destinationColumn: () => p.manyToOne(ColumnSchema),
-    task: () => p.oneToOne(TaskSchema).owner()
+    task: () => p.oneToOne(TaskSchema).owner().deleteRule('cascade')
   }
 })
 
