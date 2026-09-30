@@ -38,7 +38,8 @@ export function Column({ column, filters }: ColumnProps) {
   return (
     <Stack
       sx={{
-        width: 400
+        width: 400,
+        flexShrink: 0
       }}
     >
       <ColumnHeader column={column} showStale={showStale} onChange={setShowStale} />

@@ -12,7 +12,11 @@ export function TagEditor({ tag }: TagEditorProps) {
   const { editTag, deleteTag } = useKanban()
 
   return (
-    <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+    <Stack
+      direction="row"
+      spacing={1}
+      sx={{ alignItems: 'center', bgcolor: '#f3f3f3', borderRadius: 1, p: 1 }}
+    >
       <Box sx={{ flex: 1 }}>
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
           <Paper
@@ -34,7 +38,7 @@ export function TagEditor({ tag }: TagEditorProps) {
                 onChange={(e) => editTag(tag.id, { ...tag, label: e.currentTarget.value })}
 
                 sx={{
-                  width: tag.label == null || tag.label == '' ? 90 : tag.label.length * 5.5 + 38
+                  width: tag.label == null || tag.label == '' ? 90 : tag.label.length * 6 + 38
                 }}
                 slotProps={{
                   input: {
@@ -63,7 +67,7 @@ export function TagEditor({ tag }: TagEditorProps) {
               clearable
               onSelect={(icon) => editTag(tag.id, { icon })}
             />
-            <IconButton color="error" onClick={() => deleteTag(tag.id)} sx={{ ml: 3 }}>
+            <IconButton color="error" onClick={() => deleteTag(tag.id)}>
               <Micon icon="delete" />
             </IconButton>
           </Stack>

@@ -1,5 +1,5 @@
 import { useKanban } from '../KanbanProvider/KanbanProvider'
-import { Box, Button, Container, Icon, Stack, Typography } from '@mui/material'
+import { Box, Button, Container, Grid, Icon, Stack, Typography } from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
 import { ColumnEditor } from './ColumnEditor'
 import { Micon } from '@renderer/Common/Components/Micon'
@@ -41,16 +41,20 @@ export function Settings({}: SettingsProps) {
             Tags
           </Typography>
 
-          <Stack spacing={1}>
+          <Grid container spacing={2}>
             {tags
               ?.filter((c) => !c.markForDeletion)
               .map((c) => (
-                <TagEditor key={c.id} tag={c} />
+                <Grid>
+                  <TagEditor key={c.id} tag={c} />
+                </Grid>
               ))}
-            <Button onClick={createTag}>
-              <Micon icon="add" />
-            </Button>
-          </Stack>
+            <Grid>
+              <Button onClick={createTag}>
+                <Micon icon="add" />
+              </Button>
+            </Grid>
+          </Grid>
         </Box>
       </Stack>
     </Container>

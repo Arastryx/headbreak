@@ -80,7 +80,7 @@
   "desktopName": "com.arastryx.headbreak.desktop",
   "build": {
     "appId": "com.arastryx.headbreak",
-    "productName": "Headbreak",
+    "productName": "headbreak",
     "publish": [
       {
         "provider": "github",

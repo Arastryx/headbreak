@@ -15,7 +15,7 @@ const path = __GENERATING_MIGRATIONS ? '.' : app.getPath('userData')
 
 export default defineConfig({
   extensions: [Migrator],
-  dbName: `${path}/${import.meta.env.DEV ? 'dev' : 'app'}Db.sqlite`,
+  dbName: `${path}/${import.meta.env.DEV ? 'dev' : 'app'}/db.sqlite`,
   entities: [TaskSchema, ColumnSchema, CommentSchema, ChangeLogSchema, TaskMoverSchema, TagSchema],
   migrations: {
     pathTs: './src/main/database/migrations',

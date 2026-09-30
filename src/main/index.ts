@@ -1,12 +1,12 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import icon from '../../resources/icon.ico?asset'
 import { setupKanbanApi } from './kanbanApi'
-import { initDatabase, unitOfWork } from './database/database'
-import { TaskSchema } from './database/entities/Task'
+import { initDatabase } from './database/database'
 import { checkAutomatedMovements } from './checkAutomatedMovements'
 import { store } from './config'
+import { mkdirSync, existsSync } from 'node:fs'
 
 const isDev = !app.isPackaged
 
@@ -87,6 +87,13 @@ if (!gotTheLock) {
     app.on('browser-window-created', (_, window) => {
       optimizer.watchWindowShortcuts(window)
     })
+
+    const path = app.getPath('userData')
+    const dbPath = `${path}/${import.meta.env.DEV ? 'dev' : 'app'}`
+
+    if (!existsSync(dbPath)) {
+      mkdirSync(dbPath)
+    }
 
     await initDatabase()
     await checkAutomatedMovements()
