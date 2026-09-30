@@ -9,7 +9,7 @@ import { TaskMoverSchema } from './entities/TaskMover'
 import { defineConfig } from '@mikro-orm/sqlite'
 import { Migration20260930175134 } from './migrations/Migration20260930175134'
 
-const __GENERATING_MIGRATIONS = true
+const __GENERATING_MIGRATIONS = false
 
 const path = __GENERATING_MIGRATIONS ? '.' : app.getPath('userData')
 
