@@ -2,15 +2,18 @@ import { Column, COLUMN_TYPE } from './Column'
 import { Stack } from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
+import { TaskFilters } from './filterTasks'
 
 interface Column {
   id: number
   label?: string
 }
 
-export interface KanbanProps {}
+export interface KanbanProps {
+  filters?: TaskFilters
+}
 
-export function Kanban({}: KanbanProps) {
+export function Kanban({ filters }: KanbanProps) {
   const { kanban, moveTaskToColumn, reorderTasks } = useKanban()
 
   return (
@@ -31,11 +34,11 @@ export function Kanban({}: KanbanProps) {
         }
       }}
     >
-      <Stack direction={'row'} spacing={2} sx={{ height: '100%', p: 2 }}>
+      <Stack direction={'row'} spacing={2} sx={{ height: '100%' }}>
         {kanban
           ?.filter((c) => !c.markForDeletion)
           .map((c) => (
-            <Column key={c.id} column={c} />
+            <Column key={c.id} column={c} filters={filters} />
           ))}
       </Stack>
     </DragDropProvider>

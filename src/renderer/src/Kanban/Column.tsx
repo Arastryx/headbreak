@@ -1,14 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Icon,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography
-} from '@mui/material'
+import { Button, Dialog, DialogContent, DialogTitle, Stack } from '@mui/material'
 import { useState } from 'react'
 import { TaskEditor } from './TaskEditor'
 import { TASK_TYPE, TaskCard } from './TaskCard'
@@ -16,6 +6,8 @@ import { useDroppable } from '@dnd-kit/react'
 import { CollisionPriority } from '@dnd-kit/abstract'
 import { Micon } from '../Common/Components/Micon'
 import dayjs from 'dayjs'
+import { fitsFilters, TaskFilters } from './filterTasks'
+import { ColumnHeader } from './ColumnHeader'
 
 function isStale(lastMoved: string, hideDelay?: number) {
   if (!hideDelay) {
@@ -29,9 +21,10 @@ export const COLUMN_TYPE = 'column'
 
 export interface ColumnProps {
   column: Headbreak.Column
+  filters?: TaskFilters
 }
 
-export function Column({ column }: ColumnProps) {
+export function Column({ column, filters }: ColumnProps) {
   const [showCreate, setShowCreate] = useState(false)
   const [showStale, setShowStale] = useState(false)
 
@@ -48,31 +41,7 @@ export function Column({ column }: ColumnProps) {
         width: 400
       }}
     >
-      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-        <Stack
-          sx={{
-            width: 30
-          }}
-        >
-          {column.hideDelay && (
-            <Tooltip title="Show/hide stale tasks">
-              <IconButton
-                size="small"
-                onClick={() => setShowStale(!showStale)}
-                sx={{ color: column.color }}
-              >
-                <Micon icon={showStale ? 'visibility' : 'visibility_off'} fontSize="inherit" />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Stack>
-        <Typography variant="h6" sx={{ textAlign: 'center', flex: 1, color: column.color }}>
-          {column.label ? column.label : 'Unnamed'}
-        </Typography>
-        <Stack sx={{ justifyContent: 'center', width: 30 }}>
-          <Micon icon={column.icon ?? 'loop'} sx={{ color: column.color }} />
-        </Stack>
-      </Stack>
+      <ColumnHeader column={column} showStale={showStale} onChange={setShowStale} />
 
       <Stack
         ref={ref}
@@ -88,7 +57,10 @@ export function Column({ column }: ColumnProps) {
       >
         {column.tasks
           ?.filter(
-            (t) => !t.markForDeletion && (showStale || !isStale(t.lastMoved, column.hideDelay))
+            (t) =>
+              !t.markForDeletion &&
+              (showStale || !isStale(t.lastMoved, column.hideDelay)) &&
+              fitsFilters(t, filters)
           )
           .map((t, index) => (
             <TaskCard key={t.id} task={t} columnId={column.id} index={index} />

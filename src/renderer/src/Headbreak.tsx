@@ -3,22 +3,27 @@ import { Kanban } from './Kanban/Kanban'
 import { Box, Dialog, DialogContent, IconButton, Stack } from '@mui/material'
 import { Settings } from './Settings/Settings'
 import { Micon } from './Common/Components/Micon'
+import { KanbanSearch } from './KanbanSearch'
+import { TaskFilters } from './Kanban'
 
 export interface HeadbreakProps {}
 
 export function Headbreak({}: HeadbreakProps) {
   const [showSettings, setShowSettings] = useState(false)
 
+  const [filters, setFilters] = useState<TaskFilters>({})
+
   return (
     <>
-      <Stack direction="row">
-        <Box sx={{ height: '100vh', flex: 1, flexShrink: 0, overflowX: 'auto' }}>
-          <Kanban />
-        </Box>
-        <Box sx={{ p: 1 }}>
+      <Stack spacing={1} sx={{ height: '100vh' }}>
+        <Stack spacing={1} direction="row" sx={{ px: 1, pt: 1, alignItems: 'center' }}>
+          <KanbanSearch filters={filters} onChange={setFilters} />
           <IconButton onClick={() => setShowSettings(true)}>
             <Micon icon="settings" />
           </IconButton>
+        </Stack>
+        <Box sx={{ flex: 1, flexShrink: 0, overflowX: 'auto', px: 1, pb: 1 }}>
+          <Kanban filters={filters} />
         </Box>
       </Stack>
       <Dialog fullScreen open={showSettings} onClose={() => setShowSettings(false)}>

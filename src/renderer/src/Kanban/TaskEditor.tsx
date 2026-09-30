@@ -15,6 +15,7 @@ import { TaskMoverFields } from './TaskMoverFields'
 import { Emphasize } from '@renderer/Common/Components/Emphasize'
 import { TaskMoverPayload } from '@renderer/KanbanProvider/useKanbanManagement'
 import { TagChip } from '@renderer/Common/Components/TagChip'
+import { TagMultiSelect } from '@renderer/Common/Components/TagMultiSelect'
 
 function isPopulated(payload: Partial<TaskMoverPayload>): payload is TaskMoverPayload {
   const populated = (s?: string) => s != null && s != ''
@@ -101,36 +102,7 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
           value={description}
           onChange={(e) => setDescription(e.currentTarget.value)}
         />
-        <FormControl variant="standard" size="small" fullWidth>
-          <InputLabel id="demo-multiple-name-label">Tags</InputLabel>
-          <Select
-            labelId="demo-multiple-name-label"
-            id="demo-multiple-name"
-            multiple
-            variant="standard"
-            size="small"
-            label="Tags"
-            value={tagIds}
-            renderValue={(values) =>
-              values.length > 0 ? (
-                <Stack direction="row" spacing={1}>
-                  {values.map((t) => (
-                    <TagChip size="small" key={t} tag={t} />
-                  ))}
-                </Stack>
-              ) : undefined
-            }
-            onChange={(e) =>
-              setTagIds(Array.isArray(e.target.value) ? e.target.value : [e.target.value])
-            }
-          >
-            {tags?.map((t) => (
-              <MenuItem key={t.id} value={t.id}>
-                <TagChip tag={t} size="small" />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <TagMultiSelect value={tagIds} onChange={setTagIds} />
         <TaskMoverFields
           mover={mover}
           onChange={setMover}

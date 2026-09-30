@@ -5,7 +5,7 @@ import { ChangeLogManager } from './ChangeLogManager'
 import { normalizeEntities } from './normalize'
 import { CommentSchema, TaskComment } from './database/entities/Comment'
 import { TaskMover, TaskMoverSchema } from './database/entities/TaskMover'
-import { rel, wrap } from '@mikro-orm/core'
+import { Collection, rel, wrap } from '@mikro-orm/core'
 import dayjs from 'dayjs'
 import { Tag, TagSchema } from './database/entities/Tag'
 
@@ -104,6 +104,8 @@ export namespace KanbanManager {
       task = new Task()
       task.id = payload.id
       task.lastMoved = dayjs().toISOString()
+      task.tags = new Collection<Tag>(task)
+
       unit.persist(task)
       taskIsNew = true
     } else {
