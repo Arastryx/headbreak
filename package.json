@@ -1,10 +1,11 @@
 {
   "name": "headbreak",
-  "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
+  "version": "0.1.0",
+  "description": "A kanban app built to suit my needs",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "author": "github.com/Arastryx",
+  "homepage": "https://github.com/arastryx/headbreak",
+  "repository": "github:arastryx/headbreak",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
@@ -40,6 +41,7 @@
     "array-move": "^4.0.0",
     "cron-schedule": "^6.0.0",
     "dayjs": "^1.11.23",
+    "electron-store": "^8.2.0",
     "immer": "^11.1.18",
     "material-icons": "^1.13.14",
     "react-colorful": "^5.8.1",
@@ -67,5 +69,45 @@
     "react-dom": "^19.2.1",
     "typescript": "^5.9.3",
     "vite": "^7.2.6"
+  },
+  "desktopName": "com.arastryx.headbreak.desktop",
+  "build": {
+    "appId": "com.arastryx.headbreak",
+    "productName": "Headbreak",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "arastryx",
+        "repo": "headbreak"
+      }
+    ],
+    "win": {
+      "publish": [
+        "github"
+      ],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "deleteAppDataOnUninstall": true
+    },
+    "linux": {
+      "syncDesktopName": true,
+      "category": "Graphics",
+      "publish": [
+        "github"
+      ],
+      "target": [
+        {
+          "target": "appimage"
+        }
+      ]
+    }
   }
 }
