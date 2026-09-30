@@ -69,6 +69,40 @@ export const theme = createTheme({
       defaultProps: {
         useFlexGap: true
       }
+    },
+
+    MuiChip: {
+      defaultProps: {
+        variant: 'outlined'
+      },
+      styleOverrides: {
+        root: {
+          letterSpacing: -0.2
+        },
+        outlined: {
+          borderWidth: 1
+        },
+        sizeMedium: {
+          fontSize: 13,
+          fontWeight: 500,
+          height: 30,
+
+          '& .MuiIcon-root': {
+            fontSize: 18,
+            paddingLeft: 1
+          }
+        },
+        sizeSmall: {
+          fontSize: 10,
+          fontWeight: 500,
+          height: 22,
+
+          '& .MuiIcon-root': {
+            fontSize: 15,
+            paddingLeft: 1
+          }
+        }
+      }
     }
   }
 })

@@ -31,6 +31,7 @@ export interface TaskPayload extends Syncable {
   lastMoved: string
   comments: CommentPayload[]
   mover?: TaskMoverPayload
+  tags?: string[]
 }
 
 export interface ColumnPayload extends Syncable {
@@ -125,6 +126,14 @@ export namespace KanbanManager {
     task.description = payload.description
     task.column = column
     task.order = index
+
+    task.tags.removeAll()
+
+    if (payload.tags) {
+      payload.tags.forEach((tagId) => {
+        task.tags.add(rel(Tag, tagId))
+      })
+    }
 
     await Promise.all([
       ...payload.comments.map((c) => createUpdateDeleteComment(c, task, unit)),
@@ -232,7 +241,7 @@ export namespace KanbanManager {
 
     const [columns, tags] = await Promise.all([
       unit.findAll(ColumnSchema, {
-        populate: ['tasks.comments', 'tasks.mover'],
+        populate: ['tasks.comments', 'tasks.mover', 'tasks.tags:ref'],
         populateOrderBy: { tasks: { order: 'ASC' } },
         orderBy: { order: 'ASC' }
       }),

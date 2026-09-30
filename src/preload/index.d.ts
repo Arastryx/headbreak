@@ -22,6 +22,7 @@ declare global {
       lastMoved: string
       comments: Comment[]
       mover?: TaskMover
+      tags: string[]
     }
 
     interface Column extends Syncable {
@@ -119,7 +120,7 @@ declare global {
 
     kanbanApi: {
       sync: (columns: Headbreak.Column[], tags: Headbreak.Tag[]) => Result<void>
-      get: () => Result<Kanban>
+      get: () => Result<Headbreak.Kanban>
       getChanges: (taskId: string) => Result<Headbreak.ChangeLog[]>
     }
   }

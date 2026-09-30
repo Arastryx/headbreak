@@ -6,7 +6,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Box
+  Box,
+  Stack
 } from '@mui/material'
 import { useSortable } from '@dnd-kit/react/sortable'
 import { useState } from 'react'
@@ -15,6 +16,7 @@ import dayjs from 'dayjs'
 import { TaskDetails } from './TaskDetails/TaskDetails'
 import { ContextMenu } from '../Common/Components/ContextMenu'
 import { FadeOutText } from '../Common/Components/FadeOutText'
+import { TagChip } from '@renderer/Common/Components/TagChip'
 
 export const TASK_TYPE = 'task'
 
@@ -77,6 +79,19 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
                 >
                   {task.description}
                 </FadeOutText>
+              </CardContent>
+            )}
+            {task.tags.length > 0 && (
+              <CardContent
+                sx={{
+                  pt: 0
+                }}
+              >
+                <Stack direction={'row'} spacing={1}>
+                  {task.tags.map((t) => (
+                    <TagChip key={t} tag={t} size="small" />
+                  ))}
+                </Stack>
               </CardContent>
             )}
             <Typography

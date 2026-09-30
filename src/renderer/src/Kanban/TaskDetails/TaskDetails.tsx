@@ -9,6 +9,7 @@ import { ChangeDisplay } from './ChangeDisplay'
 import { CommentBox } from './CommentBox'
 import { intervalToString } from '../IntervalSelector/intervalToString'
 import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
+import { TagChip } from '@renderer/Common/Components/TagChip'
 
 interface TaskContentProps {
   task: Headbreak.Task
@@ -17,11 +18,11 @@ interface TaskContentProps {
 
 function TaskContent({ task, onEditClicked }: TaskContentProps) {
   return (
-    <>
+    <Stack spacing={2}>
       <Stack
         direction={'row'}
         spacing={2}
-        sx={{ mb: 2, justifyContent: 'space-between', alignItems: 'flex-start' }}
+        sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
       >
         <Typography contentEditable={true} variant="h5">
           {task.title}
@@ -31,9 +32,14 @@ function TaskContent({ task, onEditClicked }: TaskContentProps) {
         </IconButton>
       </Stack>
       {task.description && (
-        <Typography sx={{ whiteSpace: 'pre-wrap' }} gutterBottom>
-          {task.description}
-        </Typography>
+        <Typography sx={{ whiteSpace: 'pre-wrap' }}>{task.description}</Typography>
+      )}
+      {task.tags && (
+        <Stack direction={'row'} spacing={1}>
+          {task.tags.map((t) => (
+            <TagChip key={t} tag={t} />
+          ))}
+        </Stack>
       )}
       {task.mover && (
         <Typography variant="caption">
@@ -48,7 +54,7 @@ function TaskContent({ task, onEditClicked }: TaskContentProps) {
           {intervalToString(task.mover.policy, false)}
         </Typography>
       )}
-    </>
+    </Stack>
   )
 }
 

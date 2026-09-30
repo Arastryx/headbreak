@@ -1,10 +1,20 @@
-import { Box, Button, Stack, TextField } from '@mui/material'
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField
+} from '@mui/material'
 import { useState } from 'react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
 import { Micon } from '../Common/Components/Micon'
 import { TaskMoverFields } from './TaskMoverFields'
 import { Emphasize } from '@renderer/Common/Components/Emphasize'
 import { TaskMoverPayload } from '@renderer/KanbanProvider/useKanbanManagement'
+import { TagChip } from '@renderer/Common/Components/TagChip'
 
 function isPopulated(payload: Partial<TaskMoverPayload>): payload is TaskMoverPayload {
   const populated = (s?: string) => s != null && s != ''
@@ -28,8 +38,9 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
   const [title, setTitle] = useState(task?.title ?? '')
   const [description, setDescription] = useState(task?.description ?? '')
   const [mover, setMover] = useState<Partial<TaskMoverPayload | undefined>>(task?.mover)
+  const [tagIds, setTagIds] = useState<string[]>(task?.tags ?? [])
 
-  const { createTask, editTask } = useKanban()
+  const { tags, createTask, editTask } = useKanban()
 
   const [showErrorHighlighting, setShowErrorHighlighting] = useState(false)
 
@@ -50,14 +61,16 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
       editTask(task.id, {
         title,
         description,
-        mover
+        mover,
+        tags: tagIds
       })
     } else {
       createTask({
         description,
         title,
         mover,
-        columnId
+        columnId,
+        tags: tagIds
       })
     }
 
@@ -88,6 +101,36 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
           value={description}
           onChange={(e) => setDescription(e.currentTarget.value)}
         />
+        <FormControl variant="standard" size="small" fullWidth>
+          <InputLabel id="demo-multiple-name-label">Tags</InputLabel>
+          <Select
+            labelId="demo-multiple-name-label"
+            id="demo-multiple-name"
+            multiple
+            variant="standard"
+            size="small"
+            label="Tags"
+            value={tagIds}
+            renderValue={(values) =>
+              values.length > 0 ? (
+                <Stack direction="row" spacing={1}>
+                  {values.map((t) => (
+                    <TagChip size="small" key={t} tag={t} />
+                  ))}
+                </Stack>
+              ) : undefined
+            }
+            onChange={(e) =>
+              setTagIds(Array.isArray(e.target.value) ? e.target.value : [e.target.value])
+            }
+          >
+            {tags?.map((t) => (
+              <MenuItem key={t.id} value={t.id}>
+                <TagChip tag={t} size="small" />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TaskMoverFields
           mover={mover}
           onChange={setMover}

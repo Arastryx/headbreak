@@ -17,6 +17,7 @@ export interface TaskPayload {
   description?: string
   columnId: string
   mover?: TaskMoverPayload
+  tags: string[]
 }
 
 export type ColumnPayload = Omit<Headbreak.Column, 'id' | 'tasks' | 'markForDeletion'>

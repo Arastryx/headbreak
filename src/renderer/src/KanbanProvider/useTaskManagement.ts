@@ -71,7 +71,8 @@ export function useTaskManagement(modify: KanbanModifier) {
         column: payload.columnId,
         updatedAt: now,
         createdAt: now,
-        comments: []
+        comments: [],
+        tags: payload.tags
       }
 
       modify((copy) => {
@@ -97,6 +98,7 @@ export function useTaskManagement(modify: KanbanModifier) {
         task.title = payload.title
         task.description = payload.description
         task.mover = processMover(task.id, task.mover, payload.mover)
+        task.tags = payload.tags
       })
     },
     [modify]

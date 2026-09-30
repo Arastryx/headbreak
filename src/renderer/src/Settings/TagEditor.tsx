@@ -15,7 +15,15 @@ export function TagEditor({ tag }: TagEditorProps) {
     <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
       <Box sx={{ flex: 1 }}>
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-          <Paper sx={{ bgcolor: tag.color ?? '#000', borderRadius: 5 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              borderColor: tag.color ?? '#000',
+              borderRadius: 5,
+              borderWidth: 1,
+              borderStyle: 'solid'
+            }}
+          >
             <Stack spacing={0.5} sx={{ px: 0.5, py: 0.5, alignItems: 'center' }}>
               <TextField
                 size="small"
