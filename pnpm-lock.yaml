@@ -39,11 +39,14 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0
       '@mikro-orm/core':
-        specifier: ^7.1.13
-        version: 7.1.13
+        specifier: ^7.2.2
+        version: 7.2.2
+      '@mikro-orm/migrations':
+        specifier: ^7.2.2
+        version: 7.2.2(@mikro-orm/core@7.2.2)
       '@mikro-orm/sqlite':
-        specifier: ^7.1.13
-        version: 7.1.13(@mikro-orm/core@7.1.13)
+        specifier: ^7.2.2
+        version: 7.2.2(@mikro-orm/core@7.2.2)
       '@mui/material':
         specifier: ^9.3.1
         version: 9.3.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@7.2.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.18)(react@19.2.8)(supports-color@7.2.0))(@types/react@19.2.18)(react@19.2.8)(supports-color@7.2.0))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -90,6 +93,9 @@ importers:
       '@electron/devtron':
         specifier: ^2.1.1
         version: 2.1.1(@types/react@19.2.18)
+      '@mikro-orm/cli':
+        specifier: ^7.2.2
+        version: 7.2.2
       '@types/node':
         specifier: ^22.19.1
         version: 22.20.1
@@ -855,8 +861,13 @@ packages:
       react: '>= 15'
       react-dom: '>= 15'
 
-  '@mikro-orm/core@7.1.13':
-    resolution: {integrity: sha512-3esu2XDKHSFh8Ki1o2AVavDuWcZ9yt0Gx7jBk6yuYv3K1qxedio45JLaHmdffjM5EqpmeTDb9hqjuqZQtyDC0g==}
+  '@mikro-orm/cli@7.2.2':
+    resolution: {integrity: sha512-uDvXMD8G+njfHhVGHiYaQzCIknF+AIpynbxtdDV4xf3xcrK9JEBB6NC8DiS/wEYQC9xNj7QzzQc7rE8revnBxA==}
+    engines: {node: '>= 22.17.0'}
+    hasBin: true
+
+  '@mikro-orm/core@7.2.2':
+    resolution: {integrity: sha512-+KNiaYK4GHOYohPJzhhogIu5hD3kE5YZi+V+zmx50Jaw1UNJsDP8MCaVNAZ8yFWiODIACZuIFsEYQClSdTNvcA==}
     engines: {node: '>= 22.17.0'}
     peerDependencies:
       dataloader: 2.2.3
@@ -864,17 +875,23 @@ packages:
       dataloader:
         optional: true
 
-  '@mikro-orm/sql@7.1.13':
-    resolution: {integrity: sha512-hG18clkc2+aoinYZurj6b7m9zBtg/12KI1ZgUL7VA1R2VvRNMwyecqyHb57l1hlaPKjLD9IXZliHHyO2iFixQg==}
+  '@mikro-orm/migrations@7.2.2':
+    resolution: {integrity: sha512-CZwJQbljVkiZrcUy/4xkGmmuPhdwlL/IyQz/hVBUM4G5f7qlCLIwiqJ+SJspTZu+NiPznmMmS9GpcknzfGNhMw==}
     engines: {node: '>= 22.17.0'}
     peerDependencies:
-      '@mikro-orm/core': 7.1.13
+      '@mikro-orm/core': 7.2.2
 
-  '@mikro-orm/sqlite@7.1.13':
-    resolution: {integrity: sha512-Lyza5NcCNS8wPoOXpPT1yjlidZAh4oK7HWmWR8RBJ1NcEy0uYKW1HgEm2RDA/RXCTI34dEt2EFITTxJHrNnKRg==}
+  '@mikro-orm/sql@7.2.2':
+    resolution: {integrity: sha512-biH6xuFtrNEa7Lg130lD0WoncP+FGhDDVZJmeYhQCPljI9KRHw6iqFyOPNDkduaGbnvnpxE2diZIqS6NVCTfJA==}
     engines: {node: '>= 22.17.0'}
     peerDependencies:
-      '@mikro-orm/core': 7.1.13
+      '@mikro-orm/core': 7.2.2
+
+  '@mikro-orm/sqlite@7.2.2':
+    resolution: {integrity: sha512-pnY0Xc4OyVrrd9OhWCO1VxfzLkbsC2WVBrq1lBoRN4eBRZGZpen4fp7xtCQfKNcIml6T0rDtqv1zl3H/vImnGA==}
+    engines: {node: '>= 22.17.0'}
+    peerDependencies:
+      '@mikro-orm/core': 7.2.2
 
   '@mui/core-downloads-tracker@9.3.1':
     resolution: {integrity: sha512-IAyAFNQbT7hysJ9HXphiOmWJF7G1OglzHanqCgvQgH9LA2ydxtmaTBDbcBqw6euZesyShiwvpvbnYO1GY1AyXQ==}
@@ -2408,8 +2425,8 @@ packages:
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
-  kysely@0.29.5:
-    resolution: {integrity: sha512-ooa+eSbBNPTo3MycPEuW5jdrxQdQwdtB3LC3h43FiXQbIry5tR0C5lDG7eealK0E4D7XjrnOP5DIUg/LyjRMYQ==}
+  kysely@0.29.6:
+    resolution: {integrity: sha512-hHaB8C/rfzDDtr/t8YZwxAuPJTT0zHyaPoVzcXwDYhYNAgH/4sIfVhi/XLLIY+bL/FqaIJnjATDbi8ObSELmxg==}
     engines: {node: '>=22.0.0'}
 
   lazy-val@1.0.5:
@@ -2472,6 +2489,10 @@ packages:
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
     engines: {node: '>= 0.4'}
+
+  mikro-orm@7.2.2:
+    resolution: {integrity: sha512-sUm/Ny+NOFrnv7vWhfiSxIIbD16TOFKSMzptQPoiFNX0LGqlRak4BoXQCCzRqXioRGvbmq9mOOW33EHOwdrx/Q==}
+    engines: {node: '>= 22.17.0'}
 
   mime-db@1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
@@ -3321,6 +3342,10 @@ packages:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
     engines: {node: '>=12'}
 
+  yargs@17.7.2:
+    resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
+    engines: {node: '>=12'}
+
   yargs@17.7.3:
     resolution: {integrity: sha512-GZtjxm/J/4TSxuL3FNYjCmLktBTnIw/rVmKSIyKeYAZpmJB2ig9VauCC5xsa82GNKVKDAqpOn3KVzNt0zmrU0g==}
     engines: {node: '>=12'}
@@ -4051,19 +4076,32 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@mikro-orm/core@7.1.13': {}
-
-  '@mikro-orm/sql@7.1.13(@mikro-orm/core@7.1.13)':
+  '@mikro-orm/cli@7.2.2':
     dependencies:
-      '@mikro-orm/core': 7.1.13
-      kysely: 0.29.5
+      '@mikro-orm/core': 7.2.2
+      mikro-orm: 7.2.2
+      yargs: 17.7.2
+    transitivePeerDependencies:
+      - dataloader
 
-  '@mikro-orm/sqlite@7.1.13(@mikro-orm/core@7.1.13)':
+  '@mikro-orm/core@7.2.2': {}
+
+  '@mikro-orm/migrations@7.2.2(@mikro-orm/core@7.2.2)':
     dependencies:
-      '@mikro-orm/core': 7.1.13
-      '@mikro-orm/sql': 7.1.13(@mikro-orm/core@7.1.13)
+      '@mikro-orm/core': 7.2.2
+      '@mikro-orm/sql': 7.2.2(@mikro-orm/core@7.2.2)
+
+  '@mikro-orm/sql@7.2.2(@mikro-orm/core@7.2.2)':
+    dependencies:
+      '@mikro-orm/core': 7.2.2
+      kysely: 0.29.6
+
+  '@mikro-orm/sqlite@7.2.2(@mikro-orm/core@7.2.2)':
+    dependencies:
+      '@mikro-orm/core': 7.2.2
+      '@mikro-orm/sql': 7.2.2(@mikro-orm/core@7.2.2)
       better-sqlite3: 13.0.3
-      kysely: 0.29.5
+      kysely: 0.29.6
 
   '@mui/core-downloads-tracker@9.3.1': {}
 
@@ -5862,7 +5900,7 @@ snapshots:
     dependencies:
       json-buffer: 3.0.1
 
-  kysely@0.29.5: {}
+  kysely@0.29.6: {}
 
   lazy-val@1.0.5: {}
 
@@ -5918,6 +5956,8 @@ snapshots:
   material-icons@1.13.14: {}
 
   math-intrinsics@1.1.0: {}
+
+  mikro-orm@7.2.2: {}
 
   mime-db@1.52.0: {}
 
@@ -6834,6 +6874,16 @@ snapshots:
   yaml@1.10.3: {}
 
   yargs-parser@21.1.1: {}
+
+  yargs@17.7.2:
+    dependencies:
+      cliui: 8.0.1
+      escalade: 3.2.0
+      get-caller-file: 2.0.5
+      require-directory: 2.1.1
+      string-width: 4.2.3
+      y18n: 5.0.8
+      yargs-parser: 21.1.1
 
   yargs@17.7.3:
     dependencies:

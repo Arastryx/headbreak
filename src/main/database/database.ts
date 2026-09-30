@@ -1,19 +1,5 @@
-import { defineConfig, MikroORM } from '@mikro-orm/sqlite'
-import { TaskSchema } from './entities/Task'
-import { app } from 'electron'
-import { ColumnSchema } from './entities/Column'
-import { CommentSchema } from './entities/Comment'
-import { ChangeLogSchema } from './entities/ChangeLog'
-import { TaskMoverSchema } from './entities/TaskMover'
-import { TagSchema } from './entities/Tag'
-
-const path = app.getPath('userData')
-
-const config = defineConfig({
-  dbName: `${path}/${import.meta.env.DEV ? 'dev' : 'app'}Db.sqlite`,
-  entities: [TaskSchema, ColumnSchema, CommentSchema, ChangeLogSchema, TaskMoverSchema, TagSchema],
-  debug: import.meta.env.DEV
-})
+import { MikroORM } from '@mikro-orm/sqlite'
+import config from './mikro-orm.config'
 
 async function initialize() {
   return await MikroORM.init(config)
@@ -23,7 +9,7 @@ let orm: Awaited<ReturnType<typeof initialize>> | undefined
 
 export async function initDatabase() {
   orm = await initialize()
-  await orm.schema.update()
+  await orm.migrator.up()
 }
 
 export function unitOfWork() {
