@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, MenuItem, Select, Stack } from '@mui/material'
+import { FormControl, Grid, InputLabel, MenuItem, Select, Stack, SxProps } from '@mui/material'
 
 import React, { useId } from 'react'
 import { TagChip } from './TagChip'
@@ -7,16 +7,17 @@ import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
 export interface TagMultiSelectProps {
   value: string[]
   onChange: (value: string[]) => void
+  sx?: SxProps
 }
 
-export function TagMultiSelect({ value, onChange }: TagMultiSelectProps) {
+export function TagMultiSelect({ value, onChange, sx }: TagMultiSelectProps) {
   const { tags } = useKanban()
 
   const labelId = useId()
   const nameId = useId()
 
   return (
-    <FormControl variant="standard" size="small" fullWidth>
+    <FormControl variant="standard" size="small" fullWidth sx={sx}>
       <InputLabel id={labelId}>Tags</InputLabel>
       <Select
         labelId={labelId}
@@ -28,11 +29,11 @@ export function TagMultiSelect({ value, onChange }: TagMultiSelectProps) {
         value={value}
         renderValue={(values) =>
           values.length > 0 ? (
-            <Stack direction="row" spacing={1}>
+            <Grid container spacing={1}>
               {values.map((t) => (
                 <TagChip size="small" key={t} tag={t} />
               ))}
-            </Stack>
+            </Grid>
           ) : undefined
         }
         onChange={(e) =>

@@ -67,6 +67,7 @@ export function KanbanSearch({ filters, onChange }: KanbanSearchProps) {
           <TagMultiSelect
             value={filters.tags ?? []}
             onChange={(value) => onChange({ ...filters, tags: value })}
+            sx={{ minWidth: 140, maxWidth: 300 }}
           />
         </Box>
       </Popover>
