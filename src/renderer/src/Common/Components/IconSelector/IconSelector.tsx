@@ -13,7 +13,7 @@ export interface IconSelectorProps {
 
 export function IconSelector({ icon, color, onSelect, clearable }: IconSelectorProps) {
   const [search, setSearch] = useState('')
-  const splitSearch = search.split(' ')
+  const splitSearch = search.toLocaleLowerCase().split(' ')
 
   const [showIconSelector, setShowIconSelector] = useState(false)
   const anchorRef = useRef<HTMLButtonElement>(null)
