@@ -24,9 +24,7 @@ function TaskContent({ task, onEditClicked }: TaskContentProps) {
         spacing={2}
         sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
       >
-        <Typography contentEditable={true} variant="h5">
-          {task.title}
-        </Typography>
+        <Typography variant="h5">{task.title}</Typography>
         <IconButton size="small" onClick={onEditClicked}>
           <Micon icon="edit" fontSize="inherit" />
         </IconButton>
