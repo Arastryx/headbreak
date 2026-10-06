@@ -37,6 +37,16 @@ function getSoonThreshold(mover: Headbreak.TaskMover) {
   return 0
 }
 
+export function calculateTimeUntilMove(
+  mover: Headbreak.TaskMover,
+  lastMoved: string
+): TimeUntilMoveProps {
+  return {
+    numberOfDaysUntilChange: getNextMovementDate(mover, lastMoved).diff(dayjs(), 'days', true),
+    soonThresholdInDays: getSoonThreshold(mover)
+  }
+}
+
 export interface MovementWarningProps {
   task: Headbreak.Task
 }
@@ -46,19 +56,20 @@ export function MovementWarning({ task }: MovementWarningProps) {
     return null
   }
 
-  const numberOfDaysUntilChange = getNextMovementDate(task.mover, task.lastMoved).diff(
-    dayjs(),
-    'days',
-    true
+  const { numberOfDaysUntilChange, soonThresholdInDays } = calculateTimeUntilMove(
+    task.mover,
+    task.lastMoved
   )
-  const soonThresholdInDays = getSoonThreshold(task.mover)
 
   return (
     <Tooltip
       title={
         <>
           This task will move to <ColumnLabel column={task.mover.destinationColumn} />{' '}
-          <TimeUntilMove task={task} />
+          <TimeUntilMove
+            numberOfDaysUntilChange={numberOfDaysUntilChange}
+            soonThresholdInDays={soonThresholdInDays}
+          />
         </>
       }
       placement="top"
@@ -75,18 +86,15 @@ export function MovementWarning({ task }: MovementWarningProps) {
   )
 }
 
-export function TimeUntilMove({ task }: MovementWarningProps) {
-  if (!task.mover || task.mover.sourceColumn !== task.column) {
-    return null
-  }
+export interface TimeUntilMoveProps {
+  numberOfDaysUntilChange: number
+  soonThresholdInDays: number
+}
 
-  const numberOfDaysUntilChange = getNextMovementDate(task.mover, task.lastMoved).diff(
-    dayjs(),
-    'days',
-    true
-  )
-  const soonThresholdInDays = getSoonThreshold(task.mover)
-
+export function TimeUntilMove({
+  numberOfDaysUntilChange,
+  soonThresholdInDays
+}: TimeUntilMoveProps) {
   return (
     <Typography
       component={'span'}

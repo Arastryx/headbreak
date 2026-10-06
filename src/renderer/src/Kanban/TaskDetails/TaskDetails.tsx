@@ -10,7 +10,7 @@ import { CommentBox } from './CommentBox'
 import { intervalToString } from '../IntervalSelector/intervalToString'
 import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
 import { TagChip } from '@renderer/Common/Components/TagChip'
-import { TimeUntilMove } from '../MovementWarning'
+import { calculateTimeUntilMove, TimeUntilMove } from '../MovementWarning'
 
 function isComment(c: Headbreak.Comment | Headbreak.ChangeLog): c is Headbreak.Comment {
   return typeof c.content === 'string'
@@ -71,7 +71,8 @@ export function TaskDetails({ task }: TaskDetailsProps) {
                 column={task.mover.destinationColumn}
                 sx={{ opacity: 0.7 }}
               />{' '}
-              {intervalToString(task.mover.policy, false)} (<TimeUntilMove task={task} />)
+              {intervalToString(task.mover.policy, false)} (
+              <TimeUntilMove {...calculateTimeUntilMove(task.mover, task.lastMoved)} />)
             </Typography>
           )}
         </Stack>
