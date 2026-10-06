@@ -10,51 +10,7 @@ import { CommentBox } from './CommentBox'
 import { intervalToString } from '../IntervalSelector/intervalToString'
 import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
 import { TagChip } from '@renderer/Common/Components/TagChip'
-
-interface TaskContentProps {
-  task: Headbreak.Task
-  onEditClicked: () => void
-}
-
-function TaskContent({ task, onEditClicked }: TaskContentProps) {
-  return (
-    <Stack spacing={2}>
-      <Stack
-        direction={'row'}
-        spacing={2}
-        sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
-      >
-        <Typography variant="h5">{task.title}</Typography>
-        <IconButton size="small" onClick={onEditClicked}>
-          <Micon icon="edit" fontSize="inherit" />
-        </IconButton>
-      </Stack>
-      {task.description && (
-        <Typography sx={{ whiteSpace: 'pre-wrap' }}>{task.description}</Typography>
-      )}
-      {task.tags && (
-        <Stack direction={'row'} spacing={1}>
-          {task.tags.map((t) => (
-            <TagChip key={t} tag={t} />
-          ))}
-        </Stack>
-      )}
-      {task.mover && (
-        <Typography variant="caption">
-          This task moves from{' '}
-          <ColumnLabel variant="caption" column={task.mover.sourceColumn} sx={{ opacity: 0.7 }} />{' '}
-          to{' '}
-          <ColumnLabel
-            variant="caption"
-            column={task.mover.destinationColumn}
-            sx={{ opacity: 0.7 }}
-          />{' '}
-          {intervalToString(task.mover.policy, false)}
-        </Typography>
-      )}
-    </Stack>
-  )
-}
+import { TimeUntilMove } from '../MovementWarning'
 
 function isComment(c: Headbreak.Comment | Headbreak.ChangeLog): c is Headbreak.Comment {
   return typeof c.content === 'string'
@@ -79,7 +35,47 @@ export function TaskDetails({ task }: TaskDetailsProps) {
       <Typography variant="caption">
         Created {dayjs(task.createdAt).format(createdThisYear ? 'MMM D' : 'll')}
       </Typography>
-      {!editMode && <TaskContent task={task} onEditClicked={() => setEditMode(true)} />}
+      {!editMode && (
+        <Stack spacing={2}>
+          <Stack
+            direction={'row'}
+            spacing={2}
+            sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
+          >
+            <Typography variant="h5">{task.title}</Typography>
+            <IconButton size="small" onClick={() => setEditMode(true)}>
+              <Micon icon="edit" fontSize="inherit" />
+            </IconButton>
+          </Stack>
+          {task.description && (
+            <Typography sx={{ whiteSpace: 'pre-wrap' }}>{task.description}</Typography>
+          )}
+          {task.tags && (
+            <Stack direction={'row'} spacing={1}>
+              {task.tags.map((t) => (
+                <TagChip key={t} tag={t} />
+              ))}
+            </Stack>
+          )}
+          {task.mover && (
+            <Typography variant="caption">
+              This task moves from{' '}
+              <ColumnLabel
+                variant="caption"
+                column={task.mover.sourceColumn}
+                sx={{ opacity: 0.7 }}
+              />{' '}
+              to{' '}
+              <ColumnLabel
+                variant="caption"
+                column={task.mover.destinationColumn}
+                sx={{ opacity: 0.7 }}
+              />{' '}
+              {intervalToString(task.mover.policy, false)} (<TimeUntilMove task={task} />)
+            </Typography>
+          )}
+        </Stack>
+      )}
       {editMode && (
         <TaskEditor columnId={task.column} task={task} onClose={() => setEditMode(false)} />
       )}

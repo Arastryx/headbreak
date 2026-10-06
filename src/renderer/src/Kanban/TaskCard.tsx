@@ -19,21 +19,7 @@ import { FadeOutText } from '../Common/Components/FadeOutText'
 import { TagChip } from '@renderer/Common/Components/TagChip'
 import { Micon } from '@renderer/Common/Components/Micon'
 import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
-import { parseCronExpression } from 'cron-schedule'
-
-function getNextMovementDate(mover: Headbreak.TaskMover, lastMoved: string) {
-  let nextDate: Dayjs
-
-  if (mover.policyType === 'interval') {
-    const numberOfDays = Number(mover.policy)
-    nextDate = dayjs(lastMoved).add(numberOfDays, 'days').startOf('day')
-  } else {
-    const cron = parseCronExpression(mover.policy)
-    nextDate = dayjs(cron.getNextDate(new Date(Date.parse(lastMoved))))
-  }
-
-  return nextDate
-}
+import { MovementWarning } from './MovementWarning'
 
 export const TASK_TYPE = 'task'
 
@@ -85,24 +71,8 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
           >
             <CardHeader
               title={
-                <Stack direction={'row'} spacing={1} sx={{ alignItems: 'center' }}>
-                  {task.title}{' '}
-                  {task.mover && task.mover.sourceColumn === task.column && (
-                    <Tooltip
-                      title={
-                        <>
-                          This task will move to{' '}
-                          <ColumnLabel column={task.mover.destinationColumn} /> in{' '}
-                          {dayjs
-                            .duration(getNextMovementDate(task.mover, task.lastMoved).diff())
-                            .humanize()}
-                        </>
-                      }
-                      placement="top"
-                    >
-                      <Micon icon="schedule" color="action" sx={{ fontSize: 20 }} />
-                    </Tooltip>
-                  )}
+                <Stack direction={'row'} spacing={0.5} sx={{ alignItems: 'center' }}>
+                  {task.title} <MovementWarning task={task} />
                 </Stack>
               }
               sx={{ pb: task.description ? 1 : undefined }}
