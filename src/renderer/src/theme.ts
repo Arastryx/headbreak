@@ -1,5 +1,6 @@
 import { alpha, createTheme } from '@mui/material'
 
+const paper = '#f9f9f9'
 const error = '#e31e63'
 
 export const theme = createTheme({
@@ -10,7 +11,7 @@ export const theme = createTheme({
     },
     background: {
       default: '#f7f7f7',
-      paper: '#f9f9f9'
+      paper: paper
     },
     text: {
       secondary: '#999'
@@ -101,6 +102,16 @@ export const theme = createTheme({
             fontSize: 15,
             paddingLeft: 1
           }
+        }
+      }
+    },
+
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: paper,
+          color: '#333',
+          boxShadow: 'var(--mui-shadows-2);'
         }
       }
     }
