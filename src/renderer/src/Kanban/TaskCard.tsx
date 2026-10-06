@@ -17,6 +17,7 @@ import { TaskDetails } from './TaskDetails/TaskDetails'
 import { ContextMenu } from '../Common/Components/ContextMenu'
 import { FadeOutText } from '../Common/Components/FadeOutText'
 import { TagChip } from '@renderer/Common/Components/TagChip'
+import { Micon } from '@renderer/Common/Components/Micon'
 
 export const TASK_TYPE = 'task'
 
@@ -66,7 +67,17 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
               }
             }}
           >
-            <CardHeader title={task.title} sx={{ pb: task.description ? 1 : undefined }} />
+            <CardHeader
+              title={
+                <Stack direction={'row'} spacing={1} sx={{ alignItems: 'center' }}>
+                  {task.title}{' '}
+                  {task.mover && task.mover.sourceColumn === task.column && (
+                    <Micon icon="schedule" color="action" sx={{ fontSize: 20 }} />
+                  )}
+                </Stack>
+              }
+              sx={{ pb: task.description ? 1 : undefined }}
+            />
             {task.description && (
               <CardContent
                 sx={{
