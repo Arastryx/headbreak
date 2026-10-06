@@ -25,7 +25,7 @@ function getSoonThreshold(mover: Headbreak.TaskMover) {
 
   switch (type) {
     case 'interval':
-      return Math.max(Number(mover.policy) / 10, 0.25)
+      return Math.min(Math.max(Number(mover.policy) / 10, 0.25), 14)
     case 'dayOfWeek':
       return 1
     case 'dayOfMonth':
