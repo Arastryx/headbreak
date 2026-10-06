@@ -122,6 +122,7 @@ export function useTaskManagement(modify: KanbanModifier) {
 
         const [movedTask] = copy.columns[columnIndex].tasks.splice(taskIndex, 1)
 
+        movedTask.column = targetColumn.id
         targetColumn.tasks.push(movedTask)
       })
     },
@@ -144,6 +145,7 @@ export function useTaskManagement(modify: KanbanModifier) {
           arrayMoveMutable(copy.columns[sourceColumnIndex].tasks, sourceTaskIndex, targetTaskIndex)
         } else {
           const [movedTask] = copy.columns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1)
+          movedTask.column = copy.columns[targetColumnIndex].id
           copy.columns[targetColumnIndex].tasks.splice(targetTaskIndex, 0, movedTask)
         }
       })

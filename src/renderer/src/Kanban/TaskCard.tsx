@@ -4,19 +4,22 @@ import {
   CardContent,
   Typography,
   Dialog,
-  DialogTitle,
   DialogContent,
   Box,
-  Stack
+  Stack,
+  Tooltip
 } from '@mui/material'
 import { useSortable } from '@dnd-kit/react/sortable'
 import { useState } from 'react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { TaskDetails } from './TaskDetails/TaskDetails'
 import { ContextMenu } from '../Common/Components/ContextMenu'
 import { FadeOutText } from '../Common/Components/FadeOutText'
 import { TagChip } from '@renderer/Common/Components/TagChip'
+import { Micon } from '@renderer/Common/Components/Micon'
+import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
+import { MovementWarning } from './MovementWarning'
 
 export const TASK_TYPE = 'task'
 
@@ -66,7 +69,14 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
               }
             }}
           >
-            <CardHeader title={task.title} sx={{ pb: task.description ? 1 : undefined }} />
+            <CardHeader
+              title={
+                <Stack direction={'row'} spacing={0.5} sx={{ alignItems: 'center' }}>
+                  {task.title} <MovementWarning task={task} />
+                </Stack>
+              }
+              sx={{ pb: task.description ? 1 : undefined }}
+            />
             {task.description && (
               <CardContent
                 sx={{
