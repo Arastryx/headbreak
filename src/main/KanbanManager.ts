@@ -142,14 +142,6 @@ export namespace KanbanManager {
     ])
   }
 
-  function shouldUseOverrideDate(columnId: string, payload: TaskPayload) {
-    return (
-      payload.mover &&
-      payload.mover.policyType === 'interval' &&
-      payload.mover.sourceColumn === columnId
-    )
-  }
-
   async function createUpdateDeleteComment(payload: CommentPayload, task: Task, unit: Fork) {
     let comment = await unit.findOne(CommentSchema, payload.id)
 
