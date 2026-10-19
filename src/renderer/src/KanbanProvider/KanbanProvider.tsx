@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import { TaskPayload, useKanbanManagement } from './useKanbanManagement'
+import { useKanbanManagement } from './useKanbanManagement'
 
 export type KanbanData = ReturnType<typeof useKanbanManagement>
 
