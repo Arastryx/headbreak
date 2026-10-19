@@ -55,7 +55,7 @@ export function getTask(columns: Headbreak.Column[], taskId: string) {
   return columns[columnIndex].tasks[taskIndex]
 }
 
-type BasicTaskPayload = Omit<Headbreak.Payload.Task, 'id' | 'comments'>
+export type BasicTaskPayload = Omit<Headbreak.Payload.Task, 'id' | 'comments'>
 
 export function useTaskManagement(modify: KanbanModifier) {
   const createTask = useCallback(

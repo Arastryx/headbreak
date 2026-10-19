@@ -7,18 +7,27 @@ import { Emphasize } from '@renderer/Common/Components/Emphasize'
 import { TagMultiSelect } from '@renderer/Common/Components/TagMultiSelect'
 import { DatePicker } from '@mui/x-date-pickers'
 import { Dayjs } from 'dayjs'
+import { useImmer } from 'use-immer'
+import { DeepPartial } from '@renderer/Common/Types/deepPartial'
+import { BasicTaskPayload } from '@renderer/KanbanProvider/useTaskManagement'
+import { TaskFields } from './TaskFields'
 
-function isPopulated(
-  payload: Partial<Headbreak.Payload.TaskMover>
-): payload is Headbreak.Payload.TaskMover {
+function isPopulated(payload: DeepPartial<BasicTaskPayload>): payload is BasicTaskPayload {
   const populated = (s?: string) => s != null && s != ''
 
-  return (
-    populated(payload.destinationColumn) &&
-    populated(payload.sourceColumn) &&
-    populated(payload.policy) &&
-    populated(payload.policyType)
-  )
+  if (
+    payload.mover &&
+    !(
+      populated(payload.mover.destinationColumn) &&
+      populated(payload.mover.sourceColumn) &&
+      populated(payload.mover.policy) &&
+      populated(payload.mover.policyType)
+    )
+  ) {
+    return false
+  }
+
+  return populated(payload.title)
 }
 
 export interface TaskEditorProps {
@@ -28,46 +37,29 @@ export interface TaskEditorProps {
   onClose?: () => void
 }
 
-export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProps) {
-  const [title, setTitle] = useState(task?.title ?? '')
-  const [description, setDescription] = useState(task?.description ?? '')
-  const [mover, setMover] = useState<Partial<Headbreak.Payload.TaskMover | undefined>>(task?.mover)
-  const [tagIds, setTagIds] = useState<string[]>(task?.tags ?? [])
+export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: TaskEditorProps) {
+  const [task, setTask] = useImmer<DeepPartial<BasicTaskPayload>>(editableTask ?? {})
+  const { title, description, mover, tags: tagIds } = task
+
+  //Last moved override is stored separately because I have learned my lesson about storing date picker
+  // values as strings (it gets messy)
   const [lastMovedOverride, setLastMovedOverride] = useState<Dayjs | null>(null)
 
   const { createTask, editTask } = useKanban()
 
   const [showErrorHighlighting, setShowErrorHighlighting] = useState(false)
 
-  const shouldDisableSubmit = () => {
-    return (
-      title == '' ||
-      (mover &&
-        (!mover.sourceColumn || !mover.destinationColumn || !mover.policy || !mover.policyType))
-    )
-  }
-
   const submit = () => {
-    if (mover && !isPopulated(mover)) {
-      throw new Error('Tried to submit a task with only a partially filled out Task Mover')
+    if (!isPopulated(task)) {
+      throw new Error('Tried to submit a partially filled task')
     }
 
-    if (task) {
-      editTask(task.id, {
-        title,
-        description,
-        mover,
-        lastMoved: lastMovedOverride?.set('hour', 12).toISOString(),
-        tags: tagIds
-      })
+    const payload = { ...task, lastMoved: lastMovedOverride?.set('hour', 12).toISOString() }
+
+    if (editableTask) {
+      editTask(editableTask.id, payload)
     } else {
-      createTask(columnId, {
-        description,
-        title,
-        mover,
-        lastMoved: lastMovedOverride?.set('hour', 12).toISOString(),
-        tags: tagIds
-      })
+      createTask(columnId, payload)
     }
 
     onSubmit?.()
@@ -76,54 +68,14 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
 
   return (
     <Box sx={{ minWidth: 400 }}>
-      <Stack spacing={4}>
-        <Emphasize color="error" show={showErrorHighlighting && !title}>
-          <TextField
-            placeholder="Title"
-            fullWidth
-            value={title}
-            error={showErrorHighlighting && !title}
-            onChange={(e) => setTitle(e.currentTarget.value)}
-            slotProps={{
-              input: { sx: { fontSize: 19, fontFamily: 'Open Sans Variable', fontWeight: '400' } },
-              htmlInput: { maxLength: 127 }
-            }}
-          />
-        </Emphasize>
-        <TextField
-          placeholder="Description"
-          multiline
-          fullWidth
-          value={description}
-          onChange={(e) => setDescription(e.currentTarget.value)}
-        />
-        <TagMultiSelect value={tagIds} onChange={setTagIds} />
-        <TaskMoverFields
-          mover={mover}
-          onChange={setMover}
-          currentColumnId={columnId}
-          highlightErrors={showErrorHighlighting}
-        />
-        <Collapse in={columnId === mover?.sourceColumn && mover.policyType === 'interval'}>
-          <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-            <DatePicker
-              label="Last Moved Override"
-              value={lastMovedOverride}
-              onChange={setLastMovedOverride}
-              slotProps={{
-                field: { clearable: true },
-                textField: { fullWidth: true, size: 'small' }
-              }}
-            />
-            <Tooltip
-              title="Allows you to specify a custom date for when this task was previously performed (defaults to now)."
-              placement="right"
-            >
-              <Micon icon="info" color="action" />
-            </Tooltip>
-          </Stack>
-        </Collapse>
-      </Stack>
+      <TaskFields
+        task={task}
+        lastMovedOverride={lastMovedOverride}
+        columnId={columnId}
+        highlightErrors={showErrorHighlighting}
+        onLastMovedOverrideChange={setLastMovedOverride}
+        setTask={setTask}
+      />
       <Stack direction="row" spacing={2} sx={{ pt: 2, justifyContent: 'flex-end' }}>
         <Button onClick={onClose}>Cancel</Button>
         <Box
@@ -132,7 +84,7 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
         >
           <Button
             variant="contained"
-            disabled={shouldDisableSubmit()}
+            disabled={!isPopulated(task)}
             startIcon={<Micon icon={task ? 'save' : 'add'} />}
             onClick={submit}
           >
