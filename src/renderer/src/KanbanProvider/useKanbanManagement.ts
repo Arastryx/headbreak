@@ -7,19 +7,6 @@ import { useColumnManagement } from './useColumnManagement'
 import { useCommentManagement } from './useCommentManagement'
 import { useTagManagement } from './useTagManagement'
 
-export type TaskMoverPayload = Pick<
-  Headbreak.TaskMover,
-  'sourceColumn' | 'destinationColumn' | 'policy' | 'policyType'
->
-
-export interface TaskPayload {
-  title: string
-  description?: string
-  columnId: string
-  mover?: TaskMoverPayload
-  tags: string[]
-}
-
 export type ColumnPayload = Omit<Headbreak.Column, 'id' | 'tasks' | 'markForDeletion'>
 export type TagPayload = Omit<Headbreak.Tag, 'id' | 'markForDeletion'>
 

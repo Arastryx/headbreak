@@ -12,6 +12,9 @@ declare global {
 
     interface Syncable extends Auditable {
       id: string
+
+      //This field is never present when fetching syncables, but allowing it to be set on the frontend
+      // makes managing the types WAY easier when submitting syncs
       markForDeletion?: boolean
     }
 
@@ -98,13 +101,58 @@ declare global {
     //Payloads
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
+    namespace Payload {
+      interface Syncable {
+        id: string
+        markForDeletion?: boolean
+      }
+
+      export interface TaskMover extends Syncable {
+        policy: string
+        policyType: PolicyType
+        sourceColumn: string
+        destinationColumn: string
+      }
+
+      export interface Comment extends Syncable {
+        content: string
+      }
+
+      export interface Task extends Syncable {
+        title: string
+        description?: string
+        lastMoved?: string
+        comments: Comment[]
+        mover?: TaskMover
+        tags?: string[]
+      }
+
+      export interface ColumnPayload extends Syncable {
+        label?: string
+        icon?: string
+        color?: string
+        hideDelay?: number
+        tasks: Task[]
+      }
+
+      export interface Tag extends Syncable {
+        label?: string
+        icon?: string
+        color?: string
+      }
+    }
+
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+    //Results
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+
     export interface Kanban {
       columns: Column[]
       tags: Tag[]
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
-    //MISC
+    //Misc
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
     interface Error {
@@ -119,7 +167,7 @@ declare global {
     api: unknown
 
     kanbanApi: {
-      sync: (columns: Headbreak.Column[], tags: Headbreak.Tag[]) => Result<void>
+      sync: (columns: Headbreak.Payload.Column[], tags: Headbreak.Payload.Tag[]) => Result<void>
       get: () => Result<Headbreak.Kanban>
       getChanges: (taskId: string) => Result<Headbreak.ChangeLog[]>
     }

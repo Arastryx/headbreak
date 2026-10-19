@@ -103,7 +103,6 @@ export namespace KanbanManager {
 
       task = new Task()
       task.id = payload.id
-      task.lastMoved = dayjs().toISOString()
       task.tags = new Collection<Tag>(task)
 
       unit.persist(task)
@@ -116,7 +115,6 @@ export namespace KanbanManager {
 
       if (task.column != null && column.id != task.column.id) {
         ChangeLogManager.recordColumnMove(task, column)
-        task.lastMoved = dayjs().toISOString()
       }
 
       if (task.title != payload.title || task.description != payload.description) {
@@ -128,6 +126,7 @@ export namespace KanbanManager {
     task.description = payload.description
     task.column = column
     task.order = index
+    task.lastMoved = payload.lastMoved
 
     task.tags.removeAll()
 
@@ -141,6 +140,14 @@ export namespace KanbanManager {
       ...payload.comments.map((c) => createUpdateDeleteComment(c, task, unit)),
       ...(payload.mover ? [createUpdateDeleteTaskMover(payload.mover, task, unit, taskIsNew)] : [])
     ])
+  }
+
+  function shouldUseOverrideDate(columnId: string, payload: TaskPayload) {
+    return (
+      payload.mover &&
+      payload.mover.policyType === 'interval' &&
+      payload.mover.sourceColumn === columnId
+    )
   }
 
   async function createUpdateDeleteComment(payload: CommentPayload, task: Task, unit: Fork) {

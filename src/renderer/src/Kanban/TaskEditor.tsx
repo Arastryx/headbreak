@@ -1,23 +1,16 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  TextField
-} from '@mui/material'
+import { Box, Button, Collapse, Stack, TextField, Tooltip } from '@mui/material'
 import { useState } from 'react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
 import { Micon } from '../Common/Components/Micon'
 import { TaskMoverFields } from './TaskMoverFields'
 import { Emphasize } from '@renderer/Common/Components/Emphasize'
-import { TaskMoverPayload } from '@renderer/KanbanProvider/useKanbanManagement'
-import { TagChip } from '@renderer/Common/Components/TagChip'
 import { TagMultiSelect } from '@renderer/Common/Components/TagMultiSelect'
+import { DatePicker } from '@mui/x-date-pickers'
+import { Dayjs } from 'dayjs'
 
-function isPopulated(payload: Partial<TaskMoverPayload>): payload is TaskMoverPayload {
+function isPopulated(
+  payload: Partial<Headbreak.Payload.TaskMover>
+): payload is Headbreak.Payload.TaskMover {
   const populated = (s?: string) => s != null && s != ''
 
   return (
@@ -38,10 +31,11 @@ export interface TaskEditorProps {
 export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProps) {
   const [title, setTitle] = useState(task?.title ?? '')
   const [description, setDescription] = useState(task?.description ?? '')
-  const [mover, setMover] = useState<Partial<TaskMoverPayload | undefined>>(task?.mover)
+  const [mover, setMover] = useState<Partial<Headbreak.Payload.TaskMover | undefined>>(task?.mover)
   const [tagIds, setTagIds] = useState<string[]>(task?.tags ?? [])
+  const [lastMovedOverride, setLastMovedOverride] = useState<Dayjs | null>(null)
 
-  const { tags, createTask, editTask } = useKanban()
+  const { createTask, editTask } = useKanban()
 
   const [showErrorHighlighting, setShowErrorHighlighting] = useState(false)
 
@@ -63,14 +57,15 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
         title,
         description,
         mover,
+        lastMoved: lastMovedOverride?.set('hour', 12).toISOString(),
         tags: tagIds
       })
     } else {
-      createTask({
+      createTask(columnId, {
         description,
         title,
         mover,
-        columnId,
+        lastMoved: lastMovedOverride?.set('hour', 12).toISOString(),
         tags: tagIds
       })
     }
@@ -106,8 +101,28 @@ export function TaskEditor({ columnId, onSubmit, onClose, task }: TaskEditorProp
         <TaskMoverFields
           mover={mover}
           onChange={setMover}
+          currentColumnId={columnId}
           highlightErrors={showErrorHighlighting}
         />
+        <Collapse in={columnId === mover?.sourceColumn && mover.policyType === 'interval'}>
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+            <DatePicker
+              label="Last Moved Override"
+              value={lastMovedOverride}
+              onChange={setLastMovedOverride}
+              slotProps={{
+                field: { clearable: true },
+                textField: { fullWidth: true, size: 'small' }
+              }}
+            />
+            <Tooltip
+              title="Allows you to specify a custom date for when this task was previously performed (defaults to now)."
+              placement="right"
+            >
+              <Micon icon="info" color="action" />
+            </Tooltip>
+          </Stack>
+        </Collapse>
       </Stack>
       <Stack direction="row" spacing={2} sx={{ pt: 2, justifyContent: 'flex-end' }}>
         <Button onClick={onClose}>Cancel</Button>

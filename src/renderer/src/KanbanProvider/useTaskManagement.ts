@@ -1,13 +1,13 @@
 import { arrayMoveMutable } from 'array-move'
 import { useCallback } from 'react'
 import { v4 } from 'uuid'
-import { KanbanModifier, TaskMoverPayload, TaskPayload } from './useKanbanManagement'
+import { KanbanModifier } from './useKanbanManagement'
 import dayjs from 'dayjs'
 
 function processMover(
   taskId: string,
   mover?: Headbreak.TaskMover,
-  payload?: TaskMoverPayload
+  payload?: Headbreak.Payload.TaskMover
 ): Headbreak.TaskMover | undefined {
   if (!mover) {
     if (!payload) {
@@ -55,9 +55,11 @@ export function getTask(columns: Headbreak.Column[], taskId: string) {
   return columns[columnIndex].tasks[taskIndex]
 }
 
+type BasicTaskPayload = Omit<Headbreak.Payload.Task, 'id' | 'comments'>
+
 export function useTaskManagement(modify: KanbanModifier) {
   const createTask = useCallback(
-    (payload: TaskPayload) => {
+    (columnId: string, payload: BasicTaskPayload) => {
       const now = dayjs().toISOString()
 
       const id = v4()
@@ -67,19 +69,19 @@ export function useTaskManagement(modify: KanbanModifier) {
         title: payload.title,
         description: payload.description,
         mover: processMover(id, undefined, payload.mover),
-        lastMoved: now,
-        column: payload.columnId,
+        lastMoved: payload.lastMoved ?? now,
+        column: columnId,
         updatedAt: now,
         createdAt: now,
         comments: [],
-        tags: payload.tags
+        tags: payload.tags ?? []
       }
 
       modify((copy) => {
-        const targetColumn = copy.columns?.find((c) => c.id === payload.columnId)
+        const targetColumn = copy.columns?.find((c) => c.id === columnId)
 
         if (!targetColumn) {
-          throw new Error(`Tried to add a task to non-existent column ${payload.columnId}`)
+          throw new Error(`Tried to add a task to non-existent column ${columnId}`)
         }
 
         targetColumn.tasks.push(task)
@@ -91,14 +93,15 @@ export function useTaskManagement(modify: KanbanModifier) {
   )
 
   const editTask = useCallback(
-    (id: string, payload: Omit<TaskPayload, 'columnId'>) => {
+    (id: string, payload: BasicTaskPayload) => {
       modify((copy) => {
         const task = getTask(copy.columns, id)
 
         task.title = payload.title
         task.description = payload.description
         task.mover = processMover(task.id, task.mover, payload.mover)
-        task.tags = payload.tags
+        task.tags = payload.tags ?? []
+        task.lastMoved = payload.lastMoved ?? task.lastMoved
       })
     },
     [modify]
@@ -123,6 +126,7 @@ export function useTaskManagement(modify: KanbanModifier) {
         const [movedTask] = copy.columns[columnIndex].tasks.splice(taskIndex, 1)
 
         movedTask.column = targetColumn.id
+        movedTask.lastMoved = dayjs().toISOString()
         targetColumn.tasks.push(movedTask)
       })
     },

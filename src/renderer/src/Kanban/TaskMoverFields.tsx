@@ -1,16 +1,23 @@
-import { Typography, Stack, FormControlLabel, Switch, Box, Collapse } from '@mui/material'
+import { Typography, Stack, FormControlLabel, Switch, Box, Collapse, Tooltip } from '@mui/material'
 import { ColumnSelect } from '@renderer/Common/Components/ColumnSelect'
 import { IntervalSelector } from './IntervalSelector/IntervalSelector'
 import { Emphasize } from '@renderer/Common/Components/Emphasize'
-import { TaskMoverPayload } from '@renderer/KanbanProvider/useKanbanManagement'
+import { DatePicker, DateTimePicker } from '@mui/x-date-pickers'
+import { Micon } from '@renderer/Common/Components/Micon'
 
 export interface TaskMoverFieldsProps {
-  mover?: Partial<TaskMoverPayload>
+  mover?: Partial<Headbreak.Payload.TaskMover>
   highlightErrors?: boolean
-  onChange: (m?: Partial<TaskMoverPayload>) => void
+  currentColumnId: string
+  onChange: (m?: Partial<Headbreak.Payload.TaskMover>) => void
 }
 
-export function TaskMoverFields({ mover, onChange, highlightErrors }: TaskMoverFieldsProps) {
+export function TaskMoverFields({
+  mover,
+  onChange,
+  highlightErrors,
+  currentColumnId
+}: TaskMoverFieldsProps) {
   return (
     <Box>
       <FormControlLabel
