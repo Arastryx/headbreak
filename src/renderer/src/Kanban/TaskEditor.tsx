@@ -1,11 +1,7 @@
-import { Box, Button, Collapse, Stack, TextField, Tooltip } from '@mui/material'
+import { Box, Button, Stack } from '@mui/material'
 import { useState } from 'react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
 import { Micon } from '../Common/Components/Micon'
-import { TaskMoverFields } from './TaskMoverFields'
-import { Emphasize } from '@renderer/Common/Components/Emphasize'
-import { TagMultiSelect } from '@renderer/Common/Components/TagMultiSelect'
-import { DatePicker } from '@mui/x-date-pickers'
 import { Dayjs } from 'dayjs'
 import { useImmer } from 'use-immer'
 import { DeepPartial } from '@renderer/Common/Types/deepPartial'
@@ -39,7 +35,6 @@ export interface TaskEditorProps {
 
 export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: TaskEditorProps) {
   const [task, setTask] = useImmer<DeepPartial<BasicTaskPayload>>(editableTask ?? {})
-  const { title, description, mover, tags: tagIds } = task
 
   //Last moved override is stored separately because I have learned my lesson about storing date picker
   // values as strings (it gets messy)
