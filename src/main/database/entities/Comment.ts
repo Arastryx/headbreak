@@ -1,6 +1,7 @@
 import { defineEntity, p } from '@mikro-orm/core'
 import { TaskSchema } from './Task'
 import { AuditableSchema } from './Auditable'
+import { AttachmentSchema } from './Attachment'
 
 export const CommentSchema = defineEntity({
   name: 'Comment',
@@ -8,7 +9,9 @@ export const CommentSchema = defineEntity({
   properties: {
     id: p.uuid().primary(),
     content: p.text(),
-    task: () => p.manyToOne(TaskSchema).deleteRule('cascade')
+    task: () => p.manyToOne(TaskSchema).deleteRule('cascade'),
+
+    attachments: () => p.oneToMany(AttachmentSchema).mappedBy('comment')
   }
 })
 

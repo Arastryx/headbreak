@@ -2,6 +2,219 @@
   "namespaces": [],
   "tables": [
     {
+      "name": "attachment",
+      "columns": {
+        "comment_id": {
+          "name": "comment_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        },
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "link": {
+          "name": "link",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "task_id": {
+          "name": "task_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [
+            "link",
+            "localFile",
+            "pastedImage"
+          ],
+          "mappedType": "enum"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        }
+      },
+      "indexes": [
+        {
+          "columnNames": [
+            "comment_id"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "attachment_comment_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "task_id"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "attachment_task_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "primary",
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [
+        {
+          "name": "attachment_type_check",
+          "expression": "`type` in ('link', 'localFile', 'pastedImage')",
+          "definition": "check (`type` in ('link', 'localFile', 'pastedImage'))",
+          "columnName": "type"
+        }
+      ],
+      "triggers": [],
+      "foreignKeys": {
+        "attachment_comment_id_foreign": {
+          "columnNames": [
+            "comment_id"
+          ],
+          "constraintName": "attachment_comment_id_foreign",
+          "localTableName": "attachment",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "comment",
+          "deleteRule": "cascade"
+        },
+        "attachment_task_id_foreign": {
+          "columnNames": [
+            "task_id"
+          ],
+          "constraintName": "attachment_task_id_foreign",
+          "localTableName": "attachment",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "task",
+          "deleteRule": "cascade"
+        }
+      },
+      "comment": null
+    },
+    {
       "name": "change_log",
       "columns": {
         "content": {
@@ -92,7 +305,9 @@
       },
       "indexes": [
         {
-          "columnNames": ["task_id"],
+          "columnNames": [
+            "task_id"
+          ],
           "composite": false,
           "constraint": false,
           "keyName": "change_log_task_id_index",
@@ -100,7 +315,9 @@
           "unique": false
         },
         {
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -112,10 +329,14 @@
       "triggers": [],
       "foreignKeys": {
         "change_log_task_id_foreign": {
-          "columnNames": ["task_id"],
+          "columnNames": [
+            "task_id"
+          ],
           "constraintName": "change_log_task_id_foreign",
           "localTableName": "change_log",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "task",
           "deleteRule": "cascade"
         }
@@ -264,7 +485,9 @@
       },
       "indexes": [
         {
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -368,7 +591,9 @@
       },
       "indexes": [
         {
-          "columnNames": ["task_id"],
+          "columnNames": [
+            "task_id"
+          ],
           "composite": false,
           "constraint": false,
           "keyName": "comment_task_id_index",
@@ -376,7 +601,9 @@
           "unique": false
         },
         {
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -388,10 +615,14 @@
       "triggers": [],
       "foreignKeys": {
         "comment_task_id_foreign": {
-          "columnNames": ["task_id"],
+          "columnNames": [
+            "task_id"
+          ],
           "constraintName": "comment_task_id_foreign",
           "localTableName": "comment",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "task",
           "deleteRule": "cascade"
         }
@@ -506,7 +737,9 @@
       },
       "indexes": [
         {
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -661,7 +894,9 @@
       },
       "indexes": [
         {
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -669,7 +904,9 @@
           "unique": true
         },
         {
-          "columnNames": ["column_id"],
+          "columnNames": [
+            "column_id"
+          ],
           "composite": false,
           "constraint": false,
           "keyName": "task_column_id_index",
@@ -681,10 +918,14 @@
       "triggers": [],
       "foreignKeys": {
         "task_column_id_foreign": {
-          "columnNames": ["column_id"],
+          "columnNames": [
+            "column_id"
+          ],
           "constraintName": "task_column_id_foreign",
           "localTableName": "task",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "column",
           "deleteRule": "cascade"
         }
@@ -776,7 +1017,10 @@
           "default": null,
           "comment": null,
           "collation": null,
-          "enumItems": ["cron", "interval"],
+          "enumItems": [
+            "cron",
+            "interval"
+          ],
           "mappedType": "enum"
         },
         "source_column_id": {
@@ -833,7 +1077,9 @@
       },
       "indexes": [
         {
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -841,7 +1087,9 @@
           "unique": true
         },
         {
-          "columnNames": ["destination_column_id"],
+          "columnNames": [
+            "destination_column_id"
+          ],
           "composite": false,
           "constraint": false,
           "keyName": "task_mover_destination_column_id_index",
@@ -849,7 +1097,9 @@
           "unique": false
         },
         {
-          "columnNames": ["source_column_id"],
+          "columnNames": [
+            "source_column_id"
+          ],
           "composite": false,
           "constraint": false,
           "keyName": "task_mover_source_column_id_index",
@@ -857,7 +1107,9 @@
           "unique": false
         },
         {
-          "columnNames": ["task_id"],
+          "columnNames": [
+            "task_id"
+          ],
           "composite": false,
           "constraint": true,
           "keyName": "task_mover_task_id_unique",
@@ -876,24 +1128,36 @@
       "triggers": [],
       "foreignKeys": {
         "task_mover_destination_column_id_foreign": {
-          "columnNames": ["destination_column_id"],
+          "columnNames": [
+            "destination_column_id"
+          ],
           "constraintName": "task_mover_destination_column_id_foreign",
           "localTableName": "task_mover",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "column"
         },
         "task_mover_source_column_id_foreign": {
-          "columnNames": ["source_column_id"],
+          "columnNames": [
+            "source_column_id"
+          ],
           "constraintName": "task_mover_source_column_id_foreign",
           "localTableName": "task_mover",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "column"
         },
         "task_mover_task_id_foreign": {
-          "columnNames": ["task_id"],
+          "columnNames": [
+            "task_id"
+          ],
           "constraintName": "task_mover_task_id_foreign",
           "localTableName": "task_mover",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "task",
           "deleteRule": "cascade"
         }
@@ -940,7 +1204,10 @@
       },
       "indexes": [
         {
-          "columnNames": ["task_id", "tag_id"],
+          "columnNames": [
+            "task_id",
+            "tag_id"
+          ],
           "composite": true,
           "constraint": true,
           "keyName": "primary",
@@ -948,7 +1215,9 @@
           "unique": true
         },
         {
-          "columnNames": ["tag_id"],
+          "columnNames": [
+            "tag_id"
+          ],
           "composite": false,
           "constraint": false,
           "keyName": "task_tags_tag_id_index",
@@ -956,7 +1225,9 @@
           "unique": false
         },
         {
-          "columnNames": ["task_id"],
+          "columnNames": [
+            "task_id"
+          ],
           "composite": false,
           "constraint": false,
           "keyName": "task_tags_task_id_index",
@@ -968,19 +1239,27 @@
       "triggers": [],
       "foreignKeys": {
         "task_tags_tag_id_foreign": {
-          "columnNames": ["tag_id"],
+          "columnNames": [
+            "tag_id"
+          ],
           "constraintName": "task_tags_tag_id_foreign",
           "localTableName": "task_tags",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "tag",
           "updateRule": "cascade",
           "deleteRule": "cascade"
         },
         "task_tags_task_id_foreign": {
-          "columnNames": ["task_id"],
+          "columnNames": [
+            "task_id"
+          ],
           "constraintName": "task_tags_task_id_foreign",
           "localTableName": "task_tags",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "task",
           "updateRule": "cascade",
           "deleteRule": "cascade"
