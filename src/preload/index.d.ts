@@ -62,6 +62,13 @@ declare global {
       color?: string
     }
 
+    interface Attachment extends Auditable {
+      id: number
+      type: 'link' | 'localFile' | 'pastedImage'
+      link: string
+      title?: string
+    }
+
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
     //Change Types
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
@@ -170,6 +177,10 @@ declare global {
       sync: (columns: Headbreak.Payload.Column[], tags: Headbreak.Payload.Tag[]) => Result<void>
       get: () => Result<Headbreak.Kanban>
       getChanges: (taskId: string) => Result<Headbreak.ChangeLog[]>
+    }
+
+    attachmentApi: {
+      createLink: (url: string, title?: string) => Result<Headbreak.Attachment>
     }
   }
 }

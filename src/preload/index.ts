@@ -28,6 +28,10 @@ try {
     get: generateEndpoint('kanban/get'),
     getChanges: generateEndpoint('kanban/get-changes')
   })
+
+  contextBridge.exposeInMainWorld('attachmentApi', {
+    createLink: generateEndpoint('attachment/createLink')
+  })
 } catch (error) {
   console.error(error)
 }

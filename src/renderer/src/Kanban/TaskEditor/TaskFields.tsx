@@ -1,4 +1,4 @@
-import { TextField, Collapse, Stack, Tooltip } from '@mui/material'
+import { TextField, Collapse, Stack, Tooltip, Box } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers'
 import { Emphasize } from '@renderer/Common/Components/Emphasize'
 import { Micon } from '@renderer/Common/Components/Micon'
@@ -10,6 +10,7 @@ import { DeepPartial } from '@renderer/Common/Types/deepPartial'
 import { BasicTaskPayload } from '@renderer/KanbanProvider/useTaskManagement'
 import { Updater } from 'use-immer'
 import { Dayjs } from 'dayjs'
+import { AttachmentCreator } from '../AttachmentCreator/AttachmentCreator'
 
 export interface TaskFieldsProps {
   task: DeepPartial<BasicTaskPayload>
@@ -59,6 +60,9 @@ export function TaskFields({
           })
         }
       />
+      <Box>
+        <AttachmentCreator />
+      </Box>
       <TagMultiSelect
         value={tagIds ?? []}
         onChange={(t) =>
@@ -67,35 +71,37 @@ export function TaskFields({
           })
         }
       />
-      <TaskMoverFields
-        mover={mover}
-        onChange={(m) =>
-          setTask((copy) => {
-            copy.mover = m
-          })
-        }
-        currentColumnId={columnId}
-        highlightErrors={highlightErrors}
-      />
-      <Collapse in={columnId === mover?.sourceColumn && mover.policyType === 'interval'}>
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-          <DatePicker
-            label="Last Moved Override"
-            value={lastMovedOverride}
-            onChange={onLastMovedOverrideChange}
-            slotProps={{
-              field: { clearable: true },
-              textField: { fullWidth: true, size: 'small' }
-            }}
-          />
-          <Tooltip
-            title="Allows you to specify a custom date for when this task was previously performed (defaults to now)."
-            placement="right"
-          >
-            <Micon icon="info" color="action" />
-          </Tooltip>
-        </Stack>
-      </Collapse>
+      <Box>
+        <TaskMoverFields
+          mover={mover}
+          onChange={(m) =>
+            setTask((copy) => {
+              copy.mover = m
+            })
+          }
+          currentColumnId={columnId}
+          highlightErrors={highlightErrors}
+        />
+        <Collapse in={columnId === mover?.sourceColumn && mover.policyType === 'interval'}>
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+            <DatePicker
+              label="Last Moved Override"
+              value={lastMovedOverride}
+              onChange={onLastMovedOverrideChange}
+              slotProps={{
+                field: { clearable: true },
+                textField: { fullWidth: true, size: 'small' }
+              }}
+            />
+            <Tooltip
+              title="Allows you to specify a custom date for when this task was previously performed (defaults to now)."
+              placement="right"
+            >
+              <Micon icon="info" color="action" />
+            </Tooltip>
+          </Stack>
+        </Collapse>
+      </Box>
     </Stack>
   )
 }

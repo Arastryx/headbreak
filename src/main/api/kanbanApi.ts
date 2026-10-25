@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
-import { KanbanManager } from './KanbanManager'
-import { handleError } from './handleError'
-import { ChangeLogManager } from './ChangeLogManager'
+import { KanbanManager } from '../KanbanManager'
+import { handleError } from '../handleError'
+import { ChangeLogManager } from '../ChangeLogManager'
 
 export function setupKanbanApi() {
   ipcMain.handle('kanban/sync', (e, ...params: Parameters<typeof KanbanManager.sync>) =>

@@ -2,11 +2,12 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.ico?asset'
-import { setupKanbanApi } from './kanbanApi'
+import { setupKanbanApi } from './api/kanbanApi'
 import { initDatabase } from './database/database'
 import { checkAutomatedMovements } from './checkAutomatedMovements'
 import { store } from './config'
 import { mkdirSync, existsSync } from 'node:fs'
+import { setupAttachmentApi } from './api/attachmentApi'
 
 const isDev = !app.isPackaged
 
@@ -102,6 +103,7 @@ if (!gotTheLock) {
     ipcMain.on('ping', () => console.log('pong'))
 
     setupKanbanApi()
+    setupAttachmentApi()
 
     createWindow()
 
