@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  IconButton,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -14,24 +15,23 @@ import { Micon } from '@renderer/Common/Components/Micon'
 import React, { useRef, useState } from 'react'
 import { LinkAttachmentEditor } from './LinkAttachmentEditor'
 
-export interface AttachmentCreatorProps {}
+export interface AttachmentCreatorProps {
+  taskId?: string
+  onChange?: () => void
+}
 
-export function AttachmentCreator({}: AttachmentCreatorProps) {
+export function AttachmentCreator({ taskId, onChange }: AttachmentCreatorProps) {
   const [showMenu, setShowMenu] = useState(false)
   const [showLinkEditor, setShowLinkEditor] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   return (
     <>
-      <Button
-        startIcon={<Micon icon="add" />}
-        variant="outlined"
-        onClick={() => setShowMenu(true)}
-        ref={buttonRef}
-        size="small"
-      >
-        Add Attachment
-      </Button>
+      <Tooltip title="Add Attachment" placement="left">
+        <IconButton onClick={() => setShowMenu(true)} ref={buttonRef} size="small">
+          <Micon icon="add_link" />
+        </IconButton>
+      </Tooltip>
       <Menu
         open={showMenu}
         onClose={() => setShowMenu(false)}
@@ -73,7 +73,11 @@ export function AttachmentCreator({}: AttachmentCreatorProps) {
       <Dialog open={showLinkEditor} onClose={() => setShowLinkEditor(false)}>
         <DialogTitle>Add Link</DialogTitle>
         <DialogContent>
-          <LinkAttachmentEditor />
+          <LinkAttachmentEditor
+            onClose={() => setShowLinkEditor(false)}
+            taskId={taskId}
+            onSubmit={onChange}
+          />
         </DialogContent>
       </Dialog>
     </>

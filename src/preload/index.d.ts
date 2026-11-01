@@ -147,6 +147,13 @@ declare global {
         icon?: string
         color?: string
       }
+
+      interface Attachment {
+        url: string
+        title?: string
+        taskId?: string
+        commentId?: string
+      }
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
@@ -180,7 +187,13 @@ declare global {
     }
 
     attachmentApi: {
-      createLink: (url: string, title?: string) => Result<Headbreak.Attachment>
+      createLink: (payload: Headbreak.Payload.Attachment) => Result<Headbreak.Attachment>
+      getForTask: (taskId: string) => Result<Headbreak.Attachment[]>
+      edit: (
+        attachmentId: number,
+        payload: Headbreak.Payload.Attachment
+      ) => Result<Headbreak.Attachment>
+      delete: (attachmentId: number) => Result<void>
     }
   }
 }

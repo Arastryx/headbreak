@@ -60,9 +60,6 @@ export function TaskFields({
           })
         }
       />
-      <Box>
-        <AttachmentCreator />
-      </Box>
       <TagMultiSelect
         value={tagIds ?? []}
         onChange={(t) =>

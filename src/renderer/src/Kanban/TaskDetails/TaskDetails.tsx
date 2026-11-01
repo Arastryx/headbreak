@@ -1,4 +1,14 @@
-import { Box, Divider, IconButton, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  ButtonBase,
+  Card,
+  CardContent,
+  Divider,
+  Grid,
+  IconButton,
+  Stack,
+  Typography
+} from '@mui/material'
 import { useIpcData } from '../../Common/Hooks/useIpcCall'
 import dayjs from 'dayjs'
 import { useState } from 'react'
@@ -11,6 +21,8 @@ import { intervalToString } from '../IntervalSelector/intervalToString'
 import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
 import { TagChip } from '@renderer/Common/Components/TagChip'
 import { calculateTimeUntilMove, TimeUntilMove } from '../MovementWarning'
+import { AttachmentCreator } from '../AttachmentCreator'
+import { LinkAttachment } from './LinkAttachment'
 
 function isComment(c: Headbreak.Comment | Headbreak.ChangeLog): c is Headbreak.Comment {
   return typeof c.content === 'string'
@@ -22,6 +34,10 @@ export interface TaskDetailsProps {
 
 export function TaskDetails({ task }: TaskDetailsProps) {
   const { data: changes } = useIpcData(() => window.kanbanApi.getChanges(task.id), [task.id])
+  const { data: attachments, reload: reloadAttachments } = useIpcData(
+    () => window.attachmentApi.getForTask(task.id),
+    [task.id]
+  )
   const [editMode, setEditMode] = useState(false)
 
   const createdThisYear = dayjs(task.createdAt).year() === dayjs().year()
@@ -57,6 +73,18 @@ export function TaskDetails({ task }: TaskDetailsProps) {
               ))}
             </Stack>
           )}
+
+          <Grid container spacing={1}>
+            <Grid sx={{ pt: 0.3, pr: 0.5 }}>
+              <AttachmentCreator taskId={task.id} onChange={reloadAttachments} />
+            </Grid>
+            {attachments?.map((a) => (
+              <Grid key={a.id}>
+                <LinkAttachment attachment={a} onChange={reloadAttachments} />
+              </Grid>
+            ))}
+          </Grid>
+
           {task.mover && (
             <Typography variant="caption">
               This task moves from{' '}

@@ -8,6 +8,7 @@ import { checkAutomatedMovements } from './checkAutomatedMovements'
 import { store } from './config'
 import { mkdirSync, existsSync } from 'node:fs'
 import { setupAttachmentApi } from './api/attachmentApi'
+import { clearOrphanedAttachments } from './clearOrphanedAttachments'
 
 const isDev = !app.isPackaged
 
@@ -97,7 +98,8 @@ if (!gotTheLock) {
     }
 
     await initDatabase()
-    await checkAutomatedMovements()
+
+    await Promise.all([checkAutomatedMovements(), clearOrphanedAttachments()])
 
     // IPC test
     ipcMain.on('ping', () => console.log('pong'))

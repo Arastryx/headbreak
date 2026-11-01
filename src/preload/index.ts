@@ -30,7 +30,10 @@ try {
   })
 
   contextBridge.exposeInMainWorld('attachmentApi', {
-    createLink: generateEndpoint('attachment/createLink')
+    createLink: generateEndpoint('attachment/createLink'),
+    getForTask: generateEndpoint('attachment/getForTask'),
+    edit: generateEndpoint('attachment/edit'),
+    delete: generateEndpoint('attachment/delete')
   })
 } catch (error) {
   console.error(error)
