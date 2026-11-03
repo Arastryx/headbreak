@@ -11,9 +11,20 @@ export function setupAttachmentApi() {
   )
 
   ipcMain.handle(
+    'attachment/createFiles',
+    (e, ...params: Parameters<typeof AttachmentManager.createFiles>) =>
+      handleError(() => AttachmentManager.createFiles(...params))
+  )
+
+  ipcMain.handle(
     'attachment/getForTask',
     (e, ...params: Parameters<typeof AttachmentManager.getForTask>) =>
       handleError(() => AttachmentManager.getForTask(...params))
+  )
+
+  ipcMain.on('attachment/openFile', (_e, id: number) => AttachmentManager.openFile(id))
+  ipcMain.on('attachment/openFileLocation', (_e, id: number) =>
+    AttachmentManager.openFileLocation(id)
   )
 
   ipcMain.handle('attachment/edit', (e, ...params: Parameters<typeof AttachmentManager.edit>) =>

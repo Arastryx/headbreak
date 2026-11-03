@@ -22,7 +22,7 @@ import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
 import { TagChip } from '@renderer/Common/Components/TagChip'
 import { calculateTimeUntilMove, TimeUntilMove } from '../MovementWarning'
 import { AttachmentCreator } from '../AttachmentCreator'
-import { LinkAttachment } from './LinkAttachment'
+import { AttachmentDisplay } from './AttachmentDisplay'
 
 function isComment(c: Headbreak.Comment | Headbreak.ChangeLog): c is Headbreak.Comment {
   return typeof c.content === 'string'
@@ -80,7 +80,7 @@ export function TaskDetails({ task }: TaskDetailsProps) {
             </Grid>
             {attachments?.map((a) => (
               <Grid key={a.id}>
-                <LinkAttachment attachment={a} onChange={reloadAttachments} />
+                <AttachmentDisplay attachment={a} onChange={reloadAttachments} />
               </Grid>
             ))}
           </Grid>

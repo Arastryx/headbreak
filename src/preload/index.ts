@@ -31,7 +31,11 @@ try {
 
   contextBridge.exposeInMainWorld('attachmentApi', {
     createLink: generateEndpoint('attachment/createLink'),
+    createFiles: generateEndpoint('attachment/createFiles'),
     getForTask: generateEndpoint('attachment/getForTask'),
+
+    openFile: generateCommand('attachment/openFile'),
+    openFileLocation: generateCommand('attachment/openFileLocation'),
     edit: generateEndpoint('attachment/edit'),
     delete: generateEndpoint('attachment/delete')
   })

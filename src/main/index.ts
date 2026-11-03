@@ -23,6 +23,12 @@ if (isDev) {
   })
 }
 
+interface HeadbreakApp {
+  mainWindow?: BrowserWindow
+}
+
+export const headbreakApp: HeadbreakApp = {}
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -69,6 +75,8 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  headbreakApp.mainWindow = mainWindow
 }
 
 const gotTheLock = app.requestSingleInstanceLock()

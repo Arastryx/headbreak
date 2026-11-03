@@ -4,33 +4,51 @@ import { AttachmentSchema } from './database/entities/Attachment'
 import { normalizeEntities } from './normalize'
 import { Task, TaskSchema } from './database/entities/Task'
 import { TaskComment } from './database/entities/Comment'
+import { dialog, shell } from 'electron'
+import { headbreakApp } from '.'
 
 interface AttachmentPayload {
   url: string
   title?: string
   taskId?: string
-  commentId?: string
 }
 
 export namespace AttachmentManager {
   export async function createLink(payload: AttachmentPayload) {
     const unit = unitOfWork()
 
-    if (payload.taskId && payload.commentId) {
-      throw new Error('Cannot attach an attachment to both a task and a comment')
-    }
-
     const result = unit.create(AttachmentSchema, {
       type: 'link',
       link: payload.url,
       title: payload.title,
-      task: payload.taskId ? rel(Task, payload.taskId) : undefined,
-      comment: payload.commentId ? rel(TaskComment, payload.commentId) : undefined
+      task: payload.taskId ? rel(Task, payload.taskId) : undefined
     })
 
     await unit.flush()
 
     return normalizeEntities(result)
+  }
+
+  export async function createFiles(taskId: string, type: 'file' | 'folder') {
+    if (!headbreakApp.mainWindow) {
+      throw new Error('Attempted to open a dialog before the window was ready')
+    }
+
+    const result = await dialog.showOpenDialog(headbreakApp.mainWindow, {
+      properties: [type === 'file' ? 'openFile' : 'openDirectory', 'multiSelections']
+    })
+
+    const unit = unitOfWork()
+
+    result.filePaths.forEach((p) =>
+      unit.create(AttachmentSchema, {
+        type: 'localFile',
+        link: p,
+        task: rel(Task, taskId)
+      })
+    )
+
+    await unit.flush()
   }
 
   export async function getForTask(taskId: string) {
@@ -39,6 +57,28 @@ export namespace AttachmentManager {
     const task = await unit.findOneOrFail(TaskSchema, taskId, { populate: ['attachments'] })
 
     return normalizeEntities(task.attachments.map((a) => a))
+  }
+
+  export async function openFile(attachmentId: number) {
+    const unit = unitOfWork()
+    const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId)
+
+    if (attachment.type === 'link') {
+      throw new Error('Attempted to open a file on a link attachment')
+    }
+
+    await shell.openPath(attachment.link)
+  }
+
+  export async function openFileLocation(attachmentId: number) {
+    const unit = unitOfWork()
+    const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId)
+
+    if (attachment.type === 'link') {
+      throw new Error('Attempted to open a file on a link attachment')
+    }
+
+    await shell.showItemInFolder(attachment.link)
   }
 
   export async function edit(attachmentId: number, payload: AttachmentPayload) {

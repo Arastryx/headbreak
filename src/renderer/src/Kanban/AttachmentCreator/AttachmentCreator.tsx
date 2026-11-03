@@ -56,19 +56,48 @@ export function AttachmentCreator({ taskId, onChange }: AttachmentCreatorProps) 
           </ListItemIcon>
           <ListItemText primary="Link" secondary="Attach a URL" />
         </MenuItem>
-        <Tooltip
-          title={
-            'File attachments point to the original file. No files are "uploaded" to headbreak'
-          }
-          placement="right"
-        >
-          <MenuItem>
-            <ListItemIcon>
-              <Micon icon="insert_drive_file" />
-            </ListItemIcon>
-            <ListItemText primary="File" secondary="Attach a local file" />
-          </MenuItem>
-        </Tooltip>
+        {taskId && (
+          <>
+            <Tooltip
+              title={
+                'File attachments point to the original file. No files are "uploaded" to headbreak'
+              }
+              placement="right"
+            >
+              <MenuItem
+                onClick={async () => {
+                  await window.attachmentApi.createFiles(taskId, 'file')
+                  setShowMenu(false)
+                  onChange?.()
+                }}
+              >
+                <ListItemIcon>
+                  <Micon icon="insert_drive_file" />
+                </ListItemIcon>
+                <ListItemText primary="Files" secondary="Attach local files" />
+              </MenuItem>
+            </Tooltip>
+            <Tooltip
+              title={
+                'Folder attachments point to the original folder. No folders are "uploaded" to headbreak'
+              }
+              placement="right"
+            >
+              <MenuItem
+                onClick={async () => {
+                  await window.attachmentApi.createFiles(taskId, 'folder')
+                  setShowMenu(false)
+                  onChange?.()
+                }}
+              >
+                <ListItemIcon>
+                  <Micon icon="folder" />
+                </ListItemIcon>
+                <ListItemText primary="Folders" secondary="Attach local folders" />
+              </MenuItem>
+            </Tooltip>
+          </>
+        )}
       </Menu>
       <Dialog open={showLinkEditor} onClose={() => setShowLinkEditor(false)}>
         <DialogTitle>Add Link</DialogTitle>

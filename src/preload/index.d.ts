@@ -188,7 +188,10 @@ declare global {
 
     attachmentApi: {
       createLink: (payload: Headbreak.Payload.Attachment) => Result<Headbreak.Attachment>
+      createFiles: (taskId: string, type: 'file' | 'folder') => Result<void>
       getForTask: (taskId: string) => Result<Headbreak.Attachment[]>
+      openFile: (attachmentId: number) => void
+      openFileLocation: (attachmentId: number) => void
       edit: (
         attachmentId: number,
         payload: Headbreak.Payload.Attachment
