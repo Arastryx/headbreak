@@ -8,7 +8,7 @@ export const AttachmentSchema = defineEntity({
   extends: AuditableSchema,
   properties: {
     id: p.integer().primary(),
-    type: p.enum(['link', 'localFile', 'pastedImage']),
+    type: p.enum(['link', 'localFile', 'localFolder', 'pastedImage']),
     title: p.string().length(255).nullable(),
     link: p.string().length(1023),
     task: () => p.manyToOne(TaskSchema).nullable().deleteRule('cascade'),

@@ -19,14 +19,12 @@ function getAttachmentIcon(attachment: Headbreak.Attachment): MaterialIcon {
     return 'link'
   }
 
-  const pathParts = attachment.link.split(/[\\\/]/)
-  const fileParts = pathParts[pathParts.length - 1].split('.')
-
-  if (fileParts.length === 1) {
+  if (attachment.type === 'localFolder') {
     return 'folder'
   }
 
-  const extension = fileParts[fileParts.length - 1]
+  const extensionRegex = /(?:\.([^.]+))?$/
+  const extension = extensionRegex.exec(attachment.link)?.[1]
 
   switch (extension) {
     case 'png':
@@ -36,6 +34,14 @@ function getAttachmentIcon(attachment: Headbreak.Attachment): MaterialIcon {
     default:
       return 'insert_drive_file'
   }
+}
+
+function getAttachmentLabel(attachment: Headbreak.Attachment) {
+  if (attachment.type === 'link') {
+    return attachment.title
+  }
+
+  return attachment.link.replace(/^.*[\\/]/, '')
 }
 
 export interface AttachmentDisplayProps {
@@ -66,7 +72,7 @@ export function AttachmentDisplay({ attachment, onChange }: AttachmentDisplayPro
     >
       <Micon icon={getAttachmentIcon(attachment)} fontSize="small" color="action" />
       <Typography sx={{ textDecoration: 'none', color: 'unset' }}>
-        {attachment.title ?? attachment.link}
+        {getAttachmentLabel(attachment)}
       </Typography>
     </Stack>
   )
@@ -90,7 +96,7 @@ export function AttachmentDisplay({ attachment, onChange }: AttachmentDisplayPro
             label: 'Open File Location',
             icon: 'folder',
             onClick: () => {
-              window.attachmentApi.openFile(attachment.id)
+              window.attachmentApi.openFileLocation(attachment.id)
             },
             hide: attachment.type !== 'localFile'
           },

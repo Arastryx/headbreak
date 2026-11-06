@@ -62,9 +62,11 @@ declare global {
       color?: string
     }
 
+    type AttachmentType = 'link' | 'localFile' | 'localFolder' | 'pastedImage'
+
     interface Attachment extends Auditable {
       id: number
-      type: 'link' | 'localFile' | 'pastedImage'
+      type: AttachmentType
       link: string
       title?: string
     }

@@ -120,11 +120,7 @@
           "default": null,
           "comment": null,
           "collation": null,
-          "enumItems": [
-            "link",
-            "localFile",
-            "pastedImage"
-          ],
+          "enumItems": ["link", "localFile", "localFolder", "pastedImage"],
           "mappedType": "enum"
         },
         "updated_at": {
@@ -147,9 +143,7 @@
       },
       "indexes": [
         {
-          "columnNames": [
-            "comment_id"
-          ],
+          "columnNames": ["comment_id"],
           "composite": false,
           "constraint": false,
           "keyName": "attachment_comment_id_index",
@@ -157,9 +151,7 @@
           "unique": false
         },
         {
-          "columnNames": [
-            "task_id"
-          ],
+          "columnNames": ["task_id"],
           "composite": false,
           "constraint": false,
           "keyName": "attachment_task_id_index",
@@ -167,9 +159,7 @@
           "unique": false
         },
         {
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -188,26 +178,18 @@
       "triggers": [],
       "foreignKeys": {
         "attachment_comment_id_foreign": {
-          "columnNames": [
-            "comment_id"
-          ],
+          "columnNames": ["comment_id"],
           "constraintName": "attachment_comment_id_foreign",
           "localTableName": "attachment",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "comment",
           "deleteRule": "cascade"
         },
         "attachment_task_id_foreign": {
-          "columnNames": [
-            "task_id"
-          ],
+          "columnNames": ["task_id"],
           "constraintName": "attachment_task_id_foreign",
           "localTableName": "attachment",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "task",
           "deleteRule": "cascade"
         }
@@ -305,9 +287,7 @@
       },
       "indexes": [
         {
-          "columnNames": [
-            "task_id"
-          ],
+          "columnNames": ["task_id"],
           "composite": false,
           "constraint": false,
           "keyName": "change_log_task_id_index",
@@ -315,9 +295,7 @@
           "unique": false
         },
         {
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -329,14 +307,10 @@
       "triggers": [],
       "foreignKeys": {
         "change_log_task_id_foreign": {
-          "columnNames": [
-            "task_id"
-          ],
+          "columnNames": ["task_id"],
           "constraintName": "change_log_task_id_foreign",
           "localTableName": "change_log",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "task",
           "deleteRule": "cascade"
         }
@@ -485,9 +459,7 @@
       },
       "indexes": [
         {
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -591,9 +563,7 @@
       },
       "indexes": [
         {
-          "columnNames": [
-            "task_id"
-          ],
+          "columnNames": ["task_id"],
           "composite": false,
           "constraint": false,
           "keyName": "comment_task_id_index",
@@ -601,9 +571,7 @@
           "unique": false
         },
         {
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -615,14 +583,10 @@
       "triggers": [],
       "foreignKeys": {
         "comment_task_id_foreign": {
-          "columnNames": [
-            "task_id"
-          ],
+          "columnNames": ["task_id"],
           "constraintName": "comment_task_id_foreign",
           "localTableName": "comment",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "task",
           "deleteRule": "cascade"
         }
@@ -737,9 +701,7 @@
       },
       "indexes": [
         {
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -894,9 +856,7 @@
       },
       "indexes": [
         {
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -904,9 +864,7 @@
           "unique": true
         },
         {
-          "columnNames": [
-            "column_id"
-          ],
+          "columnNames": ["column_id"],
           "composite": false,
           "constraint": false,
           "keyName": "task_column_id_index",
@@ -918,14 +876,10 @@
       "triggers": [],
       "foreignKeys": {
         "task_column_id_foreign": {
-          "columnNames": [
-            "column_id"
-          ],
+          "columnNames": ["column_id"],
           "constraintName": "task_column_id_foreign",
           "localTableName": "task",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "column",
           "deleteRule": "cascade"
         }
@@ -1017,10 +971,7 @@
           "default": null,
           "comment": null,
           "collation": null,
-          "enumItems": [
-            "cron",
-            "interval"
-          ],
+          "enumItems": ["cron", "interval"],
           "mappedType": "enum"
         },
         "source_column_id": {
@@ -1077,9 +1028,7 @@
       },
       "indexes": [
         {
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "primary",
@@ -1087,9 +1036,7 @@
           "unique": true
         },
         {
-          "columnNames": [
-            "destination_column_id"
-          ],
+          "columnNames": ["destination_column_id"],
           "composite": false,
           "constraint": false,
           "keyName": "task_mover_destination_column_id_index",
@@ -1097,9 +1044,7 @@
           "unique": false
         },
         {
-          "columnNames": [
-            "source_column_id"
-          ],
+          "columnNames": ["source_column_id"],
           "composite": false,
           "constraint": false,
           "keyName": "task_mover_source_column_id_index",
@@ -1107,9 +1052,7 @@
           "unique": false
         },
         {
-          "columnNames": [
-            "task_id"
-          ],
+          "columnNames": ["task_id"],
           "composite": false,
           "constraint": true,
           "keyName": "task_mover_task_id_unique",
@@ -1128,36 +1071,24 @@
       "triggers": [],
       "foreignKeys": {
         "task_mover_destination_column_id_foreign": {
-          "columnNames": [
-            "destination_column_id"
-          ],
+          "columnNames": ["destination_column_id"],
           "constraintName": "task_mover_destination_column_id_foreign",
           "localTableName": "task_mover",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "column"
         },
         "task_mover_source_column_id_foreign": {
-          "columnNames": [
-            "source_column_id"
-          ],
+          "columnNames": ["source_column_id"],
           "constraintName": "task_mover_source_column_id_foreign",
           "localTableName": "task_mover",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "column"
         },
         "task_mover_task_id_foreign": {
-          "columnNames": [
-            "task_id"
-          ],
+          "columnNames": ["task_id"],
           "constraintName": "task_mover_task_id_foreign",
           "localTableName": "task_mover",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "task",
           "deleteRule": "cascade"
         }
@@ -1204,10 +1135,7 @@
       },
       "indexes": [
         {
-          "columnNames": [
-            "task_id",
-            "tag_id"
-          ],
+          "columnNames": ["task_id", "tag_id"],
           "composite": true,
           "constraint": true,
           "keyName": "primary",
@@ -1215,9 +1143,7 @@
           "unique": true
         },
         {
-          "columnNames": [
-            "tag_id"
-          ],
+          "columnNames": ["tag_id"],
           "composite": false,
           "constraint": false,
           "keyName": "task_tags_tag_id_index",
@@ -1225,9 +1151,7 @@
           "unique": false
         },
         {
-          "columnNames": [
-            "task_id"
-          ],
+          "columnNames": ["task_id"],
           "composite": false,
           "constraint": false,
           "keyName": "task_tags_task_id_index",
@@ -1239,27 +1163,19 @@
       "triggers": [],
       "foreignKeys": {
         "task_tags_tag_id_foreign": {
-          "columnNames": [
-            "tag_id"
-          ],
+          "columnNames": ["tag_id"],
           "constraintName": "task_tags_tag_id_foreign",
           "localTableName": "task_tags",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "tag",
           "updateRule": "cascade",
           "deleteRule": "cascade"
         },
         "task_tags_task_id_foreign": {
-          "columnNames": [
-            "task_id"
-          ],
+          "columnNames": ["task_id"],
           "constraintName": "task_tags_task_id_foreign",
           "localTableName": "task_tags",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "task",
           "updateRule": "cascade",
           "deleteRule": "cascade"

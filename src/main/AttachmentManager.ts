@@ -42,7 +42,7 @@ export namespace AttachmentManager {
 
     result.filePaths.forEach((p) =>
       unit.create(AttachmentSchema, {
-        type: 'localFile',
+        type: type === 'file' ? 'localFile' : 'localFolder',
         link: p,
         task: rel(Task, taskId)
       })
@@ -54,9 +54,13 @@ export namespace AttachmentManager {
   export async function getForTask(taskId: string) {
     const unit = unitOfWork()
 
-    const task = await unit.findOneOrFail(TaskSchema, taskId, { populate: ['attachments'] })
+    const attachments = await unit.findAll(AttachmentSchema, {
+      where: {
+        task: { id: taskId }
+      }
+    })
 
-    return normalizeEntities(task.attachments.map((a) => a))
+    return normalizeEntities(attachments.map((a) => a))
   }
 
   export async function openFile(attachmentId: number) {
