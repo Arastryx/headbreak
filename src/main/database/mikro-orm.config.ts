@@ -9,7 +9,8 @@ import { TaskMoverSchema } from './entities/TaskMover'
 import { defineConfig } from '@mikro-orm/sqlite'
 import { Migration20260930175134 } from './migrations/Migration20260930175134'
 import { AttachmentSchema } from './entities/Attachment'
-import { Migration20261025222024 } from './migrations/Migration20261025222024'
+import { ThumbnailSchema } from './entities/Thumbnail'
+import { Migration20261106184925 } from './migrations/Migration20261106184925'
 
 const __GENERATING_MIGRATIONS = false
 
@@ -27,11 +28,12 @@ export default defineConfig({
     ChangeLogSchema,
     TaskMoverSchema,
     TagSchema,
-    AttachmentSchema
+    AttachmentSchema,
+    ThumbnailSchema
   ],
   migrations: {
     pathTs: './src/main/database/migrations',
-    migrationsList: [Migration20260930175134, Migration20261025222024]
+    migrationsList: [Migration20260930175134, Migration20261106184925]
   },
   debug: import.meta.env.DEV
 })
