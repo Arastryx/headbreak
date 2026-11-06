@@ -6,6 +6,8 @@ import { Task, TaskSchema } from './database/entities/Task'
 import { TaskComment } from './database/entities/Comment'
 import { dialog, shell } from 'electron'
 import { headbreakApp } from '.'
+import { ThumbnailManager } from './ThumbnailManager'
+import { unlink } from 'fs/promises'
 
 interface AttachmentPayload {
   url: string
@@ -40,11 +42,17 @@ export namespace AttachmentManager {
 
     const unit = unitOfWork()
 
-    result.filePaths.forEach((p) =>
-      unit.create(AttachmentSchema, {
-        type: type === 'file' ? 'localFile' : 'localFolder',
-        link: p,
-        task: rel(Task, taskId)
+    await Promise.all(
+      result.filePaths.map(async (p) => {
+        const attachment = unit.create(AttachmentSchema, {
+          type: type === 'file' ? 'localFile' : 'localFolder',
+          link: p,
+          task: rel(Task, taskId)
+        })
+
+        if (ThumbnailManager.canGenerateThumbnail(attachment)) {
+          await ThumbnailManager.createThumbnail(attachment, unit)
+        }
       })
     )
 
@@ -101,8 +109,15 @@ export namespace AttachmentManager {
   export async function deleteAttachment(attachmentId: number) {
     const unit = unitOfWork()
 
-    const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId)
+    const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId, {
+      populate: ['thumbnail']
+    })
     unit.remove(attachment)
+
+    if (attachment.thumbnail) {
+      unit.remove(attachment.thumbnail)
+      await unlink(attachment.thumbnail.path)
+    }
 
     await unit.flush()
   }

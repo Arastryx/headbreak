@@ -12,7 +12,7 @@ export const ThumbnailSchema = defineEntity({
     path: p.string(),
     width: p.integer(),
     height: p.integer(),
-    attachment: () => p.oneToOne(AttachmentSchema).mappedBy('thumbnail').deleteRule('set null')
+    attachment: () => p.oneToOne(AttachmentSchema).mappedBy('thumbnail')
   }
 })
 

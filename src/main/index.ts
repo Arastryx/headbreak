@@ -9,6 +9,7 @@ import { store } from './config'
 import { mkdirSync, existsSync } from 'node:fs'
 import { setupAttachmentApi } from './api/attachmentApi'
 import { clearOrphanedAttachments } from './clearOrphanedAttachments'
+import { ThumbnailManager } from './ThumbnailManager'
 
 const isDev = !app.isPackaged
 
@@ -22,6 +23,8 @@ if (isDev) {
     console.error('Failed to install Devtron:', error)
   })
 }
+
+ThumbnailManager.prepThumbnails()
 
 interface HeadbreakApp {
   mainWindow?: BrowserWindow
