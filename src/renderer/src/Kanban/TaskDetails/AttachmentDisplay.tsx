@@ -54,7 +54,9 @@ export function AttachmentDisplay({ attachment, onChange }: AttachmentDisplayPro
 
   const { callIpc: deleteAttachment } = useIpcCall(window.attachmentApi.delete, [])
 
-  const attachmentContent = (
+  const attachmentContent = attachment.thumbnail ? (
+    <img src={`thum:///${attachment.thumbnail.id}`} />
+  ) : (
     <Stack
       direction="row"
       spacing={1}

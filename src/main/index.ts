@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, net, protocol } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.ico?asset'
@@ -10,6 +10,7 @@ import { mkdirSync, existsSync } from 'node:fs'
 import { setupAttachmentApi } from './api/attachmentApi'
 import { clearOrphanedAttachments } from './clearOrphanedAttachments'
 import { ThumbnailManager } from './ThumbnailManager'
+import url from 'node:url'
 
 const isDev = !app.isPackaged
 
@@ -87,12 +88,36 @@ const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
   app.quit()
 } else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (headbreakApp.mainWindow) {
+      if (headbreakApp.mainWindow.isMinimized()) {
+        headbreakApp.mainWindow.restore()
+      }
+      headbreakApp.mainWindow.focus()
+    }
+  })
+
+  protocol.registerSchemesAsPrivileged([{ scheme: 'thum', privileges: { bypassCSP: true } }])
+
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.whenReady().then(async () => {
     // Set app user model id for windows
-    electronApp.setAppUserModelId('com.electron')
+    electronApp.setAppUserModelId('com.arastryx.headbreak')
+
+    protocol.handle('thum', async (request) => {
+      let params = request.url.slice('thum:///'.length)
+
+      const [thumbnailId] = params.split('/')
+
+      return net.fetch(
+        url
+          .pathToFileURL((await ThumbnailManager.getThumbnail(Number(thumbnailId))) ?? '')
+          .toString()
+      )
+    })
 
     // Default open or close DevTools by F12 in development
     // and ignore CommandOrControl + R in production.

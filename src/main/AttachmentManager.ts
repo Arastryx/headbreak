@@ -65,7 +65,8 @@ export namespace AttachmentManager {
     const attachments = await unit.findAll(AttachmentSchema, {
       where: {
         task: { id: taskId }
-      }
+      },
+      populate: ['thumbnail']
     })
 
     return normalizeEntities(attachments.map((a) => a))

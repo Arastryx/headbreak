@@ -69,6 +69,14 @@ declare global {
       type: AttachmentType
       link: string
       title?: string
+      thumbnail?: Thumbnail
+    }
+
+    interface Thumbnail extends Auditable {
+      id: number
+      path: string
+      width: number
+      height: number
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*

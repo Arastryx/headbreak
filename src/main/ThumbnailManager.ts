@@ -70,4 +70,12 @@ export namespace ThumbnailManager {
       attachment: attachment
     })
   }
+
+  export async function getThumbnail(id: number) {
+    const unit = unitOfWork()
+
+    const thumbnail = await unit.findOneOrFail(ThumbnailSchema, id)
+
+    return thumbnail.path
+  }
 }
