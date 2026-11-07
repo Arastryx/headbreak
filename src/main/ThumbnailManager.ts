@@ -45,16 +45,7 @@ export namespace ThumbnailManager {
   }
 
   async function buildThumbnail(attachment: Attachment, unit: Fork) {
-    const thumb =
-      process.platform === 'linux'
-        ? await nativeImage.createFromPath(attachment.link).resize({ width: 400 })
-        : await nativeImage.createThumbnailFromPath(
-            attachment.link.replaceAll('/', '\\').replaceAll('%20', ' '),
-            {
-              width: 400,
-              height: 400
-            }
-          )
+    const thumb = await nativeImage.createFromPath(attachment.link).resize({ width: 600 })
 
     const isPng = attachment.link.endsWith('png')
     const path = `${THUMBNAIL_PATH}/${v4()}.${isPng ? 'png' : 'jpg'}`

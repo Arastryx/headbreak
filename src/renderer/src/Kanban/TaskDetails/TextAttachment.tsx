@@ -44,23 +44,22 @@ function getAttachmentLabel(attachment: Headbreak.Attachment) {
   return attachment.link.replace(/^.*[\\/]/, '')
 }
 
-export interface AttachmentDisplayProps {
+export interface TextAttachmentProps {
   attachment: Headbreak.Attachment
   onChange?: () => void
 }
 
-export function AttachmentDisplay({ attachment, onChange }: AttachmentDisplayProps) {
+export function TextAttachment({ attachment, onChange }: TextAttachmentProps) {
   const [showEdit, setShowEdit] = useState(false)
 
   const { callIpc: deleteAttachment } = useIpcCall(window.attachmentApi.delete, [])
 
-  const attachmentContent = attachment.thumbnail ? (
-    <img src={`thum:///${attachment.thumbnail.id}`} />
-  ) : (
+  const attachmentContent = (
     <Stack
       direction="row"
       spacing={1}
       sx={(theme) => ({
+        width: '100%',
         alignItems: 'center',
         borderWidth: 1,
         borderStyle: 'solid',
@@ -121,12 +120,20 @@ export function AttachmentDisplay({ attachment, onChange }: AttachmentDisplayPro
         render={({ open }) => (
           <Box onContextMenu={(e) => open(e)}>
             {attachment.type === 'link' && (
-              <ButtonBase component="a" target="_blank" href={attachment.link}>
+              <ButtonBase
+                component="a"
+                target="_blank"
+                href={attachment.link}
+                sx={{ width: '100%' }}
+              >
                 {attachmentContent}
               </ButtonBase>
             )}
             {attachment.type !== 'link' && (
-              <ButtonBase onClick={() => window.attachmentApi.openFile(attachment.id)}>
+              <ButtonBase
+                onClick={() => window.attachmentApi.openFile(attachment.id)}
+                sx={{ width: '100%' }}
+              >
                 {attachmentContent}
               </ButtonBase>
             )}
