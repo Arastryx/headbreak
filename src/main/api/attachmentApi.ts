@@ -17,6 +17,12 @@ export function setupAttachmentApi() {
   )
 
   ipcMain.handle(
+    'attachment/attachFromClipboard',
+    (e, ...params: Parameters<typeof AttachmentManager.attachFromClipboard>) =>
+      handleError(() => AttachmentManager.attachFromClipboard(...params))
+  )
+
+  ipcMain.handle(
     'attachment/getForTask',
     (e, ...params: Parameters<typeof AttachmentManager.getForTask>) =>
       handleError(() => AttachmentManager.getForTask(...params))

@@ -11,6 +11,7 @@ import { BasicTaskPayload } from '@renderer/KanbanProvider/useTaskManagement'
 import { Updater } from 'use-immer'
 import { Dayjs } from 'dayjs'
 import { AttachmentCreator } from '../AttachmentCreator/AttachmentCreator'
+import { useIpcCall } from '@renderer/Common/Hooks/useIpcCall'
 
 export interface TaskFieldsProps {
   task: DeepPartial<BasicTaskPayload>
@@ -30,6 +31,9 @@ export function TaskFields({
   onLastMovedOverrideChange
 }: TaskFieldsProps) {
   const { title, description, mover, tags: tagIds } = task
+
+  const { callIpc: attachFromClipboard } = useIpcCall(window.attachmentApi.attachFromClipboard, [])
+
   return (
     <Stack spacing={4}>
       <Emphasize color="error" show={highlightErrors && !title}>
@@ -54,6 +58,17 @@ export function TaskFields({
         multiline
         fullWidth
         value={description}
+        onPaste={(e) => {
+          var items = e.clipboardData.items
+
+          for (let j = 0; j < items.length; j++) {
+            const file = items[j].getAsFile()
+            if (file) {
+              attachFromClipboard()
+              return
+            }
+          }
+        }}
         onChange={(e) =>
           setTask((copy) => {
             copy.description = e.target.value

@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 function generateEndpoint(channel: string) {
@@ -32,6 +32,7 @@ try {
   contextBridge.exposeInMainWorld('attachmentApi', {
     createLink: generateEndpoint('attachment/createLink'),
     createFiles: generateEndpoint('attachment/createFiles'),
+    attachFromClipboard: generateEndpoint('attachment/attachFromClipboard'),
     getForTask: generateEndpoint('attachment/getForTask'),
 
     openFile: generateCommand('attachment/openFile'),

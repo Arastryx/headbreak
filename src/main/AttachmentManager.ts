@@ -4,10 +4,12 @@ import { AttachmentSchema } from './database/entities/Attachment'
 import { normalizeEntities } from './normalize'
 import { Task, TaskSchema } from './database/entities/Task'
 import { TaskComment } from './database/entities/Comment'
-import { dialog, shell } from 'electron'
+import { app, clipboard, dialog, shell } from 'electron'
 import { headbreakApp } from '.'
 import { ThumbnailManager } from './ThumbnailManager'
-import { unlink } from 'fs/promises'
+import { unlink, writeFile } from 'fs/promises'
+import { v4 } from 'uuid'
+import { APP_DIR, DEV_DIR } from './appDir'
 
 interface AttachmentPayload {
   url: string
@@ -16,6 +18,8 @@ interface AttachmentPayload {
 }
 
 export namespace AttachmentManager {
+  const PASTE_PATH = `${app.getPath('userData')}/${app.isPackaged ? APP_DIR : DEV_DIR}/pasted`
+
   export async function createLink(payload: AttachmentPayload) {
     const unit = unitOfWork()
 
@@ -57,6 +61,16 @@ export namespace AttachmentManager {
     )
 
     await unit.flush()
+  }
+
+  export async function attachFromClipboard() {
+    const pastedImage = clipboard.readImage()
+
+    if (!pastedImage.isEmpty()) {
+      const path = `${PASTE_PATH}/${v4()}.png`
+      await writeFile(path, pastedImage.toPNG())
+      return
+    }
   }
 
   export async function getForTask(taskId: string) {
