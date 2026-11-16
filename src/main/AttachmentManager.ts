@@ -64,13 +64,38 @@ export namespace AttachmentManager {
   }
 
   export async function attachFromClipboard() {
-    const pastedImage = clipboard.readImage()
+    const items = await clipboard.read()
 
-    if (!pastedImage.isEmpty()) {
-      const path = `${PASTE_PATH}/${v4()}.png`
-      await writeFile(path, pastedImage.toPNG())
-      return
+    if (hasImage(items)) {
+      //FOLLOW INSTRUCTIONS HERE: https://web.dev/articles/clipboard/paste-images
+      // On how to extract the image
+      console.log('You pasted an image!!!!')
+    } else {
+      console.log(await readFiles(items))
     }
+  }
+
+  function hasImage(items: Electron.ClipboardItem[]) {
+    const clipboardItems = items
+    for (const clipboardItem of clipboardItems) {
+      const imageTypes = clipboardItem.types.find((type) => type.startsWith('image/'))
+
+      if (imageTypes) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  async function readFiles(items: Electron.ClipboardItem[]) {
+    const [item] = items
+    if (item.types.includes('text/uri-list')) {
+      const blob = await item.getType('text/uri-list')
+      const uriList = await blob.text()
+      return uriList.split(/\r?\n/).filter(Boolean)
+    }
+    return []
   }
 
   export async function getForTask(taskId: string) {
