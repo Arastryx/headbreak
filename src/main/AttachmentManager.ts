@@ -119,18 +119,6 @@ export namespace AttachmentManager {
     return []
   }
 
-  export async function attachAttachmentsToTask(attachmentIds: number[], taskId: string) {
-    const unit = unitOfWork()
-
-    const task = await unit.findOneOrFail(TaskSchema, taskId, { populate: ['attachments'] })
-
-    attachmentIds.forEach((id) => {
-      task.attachments.add(rel(Attachment, id))
-    })
-
-    await unit.flush()
-  }
-
   export async function getForTask(taskId: string) {
     const unit = unitOfWork()
 
@@ -144,7 +132,7 @@ export namespace AttachmentManager {
     return normalizeEntities(attachments.map((a) => a))
   }
 
-  export async function openFile(attachmentId: number) {
+  export async function openFile(attachmentId: string) {
     const unit = unitOfWork()
     const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId)
 
@@ -155,7 +143,7 @@ export namespace AttachmentManager {
     await shell.openPath(attachment.link)
   }
 
-  export async function openFileLocation(attachmentId: number) {
+  export async function openFileLocation(attachmentId: string) {
     const unit = unitOfWork()
     const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId)
 
@@ -166,7 +154,7 @@ export namespace AttachmentManager {
     await shell.showItemInFolder(attachment.link)
   }
 
-  export async function edit(attachmentId: number, payload: AttachmentPayload) {
+  export async function edit(attachmentId: string, payload: AttachmentPayload) {
     const unit = unitOfWork()
 
     const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId)
@@ -179,7 +167,7 @@ export namespace AttachmentManager {
     return attachment
   }
 
-  export async function deleteAttachment(attachmentId: number) {
+  export async function deleteAttachment(attachmentId: string) {
     const unit = unitOfWork()
 
     const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId, {

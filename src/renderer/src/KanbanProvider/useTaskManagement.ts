@@ -74,7 +74,8 @@ export function useTaskManagement(modify: KanbanModifier) {
         updatedAt: now,
         createdAt: now,
         comments: [],
-        tags: payload.tags ?? []
+        tags: payload.tags ?? [],
+        attachments: payload.attachments ?? []
       }
 
       modify((copy) => {
@@ -100,7 +101,8 @@ export function useTaskManagement(modify: KanbanModifier) {
         task.title = payload.title
         task.description = payload.description
         task.mover = processMover(task.id, task.mover, payload.mover)
-        task.tags = payload.tags ?? []
+        task.tags = payload.tags
+        task.attachments = payload.attachments
         task.lastMoved = payload.lastMoved ?? task.lastMoved
       })
     },

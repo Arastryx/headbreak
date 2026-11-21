@@ -8,6 +8,7 @@ import { TaskMover, TaskMoverSchema } from './database/entities/TaskMover'
 import { Collection, rel, wrap } from '@mikro-orm/core'
 import dayjs from 'dayjs'
 import { Tag, TagSchema } from './database/entities/Tag'
+import { Attachment } from './database/entities/Attachment'
 
 interface Syncable {
   id: string
@@ -31,7 +32,8 @@ export interface TaskPayload extends Syncable {
   lastMoved: string
   comments: CommentPayload[]
   mover?: TaskMoverPayload
-  tags?: string[]
+  tags: string[]
+  attachments: string[]
 }
 
 export interface ColumnPayload extends Syncable {
@@ -104,6 +106,7 @@ export namespace KanbanManager {
       task = new Task()
       task.id = payload.id
       task.tags = new Collection<Tag>(task)
+      task.attachments = new Collection<Attachment>(task)
 
       unit.persist(task)
       taskIsNew = true
@@ -133,6 +136,14 @@ export namespace KanbanManager {
     if (payload.tags) {
       payload.tags.forEach((tagId) => {
         task.tags.add(rel(Tag, tagId))
+      })
+    }
+
+    task.attachments.removeAll()
+
+    if (payload.attachments) {
+      payload.attachments.forEach((attachmentId) => {
+        task.attachments.add(rel(Attachment, attachmentId))
       })
     }
 
@@ -242,7 +253,7 @@ export namespace KanbanManager {
 
     const [columns, tags] = await Promise.all([
       unit.findAll(ColumnSchema, {
-        populate: ['tasks.comments', 'tasks.mover', 'tasks.tags:ref'],
+        populate: ['tasks.comments', 'tasks.mover', 'tasks.tags:ref', 'tasks.attachments:ref'],
         populateOrderBy: { tasks: { order: 'ASC' } },
         orderBy: { order: 'ASC' }
       }),

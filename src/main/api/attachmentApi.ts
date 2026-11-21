@@ -23,19 +23,13 @@ export function setupAttachmentApi() {
   )
 
   ipcMain.handle(
-    'attachment/attachAttachmentsToTask',
-    (e, ...params: Parameters<typeof AttachmentManager.attachAttachmentsToTask>) =>
-      handleError(() => AttachmentManager.attachAttachmentsToTask(...params))
-  )
-
-  ipcMain.handle(
     'attachment/getForTask',
     (e, ...params: Parameters<typeof AttachmentManager.getForTask>) =>
       handleError(() => AttachmentManager.getForTask(...params))
   )
 
-  ipcMain.on('attachment/openFile', (_e, id: number) => AttachmentManager.openFile(id))
-  ipcMain.on('attachment/openFileLocation', (_e, id: number) =>
+  ipcMain.on('attachment/openFile', (_e, id: string) => AttachmentManager.openFile(id))
+  ipcMain.on('attachment/openFileLocation', (_e, id: string) =>
     AttachmentManager.openFileLocation(id)
   )
 

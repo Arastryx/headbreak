@@ -8,7 +8,7 @@ export const AttachmentSchema = defineEntity({
   name: 'Attachment',
   extends: AuditableSchema,
   properties: {
-    id: p.integer().primary(),
+    id: p.uuid().primary(),
     type: p.enum(['link', 'localFile', 'localFolder', 'pastedImage']),
     title: p.string().length(255).nullable(),
     link: p.string().length(1023),

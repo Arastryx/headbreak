@@ -33,7 +33,6 @@ try {
     createLink: generateEndpoint('attachment/createLink'),
     createFiles: generateEndpoint('attachment/createFiles'),
     createFromClipboard: generateEndpoint('attachment/createFromClipboard'),
-    attachAttachmentsToTask: generateEndpoint('attachment/attachAttachmentsToTask'),
     getForTask: generateEndpoint('attachment/getForTask'),
 
     openFile: generateCommand('attachment/openFile'),

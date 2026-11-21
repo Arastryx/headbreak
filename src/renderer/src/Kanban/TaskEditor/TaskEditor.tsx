@@ -50,7 +50,11 @@ export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: 
       throw new Error('Tried to submit a partially filled task')
     }
 
-    const payload = { ...task, lastMoved: lastMovedOverride?.set('hour', 12).toISOString() }
+    const payload = {
+      ...task,
+      lastMoved: lastMovedOverride?.set('hour', 12).toISOString(),
+      attachments: (editableTask?.attachments ?? []).concat(attachments.map((a) => a.id))
+    }
 
     if (editableTask) {
       editTask(editableTask.id, payload)

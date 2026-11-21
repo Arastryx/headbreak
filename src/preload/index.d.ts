@@ -26,6 +26,7 @@ declare global {
       comments: Comment[]
       mover?: TaskMover
       tags: string[]
+      attachments: string[]
     }
 
     interface Column extends Syncable {
@@ -65,7 +66,7 @@ declare global {
     type AttachmentType = 'link' | 'localFile' | 'localFolder' | 'pastedImage'
 
     interface Attachment extends Auditable {
-      id: number
+      id: string
       type: AttachmentType
       link: string
       title?: string
@@ -141,7 +142,8 @@ declare global {
         lastMoved?: string
         comments: Comment[]
         mover?: TaskMover
-        tags?: string[]
+        tags: string[]
+        attachments: string[]
       }
 
       export interface ColumnPayload extends Syncable {
@@ -200,15 +202,14 @@ declare global {
       createLink: (payload: Headbreak.Payload.Attachment) => Result<Headbreak.Attachment>
       createFiles: (taskId: string, type: 'file' | 'folder') => Result<void>
       createFromClipboard: () => Result<Headbreak.Attachment[]>
-      attachAttachmentsToTask: () => Result<void>
       getForTask: (taskId: string) => Result<Headbreak.Attachment[]>
-      openFile: (attachmentId: number) => void
-      openFileLocation: (attachmentId: number) => void
+      openFile: (attachmentId: string) => void
+      openFileLocation: (attachmentId: string) => void
       edit: (
-        attachmentId: number,
+        attachmentId: string,
         payload: Headbreak.Payload.Attachment
       ) => Result<Headbreak.Attachment>
-      delete: (attachmentId: number) => Result<void>
+      delete: (attachmentId: string) => Result<void>
     }
   }
 }
