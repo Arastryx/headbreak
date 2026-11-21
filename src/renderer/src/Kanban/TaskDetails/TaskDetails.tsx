@@ -12,8 +12,9 @@ import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
 import { TagChip } from '@renderer/Common/Components/TagChip'
 import { calculateTimeUntilMove, TimeUntilMove } from '../MovementWarning'
 import { AttachmentCreator } from '../AttachmentCreator'
-import { ImageAttachment } from './ImageAttachment'
-import { TextAttachment } from './TextAttachment'
+import { ImageAttachment } from '../AttachmentDisplay/ImageAttachment'
+import { TextAttachment } from '../AttachmentDisplay/TextAttachment'
+import { AttachmentDisplay } from '../AttachmentDisplay'
 
 function isComment(c: Headbreak.Comment | Headbreak.ChangeLog): c is Headbreak.Comment {
   return typeof c.content === 'string'
@@ -36,16 +37,6 @@ export function TaskDetails({ task }: TaskDetailsProps) {
   const history = [...task.comments.filter((c) => !c.markForDeletion), ...(changes ?? [])].sort(
     (a, b) => dayjs(a.createdAt).diff(b.createdAt)
   )
-
-  const imageAttachments = attachments?.filter((a) => a.thumbnail != null)
-  const textAttachments = attachments?.filter((a) => a.thumbnail == null)
-
-  const imageGridSizing: { size: number; maxHeight: number } =
-    imageAttachments?.length == 1
-      ? { size: 12, maxHeight: 512 }
-      : (imageAttachments?.length ?? 0) >= 9
-        ? { size: 4, maxHeight: 190 }
-        : { size: 6, maxHeight: 232 }
 
   return (
     <Box sx={{ minWidth: 300 }}>
@@ -78,24 +69,7 @@ export function TaskDetails({ task }: TaskDetailsProps) {
           <Box>
             <AttachmentCreator taskId={task.id} onChange={reloadAttachments} />
           </Box>
-          <Grid container sx={{ alignItems: 'stretch' }}>
-            {imageAttachments?.map((a) => (
-              <Grid key={a.id} size={imageGridSizing.size}>
-                <ImageAttachment
-                  attachment={a}
-                  onChange={reloadAttachments}
-                  maxHeight={imageGridSizing.maxHeight}
-                />
-              </Grid>
-            ))}
-          </Grid>
-          {textAttachments?.length != 0 && (
-            <Stack>
-              {textAttachments?.map((a) => (
-                <TextAttachment key={a.id} attachment={a} onChange={reloadAttachments} />
-              ))}
-            </Stack>
-          )}
+          <AttachmentDisplay attachments={attachments} onChange={reloadAttachments} />
 
           {task.mover && (
             <Typography variant="caption">

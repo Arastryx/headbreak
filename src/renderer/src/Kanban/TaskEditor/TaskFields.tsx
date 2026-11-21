@@ -12,27 +12,32 @@ import { Updater } from 'use-immer'
 import { Dayjs } from 'dayjs'
 import { AttachmentCreator } from '../AttachmentCreator/AttachmentCreator'
 import { useIpcCall } from '@renderer/Common/Hooks/useIpcCall'
+import { AttachmentDisplay } from '../AttachmentDisplay'
 
 export interface TaskFieldsProps {
   task: DeepPartial<BasicTaskPayload>
+  attachments: Headbreak.Attachment[]
   lastMovedOverride: Dayjs | null
   columnId: string
   highlightErrors?: boolean
   onLastMovedOverrideChange: (v: Dayjs | null) => void
   setTask: Updater<DeepPartial<BasicTaskPayload>>
+  onAttachmentsPasted: (a: Headbreak.Attachment[]) => void
 }
 
 export function TaskFields({
   task,
+  attachments,
   highlightErrors,
   columnId,
   setTask,
   lastMovedOverride,
-  onLastMovedOverrideChange
+  onLastMovedOverrideChange,
+  onAttachmentsPasted
 }: TaskFieldsProps) {
   const { title, description, mover, tags: tagIds } = task
 
-  const { callIpc: attachFromClipboard } = useIpcCall(window.attachmentApi.attachFromClipboard, [])
+  const { callIpc: createFromClipboard } = useIpcCall(window.attachmentApi.createFromClipboard, [])
 
   return (
     <Stack spacing={4}>
@@ -58,13 +63,18 @@ export function TaskFields({
         multiline
         fullWidth
         value={description}
-        onPaste={(e) => {
+        onPaste={async (e) => {
           var items = e.clipboardData.items
 
           for (let j = 0; j < items.length; j++) {
             const file = items[j].getAsFile()
             if (file) {
-              attachFromClipboard()
+              const result = await createFromClipboard()
+
+              if (result) {
+                onAttachmentsPasted(result)
+              }
+
               return
             }
           }
@@ -75,6 +85,7 @@ export function TaskFields({
           })
         }
       />
+      {attachments.length > 0 && <AttachmentDisplay attachments={attachments} />}
       <TagMultiSelect
         value={tagIds ?? []}
         onChange={(t) =>

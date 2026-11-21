@@ -1,15 +1,16 @@
 import { rel } from '@mikro-orm/core'
 import { unitOfWork } from './database/database'
-import { AttachmentSchema } from './database/entities/Attachment'
+import { Attachment, AttachmentSchema } from './database/entities/Attachment'
 import { normalizeEntities } from './normalize'
 import { Task, TaskSchema } from './database/entities/Task'
 import { TaskComment } from './database/entities/Comment'
 import { app, clipboard, dialog, shell } from 'electron'
 import { headbreakApp } from '.'
 import { ThumbnailManager } from './ThumbnailManager'
-import { unlink, writeFile } from 'fs/promises'
+import { unlink, writeFile, lstat, mkdir } from 'fs/promises'
 import { v4 } from 'uuid'
 import { APP_DIR, DEV_DIR } from './appDir'
+import { existsSync } from 'fs'
 
 interface AttachmentPayload {
   url: string
@@ -19,6 +20,12 @@ interface AttachmentPayload {
 
 export namespace AttachmentManager {
   const PASTE_PATH = `${app.getPath('userData')}/${app.isPackaged ? APP_DIR : DEV_DIR}/pasted`
+
+  export async function prepPasted() {
+    if (!existsSync(PASTE_PATH)) {
+      await mkdir(PASTE_PATH)
+    }
+  }
 
   export async function createLink(payload: AttachmentPayload) {
     const unit = unitOfWork()
@@ -44,34 +51,45 @@ export namespace AttachmentManager {
       properties: [type === 'file' ? 'openFile' : 'openDirectory', 'multiSelections']
     })
 
+    await createFileAttachments(result.filePaths, taskId)
+  }
+
+  async function createFileAttachments(filePaths: string[], taskId?: string) {
     const unit = unitOfWork()
 
-    await Promise.all(
-      result.filePaths.map(async (p) => {
+    const attachments = await Promise.all(
+      filePaths.map(async (p) => {
+        const isFolder = (await lstat(p)).isDirectory()
+
         const attachment = unit.create(AttachmentSchema, {
-          type: type === 'file' ? 'localFile' : 'localFolder',
+          type: isFolder ? 'localFolder' : 'localFile',
           link: p,
-          task: rel(Task, taskId)
+          task: taskId ? rel(Task, taskId) : undefined
         })
 
         if (ThumbnailManager.canGenerateThumbnail(attachment)) {
           await ThumbnailManager.createThumbnail(attachment, unit)
         }
+
+        return attachment
       })
     )
 
     await unit.flush()
+
+    return normalizeEntities(attachments)
   }
 
-  export async function attachFromClipboard() {
+  export async function createFromClipboard() {
     const items = await clipboard.read()
 
     if (hasImage(items)) {
       //FOLLOW INSTRUCTIONS HERE: https://web.dev/articles/clipboard/paste-images
       // On how to extract the image
       console.log('You pasted an image!!!!')
+      return []
     } else {
-      console.log(await readFiles(items))
+      return await createFileAttachments(await readFiles(items))
     }
   }
 
@@ -93,9 +111,24 @@ export namespace AttachmentManager {
     if (item.types.includes('text/uri-list')) {
       const blob = await item.getType('text/uri-list')
       const uriList = await blob.text()
-      return uriList.split(/\r?\n/).filter(Boolean)
+      return uriList
+        .split(/\r?\n/)
+        .filter(Boolean)
+        .map((s) => s.slice(8))
     }
     return []
+  }
+
+  export async function attachAttachmentsToTask(attachmentIds: number[], taskId: string) {
+    const unit = unitOfWork()
+
+    const task = await unit.findOneOrFail(TaskSchema, taskId, { populate: ['attachments'] })
+
+    attachmentIds.forEach((id) => {
+      task.attachments.add(rel(Attachment, id))
+    })
+
+    await unit.flush()
   }
 
   export async function getForTask(taskId: string) {

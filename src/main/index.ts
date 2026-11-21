@@ -11,6 +11,7 @@ import { setupAttachmentApi } from './api/attachmentApi'
 import { clearOrphanedAttachments } from './clearOrphanedAttachments'
 import { ThumbnailManager } from './ThumbnailManager'
 import url from 'node:url'
+import { AttachmentManager } from './AttachmentManager'
 
 const isDev = !app.isPackaged
 
@@ -26,6 +27,7 @@ if (isDev) {
 }
 
 ThumbnailManager.prepThumbnails()
+AttachmentManager.prepPasted()
 
 interface HeadbreakApp {
   mainWindow?: BrowserWindow

@@ -35,6 +35,7 @@ export interface TaskEditorProps {
 
 export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: TaskEditorProps) {
   const [task, setTask] = useImmer<DeepPartial<BasicTaskPayload>>(editableTask ?? {})
+  const [attachments, setAttachments] = useState<Headbreak.Attachment[]>([])
 
   //Last moved override is stored separately because I have learned my lesson about storing date picker
   // values as strings (it gets messy)
@@ -65,11 +66,13 @@ export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: 
     <Box sx={{ minWidth: 400 }}>
       <TaskFields
         task={task}
+        attachments={attachments}
         lastMovedOverride={lastMovedOverride}
         columnId={columnId}
         highlightErrors={showErrorHighlighting}
         onLastMovedOverrideChange={setLastMovedOverride}
         setTask={setTask}
+        onAttachmentsPasted={(a) => setAttachments(attachments.concat(a))}
       />
       <Stack direction="row" spacing={2} sx={{ pt: 2, justifyContent: 'flex-end' }}>
         <Button onClick={onClose}>Cancel</Button>
