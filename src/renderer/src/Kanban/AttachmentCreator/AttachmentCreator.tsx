@@ -14,16 +14,35 @@ import {
 import { Micon } from '@renderer/Common/Components/Micon'
 import React, { useRef, useState } from 'react'
 import { LinkAttachmentEditor } from './LinkAttachmentEditor'
+import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
+import { useIpcCall } from '@renderer/Common/Hooks/useIpcCall'
 
 export interface AttachmentCreatorProps {
   taskId?: string
-  onChange?: () => void
 }
 
-export function AttachmentCreator({ taskId, onChange }: AttachmentCreatorProps) {
+export function AttachmentCreator({ taskId }: AttachmentCreatorProps) {
   const [showMenu, setShowMenu] = useState(false)
   const [showLinkEditor, setShowLinkEditor] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
+
+  const { createAttachment } = useKanban()
+
+  const { callIpc: fetchPaths } = useIpcCall(window.attachmentApi.createFiles, [])
+
+  const createFiles = async (type: 'file' | 'folder') => {
+    if (!taskId) {
+      return
+    }
+
+    setShowMenu(false)
+
+    const paths = await fetchPaths(type)
+
+    paths?.forEach((p) => {
+      createAttachment({ link: p, type: type === 'file' ? 'localFile' : 'localFolder' }, taskId)
+    })
+  }
 
   return (
     <>
@@ -64,13 +83,7 @@ export function AttachmentCreator({ taskId, onChange }: AttachmentCreatorProps) 
               }
               placement="right"
             >
-              <MenuItem
-                onClick={async () => {
-                  await window.attachmentApi.createFiles(taskId, 'file')
-                  setShowMenu(false)
-                  onChange?.()
-                }}
-              >
+              <MenuItem onClick={() => createFiles('file')}>
                 <ListItemIcon>
                   <Micon icon="insert_drive_file" />
                 </ListItemIcon>
@@ -83,13 +96,7 @@ export function AttachmentCreator({ taskId, onChange }: AttachmentCreatorProps) 
               }
               placement="right"
             >
-              <MenuItem
-                onClick={async () => {
-                  await window.attachmentApi.createFiles(taskId, 'folder')
-                  setShowMenu(false)
-                  onChange?.()
-                }}
-              >
+              <MenuItem onClick={() => createFiles('folder')}>
                 <ListItemIcon>
                   <Micon icon="folder" />
                 </ListItemIcon>

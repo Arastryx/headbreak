@@ -190,7 +190,7 @@ declare global {
     }
 
     attachmentApi: {
-      createFiles: (taskId: string, type: 'file' | 'folder') => Result<string[]>
+      createFiles: (type: 'file' | 'folder') => Result<string[]>
       createFromClipboard: () => Result<string[]>
       openFile: (attachmentId: string) => void
       openFileLocation: (attachmentId: string) => void

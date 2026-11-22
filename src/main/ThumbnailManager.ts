@@ -28,7 +28,7 @@ export namespace ThumbnailManager {
 
     const unit = unitOfWork()
 
-    let thumbnail: any = unit.findOne(ThumbnailSchema, path)
+    let thumbnail: any = await unit.findOne(ThumbnailSchema, path)
 
     if (!thumbnail) {
       thumbnail = await buildThumbnail(path, unit)
@@ -45,7 +45,7 @@ export namespace ThumbnailManager {
     const isPng = path.endsWith('png')
     const thumb = `${THUMBNAIL_PATH}/${v4()}.${isPng ? 'png' : 'jpg'}`
 
-    await writeFile(path, isPng ? image.toPNG() : image.toJPEG(100))
+    await writeFile(thumb, isPng ? image.toPNG() : image.toJPEG(100))
 
     const size = image.getSize()
 

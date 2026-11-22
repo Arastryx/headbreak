@@ -42,7 +42,7 @@ export namespace AttachmentManager {
   //   return normalizeEntities(result)
   // }
 
-  export async function createFiles(taskId: string, type: 'file' | 'folder') {
+  export async function createFiles(type: 'file' | 'folder') {
     if (!headbreakApp.mainWindow) {
       throw new Error('Attempted to open a dialog before the window was ready')
     }
