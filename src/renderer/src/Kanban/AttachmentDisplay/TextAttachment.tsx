@@ -14,7 +14,7 @@ import { LinkAttachmentEditor } from '../AttachmentCreator/LinkAttachmentEditor'
 import { MaterialIcon } from 'material-icons'
 import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
 
-function getAttachmentIcon(attachment: Headbreak.Attachment): MaterialIcon {
+function getAttachmentIcon(attachment: Headbreak.Payload.Attachment): MaterialIcon {
   if (attachment.type === 'link') {
     return 'link'
   }
@@ -36,7 +36,7 @@ function getAttachmentIcon(attachment: Headbreak.Attachment): MaterialIcon {
   }
 }
 
-function getAttachmentLabel(attachment: Headbreak.Attachment) {
+function getAttachmentLabel(attachment: Headbreak.Payload.Attachment) {
   if (attachment.type === 'link') {
     return attachment.title
   }
@@ -45,13 +45,12 @@ function getAttachmentLabel(attachment: Headbreak.Attachment) {
 }
 
 export interface TextAttachmentProps {
-  attachment: Headbreak.Attachment
+  attachment: Headbreak.Attachment | Headbreak.Payload.Attachment
+  onDelete: (attachment: Headbreak.Attachment | Headbreak.Payload.Attachment) => void
 }
 
-export function TextAttachment({ attachment }: TextAttachmentProps) {
+export function TextAttachment({ attachment, onDelete }: TextAttachmentProps) {
   const [showEdit, setShowEdit] = useState(false)
-
-  const { deleteAttachment } = useKanban()
 
   const attachmentContent = (
     <Stack
@@ -110,8 +109,8 @@ export function TextAttachment({ attachment }: TextAttachmentProps) {
             label: 'Delete',
             icon: 'delete',
             danger: true,
-            onClick: async () => {
-              await deleteAttachment(attachment.id)
+            onClick: () => {
+              onDelete(attachment)
             }
           }
         ]}

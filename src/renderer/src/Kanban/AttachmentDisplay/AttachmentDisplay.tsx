@@ -8,10 +8,16 @@ function canHaveThumbnail(path: string) {
 }
 
 export interface AttachmentDisplayProps {
-  attachments?: Headbreak.Attachment[]
+  attachments?: (Headbreak.Attachment | Headbreak.Payload.Attachment)[]
+  preventOpeningImages?: boolean
+  onDelete: (attachment: Headbreak.Attachment | Headbreak.Payload.Attachment) => void
 }
 
-export function AttachmentDisplay({ attachments }: AttachmentDisplayProps) {
+export function AttachmentDisplay({
+  attachments,
+  preventOpeningImages,
+  onDelete
+}: AttachmentDisplayProps) {
   const imageAttachments = attachments?.filter(
     (a) => !a.markForDeletion && canHaveThumbnail(a.link)
   )
@@ -31,14 +37,19 @@ export function AttachmentDisplay({ attachments }: AttachmentDisplayProps) {
       <Grid container sx={{ alignItems: 'stretch' }}>
         {imageAttachments?.map((a) => (
           <Grid key={a.id} size={imageGridSizing.size}>
-            <ImageAttachment attachment={a} maxHeight={imageGridSizing.maxHeight} />
+            <ImageAttachment
+              attachment={a}
+              maxHeight={imageGridSizing.maxHeight}
+              preventOpening={preventOpeningImages}
+              onDelete={onDelete}
+            />
           </Grid>
         ))}
       </Grid>
       {textAttachments?.length != 0 && (
         <Stack>
           {textAttachments?.map((a) => (
-            <TextAttachment key={a.id} attachment={a} />
+            <TextAttachment key={a.id} attachment={a} onDelete={onDelete} />
           ))}
         </Stack>
       )}

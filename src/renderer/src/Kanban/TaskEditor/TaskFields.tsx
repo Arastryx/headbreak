@@ -13,16 +13,18 @@ import { Dayjs } from 'dayjs'
 import { AttachmentCreator } from '../AttachmentCreator/AttachmentCreator'
 import { useIpcCall } from '@renderer/Common/Hooks/useIpcCall'
 import { AttachmentDisplay } from '../AttachmentDisplay'
+import { BasicAttachmentPayload } from '@renderer/KanbanProvider/useAttachmentManagement'
 
 export interface TaskFieldsProps {
   task: DeepPartial<BasicTaskPayload>
-  attachments: Headbreak.Attachment[]
+  attachments: Headbreak.Payload.Attachment[]
   lastMovedOverride: Dayjs | null
   columnId: string
   highlightErrors?: boolean
   onLastMovedOverrideChange: (v: Dayjs | null) => void
   setTask: Updater<DeepPartial<BasicTaskPayload>>
-  onAttachmentsPasted: (a: Headbreak.Attachment[]) => void
+  onFilesPasted: (paths: Headbreak.PastedDirectory[]) => void
+  onDeleteAttachment: (id: string) => void
 }
 
 export function TaskFields({
@@ -33,7 +35,8 @@ export function TaskFields({
   setTask,
   lastMovedOverride,
   onLastMovedOverrideChange,
-  onAttachmentsPasted
+  onFilesPasted,
+  onDeleteAttachment
 }: TaskFieldsProps) {
   const { title, description, mover, tags: tagIds } = task
 
@@ -71,9 +74,9 @@ export function TaskFields({
             if (file) {
               const result = await createFromClipboard()
 
-              // if (result) {
-              //   onAttachmentsPasted(result)
-              // }
+              if (result) {
+                onFilesPasted(result)
+              }
 
               return
             }
@@ -85,7 +88,13 @@ export function TaskFields({
           })
         }
       />
-      {attachments.length > 0 && <AttachmentDisplay attachments={attachments} />}
+      {attachments.length > 0 && (
+        <AttachmentDisplay
+          attachments={attachments}
+          preventOpeningImages
+          onDelete={(a) => onDeleteAttachment(a.id)}
+        />
+      )}
       <TagMultiSelect
         value={tagIds ?? []}
         onChange={(t) =>

@@ -39,10 +39,10 @@ export namespace ThumbnailManager {
     return thumbnail.thumb
   }
 
-  async function buildThumbnail(path: string, unit: Fork) {
-    const image = await nativeImage.createFromPath(path).resize({ width: 600 })
+  async function buildThumbnail(originalPath: string, unit: Fork) {
+    const image = await nativeImage.createFromPath(originalPath).resize({ width: 600 })
 
-    const isPng = path.endsWith('png')
+    const isPng = originalPath.endsWith('png')
     const thumb = `${THUMBNAIL_PATH}/${v4()}.${isPng ? 'png' : 'jpg'}`
 
     await writeFile(thumb, isPng ? image.toPNG() : image.toJPEG(100))
@@ -50,7 +50,7 @@ export namespace ThumbnailManager {
     const size = image.getSize()
 
     return unit.create(ThumbnailSchema, {
-      path: path,
+      path: originalPath,
       thumb,
       width: size.width,
       height: size.height

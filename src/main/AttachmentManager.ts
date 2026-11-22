@@ -84,10 +84,17 @@ export namespace AttachmentManager {
     if (item.types.includes('text/uri-list')) {
       const blob = await item.getType('text/uri-list')
       const uriList = await blob.text()
-      return uriList
+      const paths = uriList
         .split(/\r?\n/)
         .filter(Boolean)
         .map((s) => s.slice(8))
+
+      return await Promise.all(
+        paths.map(async (p) => ({
+          path: p,
+          isDirectory: (await lstat(p)).isDirectory()
+        }))
+      )
     }
     return []
   }

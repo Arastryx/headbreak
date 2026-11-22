@@ -1,4 +1,5 @@
 import {
+  alpha,
   Box,
   ButtonBase,
   Dialog,
@@ -38,7 +39,7 @@ function getAttachmentIcon(attachment: Headbreak.Attachment): MaterialIcon {
   }
 }
 
-function getAttachmentLabel(attachment: Headbreak.Attachment) {
+function getAttachmentLabel(attachment: Headbreak.Payload.Attachment) {
   if (attachment.type === 'link') {
     return attachment.title
   }
@@ -47,20 +48,42 @@ function getAttachmentLabel(attachment: Headbreak.Attachment) {
 }
 
 export interface ImageAttachmentProps {
-  attachment: Headbreak.Attachment
+  attachment: Headbreak.Attachment | Headbreak.Payload.Attachment
   maxHeight?: number
-  onChange?: () => void
+  preventOpening?: boolean
+  onDelete: (attachment: Headbreak.Attachment | Headbreak.Payload.Attachment) => void
 }
 
-export function ImageAttachment({ attachment, onChange, maxHeight }: ImageAttachmentProps) {
-  const { deleteAttachment } = useKanban()
-
+export function ImageAttachment({
+  attachment,
+  maxHeight,
+  preventOpening,
+  onDelete
+}: ImageAttachmentProps) {
   const attachmentContent = (
-    <Box
-      component={'img'}
-      src={`thum:///${attachment.link}`}
-      sx={{ maxWidth: '100%', maxHeight: maxHeight }}
-    />
+    <Box sx={{ position: 'relative' }}>
+      <Typography
+        variant="caption"
+        sx={{
+          position: 'absolute',
+          color: 'black',
+          top: 0,
+          left: 1,
+          bgcolor: alpha('#fff', 0.5),
+          lineHeight: 1,
+          p: 0.5,
+          borderBottomRightRadius: 3,
+          pointerEvents: 'none'
+        }}
+      >
+        {getAttachmentLabel(attachment)}
+      </Typography>
+      <Box
+        component={'img'}
+        src={`thum:///${attachment.link}`}
+        sx={{ maxWidth: '100%', maxHeight: maxHeight }}
+      />
+    </Box>
   )
 
   return (
@@ -76,7 +99,8 @@ export function ImageAttachment({ attachment, onChange, maxHeight }: ImageAttach
               } else {
                 window.attachmentApi.openFile(attachment.id)
               }
-            }
+            },
+            hide: preventOpening
           },
           {
             label: 'Open File Location',
@@ -84,15 +108,14 @@ export function ImageAttachment({ attachment, onChange, maxHeight }: ImageAttach
             onClick: () => {
               window.attachmentApi.openFileLocation(attachment.id)
             },
-            hide: attachment.type !== 'localFile'
+            hide: attachment.type !== 'localFile' || preventOpening
           },
           {
             label: 'Delete',
             icon: 'delete',
             danger: true,
-            onClick: async () => {
-              await deleteAttachment(attachment.id)
-              onChange?.()
+            onClick: () => {
+              onDelete(attachment)
             }
           }
         ]}
@@ -108,18 +131,35 @@ export function ImageAttachment({ attachment, onChange, maxHeight }: ImageAttach
               height: '100%'
             }}
           >
-            <ButtonBase
-              onClick={() => window.attachmentApi.openFile(attachment.id)}
-              sx={{
-                width: '100%',
-                height: '100%',
-                p: 1,
-                minHeight: 40,
-                '&:hover': { bgcolor: 'action.hover', opacity: 0.9 }
-              }}
-            >
-              {attachmentContent}
-            </ButtonBase>
+            {preventOpening && (
+              <Stack
+                sx={(theme) => ({
+                  width: '100%',
+                  height: '100%',
+                  p: 1,
+                  minHeight: 40,
+                  '&:hover': { bgcolor: alpha(theme.palette.action.hover, 0.02) },
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                })}
+              >
+                {attachmentContent}
+              </Stack>
+            )}
+            {!preventOpening && (
+              <ButtonBase
+                onClick={() => window.attachmentApi.openFile(attachment.id)}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  p: 1,
+                  minHeight: 40,
+                  '&:hover': { bgcolor: 'action.hover', opacity: 0.9 }
+                }}
+              >
+                {attachmentContent}
+              </ButtonBase>
+            )}
           </Box>
         )}
       ></ContextMenu>

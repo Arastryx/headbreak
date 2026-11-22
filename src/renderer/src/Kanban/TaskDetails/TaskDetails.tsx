@@ -15,6 +15,7 @@ import { AttachmentCreator } from '../AttachmentCreator'
 import { ImageAttachment } from '../AttachmentDisplay/ImageAttachment'
 import { TextAttachment } from '../AttachmentDisplay/TextAttachment'
 import { AttachmentDisplay } from '../AttachmentDisplay'
+import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
 
 function isComment(c: Headbreak.Comment | Headbreak.ChangeLog): c is Headbreak.Comment {
   return typeof c.content === 'string'
@@ -34,6 +35,8 @@ export function TaskDetails({ task }: TaskDetailsProps) {
   const history = [...task.comments.filter((c) => !c.markForDeletion), ...(changes ?? [])].sort(
     (a, b) => dayjs(a.createdAt).diff(b.createdAt)
   )
+
+  const { deleteAttachment } = useKanban()
 
   return (
     <Box sx={{ minWidth: 300 }}>
@@ -66,7 +69,10 @@ export function TaskDetails({ task }: TaskDetailsProps) {
           <Box>
             <AttachmentCreator taskId={task.id} />
           </Box>
-          <AttachmentDisplay attachments={task.attachments} />
+          <AttachmentDisplay
+            attachments={task.attachments}
+            onDelete={(a) => deleteAttachment(a.id)}
+          />
 
           {task.mover && (
             <Typography variant="caption">

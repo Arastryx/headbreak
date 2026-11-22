@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 
 export interface LinkAttachmentEditorProps {
   onClose?: () => void
-  attachment?: Headbreak.Attachment
+  attachment?: Headbreak.Attachment | Headbreak.Payload.Attachment
   taskId?: string
 }
 

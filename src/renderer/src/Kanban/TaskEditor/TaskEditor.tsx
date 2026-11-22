@@ -2,11 +2,13 @@ import { Box, Button, Stack } from '@mui/material'
 import { useState } from 'react'
 import { useKanban } from '../../KanbanProvider/KanbanProvider'
 import { Micon } from '../../Common/Components/Micon'
-import { Dayjs } from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { useImmer } from 'use-immer'
 import { DeepPartial } from '@renderer/Common/Types/deepPartial'
 import { BasicTaskPayload } from '@renderer/KanbanProvider/useTaskManagement'
 import { TaskFields } from './TaskFields'
+import { BasicAttachmentPayload } from '@renderer/KanbanProvider/useAttachmentManagement'
+import { v4 } from 'uuid'
 
 function isPopulated(payload: DeepPartial<BasicTaskPayload>): payload is BasicTaskPayload {
   const populated = (s?: string) => s != null && s != ''
@@ -40,7 +42,7 @@ export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: 
       attachments: []
     }
   )
-  const [attachments, setAttachments] = useState<Headbreak.Attachment[]>([])
+  const [attachments, setAttachments] = useState<Headbreak.Payload.Attachment[]>([])
 
   //Last moved override is stored separately because I have learned my lesson about storing date picker
   // values as strings (it gets messy)
@@ -58,7 +60,14 @@ export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: 
     const payload: BasicTaskPayload = {
       ...task,
       lastMoved: lastMovedOverride?.set('hour', 12).toISOString(),
-      attachments: (editableTask?.attachments ?? []).concat(attachments)
+      attachments: (editableTask?.attachments ?? []).concat(
+        attachments.map((a) => ({
+          ...a,
+          id: v4(),
+          createdAt: dayjs().toISOString(),
+          updatedAt: dayjs().toISOString()
+        }))
+      )
     }
 
     if (editableTask) {
@@ -81,7 +90,20 @@ export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: 
         highlightErrors={showErrorHighlighting}
         onLastMovedOverrideChange={setLastMovedOverride}
         setTask={setTask}
-        onAttachmentsPasted={(a) => setAttachments(attachments.concat(a))}
+        onFilesPasted={(paths) => {
+          setAttachments(
+            attachments.concat(
+              paths.map((p) => ({
+                id: v4(),
+                link: p.path,
+                type: p.isDirectory ? 'localFolder' : 'localFile'
+              }))
+            )
+          )
+        }}
+        onDeleteAttachment={(id) => {
+          setAttachments(attachments.filter((a) => a.id != id))
+        }}
       />
       <Stack direction="row" spacing={2} sx={{ pt: 2, justifyContent: 'flex-end' }}>
         <Button onClick={onClose}>Cancel</Button>

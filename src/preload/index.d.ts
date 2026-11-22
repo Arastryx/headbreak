@@ -177,6 +177,11 @@ declare global {
       name?: string
       stack?: string
     }
+
+    interface PastedDirectory {
+      path: string
+      isDirectory: boolean
+    }
   }
 
   interface Window {
@@ -191,7 +196,7 @@ declare global {
 
     attachmentApi: {
       createFiles: (type: 'file' | 'folder') => Result<string[]>
-      createFromClipboard: () => Result<string[]>
+      createFromClipboard: () => Result<Headbreak.PastedDirectory[]>
       openFile: (attachmentId: string) => void
       openFileLocation: (attachmentId: string) => void
     }
