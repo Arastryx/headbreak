@@ -1,13 +1,8 @@
-import { rel } from '@mikro-orm/core'
 import { unitOfWork } from './database/database'
-import { Attachment, AttachmentSchema } from './database/entities/Attachment'
-import { normalizeEntities } from './normalize'
-import { Task, TaskSchema } from './database/entities/Task'
-import { TaskComment } from './database/entities/Comment'
-import { app, clipboard, dialog, shell } from 'electron'
+import { AttachmentSchema } from './database/entities/Attachment'
+import { app, clipboard, dialog, nativeImage, shell } from 'electron'
 import { headbreakApp } from '.'
-import { ThumbnailManager } from './ThumbnailManager'
-import { unlink, writeFile, lstat, mkdir } from 'fs/promises'
+import { writeFile, lstat, mkdir } from 'fs/promises'
 import { v4 } from 'uuid'
 import { APP_DIR, DEV_DIR } from './appDir'
 import { existsSync } from 'fs'
@@ -27,21 +22,6 @@ export namespace AttachmentManager {
     }
   }
 
-  // export async function createLink(payload: AttachmentPayload) {
-  //   const unit = unitOfWork()
-
-  //   const result = unit.create(AttachmentSchema, {
-  //     type: 'link',
-  //     link: payload.url,
-  //     title: payload.title,
-  //     task: payload.taskId ? rel(Task, payload.taskId) : undefined
-  //   })
-
-  //   await unit.flush()
-
-  //   return normalizeEntities(result)
-  // }
-
   export async function createFiles(type: 'file' | 'folder') {
     if (!headbreakApp.mainWindow) {
       throw new Error('Attempted to open a dialog before the window was ready')
@@ -57,10 +37,7 @@ export namespace AttachmentManager {
     const items = await clipboard.read()
 
     if (hasImage(items)) {
-      //FOLLOW INSTRUCTIONS HERE: https://web.dev/articles/clipboard/paste-images
-      // On how to extract the image
-      console.log('You pasted an image!!!!')
-      return []
+      return [{ path: await pasteImageAndGetPath(items), type: 'pastedImage' }]
     } else {
       return await readFiles(items)
     }
@@ -69,14 +46,35 @@ export namespace AttachmentManager {
   function hasImage(items: Electron.ClipboardItem[]) {
     const clipboardItems = items
     for (const clipboardItem of clipboardItems) {
-      const imageTypes = clipboardItem.types.find((type) => type.startsWith('image/'))
+      const imageType = clipboardItem.types.find((type) => type.startsWith('image/'))
 
-      if (imageTypes) {
+      if (imageType) {
         return true
       }
     }
 
     return false
+  }
+
+  async function pasteImageAndGetPath(items: Electron.ClipboardItem[]) {
+    for (const clipboardItem of items) {
+      const imageType = clipboardItem.types.find((type) => type.startsWith('image/'))
+
+      if (imageType) {
+        const blob = await clipboardItem.getType(imageType)
+
+        if (blob instanceof Blob) {
+          const buffer = await blob.arrayBuffer()
+          const image = nativeImage.createFromBuffer(Buffer.from(buffer))
+
+          const pastePath = `${PASTE_PATH}/${v4()}.png`
+
+          await writeFile(pastePath, image.toPNG())
+
+          return pastePath
+        }
+      }
+    }
   }
 
   async function readFiles(items: Electron.ClipboardItem[]) {
@@ -92,25 +90,12 @@ export namespace AttachmentManager {
       return await Promise.all(
         paths.map(async (p) => ({
           path: p,
-          isDirectory: (await lstat(p)).isDirectory()
+          type: (await lstat(p)).isDirectory() ? 'localFolder' : 'localFile'
         }))
       )
     }
     return []
   }
-
-  // export async function getForTask(taskId: string) {
-  //   const unit = unitOfWork()
-
-  //   const attachments = await unit.findAll(AttachmentSchema, {
-  //     where: {
-  //       task: { id: taskId }
-  //     },
-  //     populate: ['thumbnail']
-  //   })
-
-  //   return normalizeEntities(attachments.map((a) => a))
-  // }
 
   export async function openFile(attachmentId: string) {
     const unit = unitOfWork()
@@ -133,33 +118,4 @@ export namespace AttachmentManager {
 
     await shell.showItemInFolder(attachment.link)
   }
-
-  // export async function edit(attachmentId: string, payload: AttachmentPayload) {
-  //   const unit = unitOfWork()
-
-  //   const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId)
-
-  //   attachment.link = payload.url
-  //   attachment.title = payload.title
-
-  //   await unit.flush()
-
-  //   return attachment
-  // }
-
-  // export async function deleteAttachment(attachmentId: string) {
-  //   const unit = unitOfWork()
-
-  //   const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId, {
-  //     populate: ['thumbnail']
-  //   })
-  //   unit.remove(attachment)
-
-  //   if (attachment.thumbnail) {
-  //     unit.remove(attachment.thumbnail)
-  //     await unlink(attachment.thumbnail.path)
-  //   }
-
-  //   await unit.flush()
-  // }
 }

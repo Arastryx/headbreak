@@ -180,7 +180,7 @@ declare global {
 
     interface PastedDirectory {
       path: string
-      isDirectory: boolean
+      type: Exclude<AttachmentType, 'link'>
     }
   }
 

@@ -96,7 +96,7 @@ export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: 
               paths.map((p) => ({
                 id: v4(),
                 link: p.path,
-                type: p.isDirectory ? 'localFolder' : 'localFile'
+                type: p.type
               }))
             )
           )
