@@ -40,7 +40,12 @@ export namespace ThumbnailManager {
   }
 
   async function buildThumbnail(originalPath: string, unit: Fork) {
-    const image = await nativeImage.createFromPath(originalPath).resize({ width: 600 })
+    let image = await nativeImage.createFromPath(originalPath)
+    const originalSize = image.getSize()
+
+    if (originalSize.width > 600) {
+      image = image.resize({ width: 600 })
+    }
 
     const isPng = originalPath.endsWith('png')
     const thumb = `${THUMBNAIL_PATH}/${v4()}.${isPng ? 'png' : 'jpg'}`

@@ -62,22 +62,25 @@ export function ImageAttachment({
 }: ImageAttachmentProps) {
   const attachmentContent = (
     <Box sx={{ position: 'relative' }}>
-      <Typography
-        variant="caption"
-        sx={{
-          position: 'absolute',
-          color: 'black',
-          top: 0,
-          left: 1,
-          bgcolor: alpha('#fff', 0.5),
-          lineHeight: 1,
-          p: 0.5,
-          borderBottomRightRadius: 3,
-          pointerEvents: 'none'
-        }}
-      >
-        {getAttachmentLabel(attachment)}
-      </Typography>
+      {attachment.type != 'pastedImage' && (
+        <Typography
+          variant="caption"
+          sx={{
+            position: 'absolute',
+            color: 'black',
+            top: 0,
+            left: 1,
+            bgcolor: alpha('#fff', 0.5),
+            lineHeight: 1,
+            p: 0.5,
+            borderBottomRightRadius: 3,
+            pointerEvents: 'none'
+          }}
+        >
+          {getAttachmentLabel(attachment)}
+        </Typography>
+      )}
+
       <Box
         component={'img'}
         src={`thum:///${attachment.link}`}
