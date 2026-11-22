@@ -93,6 +93,7 @@ export function TaskFields({
           attachments={attachments}
           preventOpeningImages
           onDelete={(a) => onDeleteAttachment(a.id)}
+          compact
         />
       )}
       <TagMultiSelect

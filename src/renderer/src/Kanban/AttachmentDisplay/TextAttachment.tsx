@@ -47,9 +47,10 @@ function getAttachmentLabel(attachment: Headbreak.Payload.Attachment) {
 export interface TextAttachmentProps {
   attachment: Headbreak.Attachment | Headbreak.Payload.Attachment
   onDelete: (attachment: Headbreak.Attachment | Headbreak.Payload.Attachment) => void
+  compact?: boolean
 }
 
-export function TextAttachment({ attachment, onDelete }: TextAttachmentProps) {
+export function TextAttachment({ attachment, onDelete, compact }: TextAttachmentProps) {
   const [showEdit, setShowEdit] = useState(false)
 
   const attachmentContent = (
@@ -69,8 +70,15 @@ export function TextAttachment({ attachment, onDelete }: TextAttachmentProps) {
         }
       })}
     >
-      <Micon icon={getAttachmentIcon(attachment)} fontSize="small" color="action" />
-      <Typography sx={{ textDecoration: 'none', color: 'unset' }}>
+      <Micon
+        icon={getAttachmentIcon(attachment)}
+        sx={{ fontSize: compact ? 16 : 22 }}
+        color="action"
+      />
+      <Typography
+        variant={compact ? 'body2' : undefined}
+        sx={{ textDecoration: 'none', color: 'unset' }}
+      >
         {getAttachmentLabel(attachment)}
       </Typography>
     </Stack>

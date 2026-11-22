@@ -52,17 +52,19 @@ export interface ImageAttachmentProps {
   maxHeight?: number
   preventOpening?: boolean
   onDelete: (attachment: Headbreak.Attachment | Headbreak.Payload.Attachment) => void
+  hideTitle?: boolean
 }
 
 export function ImageAttachment({
   attachment,
   maxHeight,
   preventOpening,
+  hideTitle,
   onDelete
 }: ImageAttachmentProps) {
   const attachmentContent = (
     <Box sx={{ position: 'relative' }}>
-      {attachment.type != 'pastedImage' && (
+      {attachment.type != 'pastedImage' && !hideTitle && (
         <Typography
           variant="caption"
           sx={{
