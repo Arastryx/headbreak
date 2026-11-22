@@ -85,7 +85,7 @@ export namespace AttachmentManager {
       const paths = uriList
         .split(/\r?\n/)
         .filter(Boolean)
-        .map((s) => s.slice(8))
+        .map((s) => decodeURI(s.slice(8)))
 
       return await Promise.all(
         paths.map(async (p) => ({

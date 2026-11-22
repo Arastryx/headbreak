@@ -159,6 +159,16 @@
         },
         {
           "columnNames": [
+            "link"
+          ],
+          "composite": false,
+          "constraint": false,
+          "keyName": "attachment_link_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
             "task_id"
           ],
           "composite": false,
@@ -178,7 +188,14 @@
           "unique": true
         }
       ],
-      "checks": [],
+      "checks": [
+        {
+          "name": "attachment_type_check",
+          "expression": "`type` in ('link', 'localFile', 'localFolder', 'pastedImage')",
+          "definition": "check (`type` in ('link', 'localFile', 'localFolder', 'pastedImage'))",
+          "columnName": "type"
+        }
+      ],
       "triggers": [],
       "foreignKeys": {
         "attachment_comment_id_foreign": {

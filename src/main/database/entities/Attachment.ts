@@ -11,7 +11,7 @@ export const AttachmentSchema = defineEntity({
     id: p.uuid().primary(),
     type: p.enum(['link', 'localFile', 'localFolder', 'pastedImage']),
     title: p.string().length(255).nullable(),
-    link: p.string().length(1023),
+    link: p.string().length(1023).index(),
 
     task: () => p.manyToOne(TaskSchema).nullable().deleteRule('cascade'),
     comment: () => p.manyToOne(CommentSchema).nullable().deleteRule('cascade')

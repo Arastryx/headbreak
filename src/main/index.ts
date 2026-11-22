@@ -8,7 +8,7 @@ import { checkAutomatedMovements } from './checkAutomatedMovements'
 import { store } from './config'
 import { mkdirSync, existsSync } from 'node:fs'
 import { setupAttachmentApi } from './api/attachmentApi'
-import { clearOrphanedAttachments } from './clearOrphanedAttachments'
+import { clearOrphanedThumbnails } from './clearOrphanedThumbnails'
 import { ThumbnailManager } from './ThumbnailManager'
 import url from 'node:url'
 import { AttachmentManager } from './AttachmentManager'
@@ -113,7 +113,7 @@ if (!gotTheLock) {
       let params = request.url.slice('thum:///'.length)
 
       return net.fetch(
-        url.pathToFileURL((await ThumbnailManager.getThumbnail(params)) ?? '').toString()
+        url.pathToFileURL((await ThumbnailManager.getThumbnail(decodeURI(params))) ?? '').toString()
       )
     })
 
@@ -133,7 +133,7 @@ if (!gotTheLock) {
 
     await initDatabase()
 
-    await Promise.all([checkAutomatedMovements(), clearOrphanedAttachments()])
+    await Promise.all([checkAutomatedMovements(), clearOrphanedThumbnails()])
 
     // IPC test
     ipcMain.on('ping', () => console.log('pong'))

@@ -1,6 +1,6 @@
 import { nativeImage, app } from 'electron'
 import { extname } from 'path'
-import { writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir, unlink } from 'fs/promises'
 import { Thumbnail, ThumbnailSchema } from './database/entities/Thumbnail'
 import { Fork, unitOfWork } from './database/database'
 import { Attachment, AttachmentSchema } from './database/entities/Attachment'
@@ -60,5 +60,10 @@ export namespace ThumbnailManager {
       width: size.width,
       height: size.height
     })
+  }
+
+  export async function removeThumbnail(thumbnail: Thumbnail, unit: Fork) {
+    await unlink(thumbnail.thumb)
+    unit.remove(thumbnail)
   }
 }
