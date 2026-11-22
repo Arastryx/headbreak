@@ -102,11 +102,7 @@ export function AttachmentCreator({ taskId, onChange }: AttachmentCreatorProps) 
       <Dialog open={showLinkEditor} onClose={() => setShowLinkEditor(false)}>
         <DialogTitle>Add Link</DialogTitle>
         <DialogContent>
-          <LinkAttachmentEditor
-            onClose={() => setShowLinkEditor(false)}
-            taskId={taskId}
-            onSubmit={onChange}
-          />
+          <LinkAttachmentEditor onClose={() => setShowLinkEditor(false)} taskId={taskId} />
         </DialogContent>
       </Dialog>
     </>

@@ -71,9 +71,9 @@ export function TaskFields({
             if (file) {
               const result = await createFromClipboard()
 
-              if (result) {
-                onAttachmentsPasted(result)
-              }
+              // if (result) {
+              //   onAttachmentsPasted(result)
+              // }
 
               return
             }

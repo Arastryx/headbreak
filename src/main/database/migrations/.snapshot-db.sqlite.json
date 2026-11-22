@@ -89,23 +89,6 @@
           "enumItems": [],
           "mappedType": "text"
         },
-        "thumbnail_id": {
-          "name": "thumbnail_id",
-          "type": "integer",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": true,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "integer"
-        },
         "title": {
           "name": "title",
           "type": "text",
@@ -186,16 +169,6 @@
         },
         {
           "columnNames": [
-            "thumbnail_id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "keyName": "attachment_thumbnail_id_unique",
-          "primary": false,
-          "unique": true
-        },
-        {
-          "columnNames": [
             "id"
           ],
           "composite": false,
@@ -205,14 +178,7 @@
           "unique": true
         }
       ],
-      "checks": [
-        {
-          "name": "attachment_type_check",
-          "expression": "`type` in ('link', 'localFile', 'localFolder', 'pastedImage')",
-          "definition": "check (`type` in ('link', 'localFile', 'localFolder', 'pastedImage'))",
-          "columnName": "type"
-        }
-      ],
+      "checks": [],
       "triggers": [],
       "foreignKeys": {
         "attachment_comment_id_foreign": {
@@ -238,18 +204,6 @@
           ],
           "referencedTableName": "task",
           "deleteRule": "cascade"
-        },
-        "attachment_thumbnail_id_foreign": {
-          "columnNames": [
-            "thumbnail_id"
-          ],
-          "constraintName": "attachment_thumbnail_id_foreign",
-          "localTableName": "attachment",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "thumbnail",
-          "deleteRule": "set null"
         }
       },
       "comment": null
@@ -1344,11 +1298,11 @@
           "enumItems": [],
           "mappedType": "integer"
         },
-        "id": {
-          "name": "id",
-          "type": "integer",
+        "path": {
+          "name": "path",
+          "type": "text",
           "unsigned": false,
-          "autoincrement": true,
+          "autoincrement": false,
           "primary": true,
           "nullable": false,
           "unique": false,
@@ -1359,10 +1313,10 @@
           "comment": null,
           "collation": null,
           "enumItems": [],
-          "mappedType": "integer"
+          "mappedType": "text"
         },
-        "path": {
-          "name": "path",
+        "thumb": {
+          "name": "thumb",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -1416,7 +1370,7 @@
       "indexes": [
         {
           "columnNames": [
-            "id"
+            "path"
           ],
           "composite": false,
           "constraint": true,

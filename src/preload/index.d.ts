@@ -26,7 +26,7 @@ declare global {
       comments: Comment[]
       mover?: TaskMover
       tags: string[]
-      attachments: string[]
+      attachments: Attachment[]
     }
 
     interface Column extends Syncable {
@@ -65,19 +65,11 @@ declare global {
 
     type AttachmentType = 'link' | 'localFile' | 'localFolder' | 'pastedImage'
 
-    interface Attachment extends Auditable {
+    interface Attachment extends Syncable {
       id: string
       type: AttachmentType
       link: string
       title?: string
-      thumbnail?: Thumbnail
-    }
-
-    interface Thumbnail extends Auditable {
-      id: number
-      path: string
-      width: number
-      height: number
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
@@ -143,7 +135,7 @@ declare global {
         comments: Comment[]
         mover?: TaskMover
         tags: string[]
-        attachments: string[]
+        attachments: Attachment[]
       }
 
       export interface ColumnPayload extends Syncable {
@@ -160,11 +152,10 @@ declare global {
         color?: string
       }
 
-      interface Attachment {
-        url: string
+      interface Attachment extends Syncable {
+        type: AttachmentType
+        link: string
         title?: string
-        taskId?: string
-        commentId?: string
       }
     }
 
@@ -199,17 +190,10 @@ declare global {
     }
 
     attachmentApi: {
-      createLink: (payload: Headbreak.Payload.Attachment) => Result<Headbreak.Attachment>
-      createFiles: (taskId: string, type: 'file' | 'folder') => Result<void>
-      createFromClipboard: () => Result<Headbreak.Attachment[]>
-      getForTask: (taskId: string) => Result<Headbreak.Attachment[]>
+      createFiles: (taskId: string, type: 'file' | 'folder') => Result<string[]>
+      createFromClipboard: () => Result<string[]>
       openFile: (attachmentId: string) => void
       openFileLocation: (attachmentId: string) => void
-      edit: (
-        attachmentId: string,
-        payload: Headbreak.Payload.Attachment
-      ) => Result<Headbreak.Attachment>
-      delete: (attachmentId: string) => Result<void>
     }
   }
 }

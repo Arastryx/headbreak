@@ -112,12 +112,8 @@ if (!gotTheLock) {
     protocol.handle('thum', async (request) => {
       let params = request.url.slice('thum:///'.length)
 
-      const [thumbnailId] = params.split('/')
-
       return net.fetch(
-        url
-          .pathToFileURL((await ThumbnailManager.getThumbnail(Number(thumbnailId))) ?? '')
-          .toString()
+        url.pathToFileURL((await ThumbnailManager.getThumbnail(params)) ?? '').toString()
       )
     })
 

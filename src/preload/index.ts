@@ -36,9 +36,7 @@ try {
     getForTask: generateEndpoint('attachment/getForTask'),
 
     openFile: generateCommand('attachment/openFile'),
-    openFileLocation: generateCommand('attachment/openFileLocation'),
-    edit: generateEndpoint('attachment/edit'),
-    delete: generateEndpoint('attachment/delete')
+    openFileLocation: generateCommand('attachment/openFileLocation')
   })
 } catch (error) {
   console.error(error)

@@ -3,14 +3,21 @@ import React from 'react'
 import { ImageAttachment } from './ImageAttachment'
 import { TextAttachment } from './TextAttachment'
 
-export interface AttachmentDisplayProps {
-  attachments?: Headbreak.Attachment[]
-  onChange?: () => void
+function canHaveThumbnail(path: string) {
+  return path.endsWith('png') || path.endsWith('jpg') || path.endsWith('jpeg')
 }
 
-export function AttachmentDisplay({ attachments, onChange }: AttachmentDisplayProps) {
-  const imageAttachments = attachments?.filter((a) => a.thumbnail != null)
-  const textAttachments = attachments?.filter((a) => a.thumbnail == null)
+export interface AttachmentDisplayProps {
+  attachments?: Headbreak.Attachment[]
+}
+
+export function AttachmentDisplay({ attachments }: AttachmentDisplayProps) {
+  const imageAttachments = attachments?.filter(
+    (a) => !a.markForDeletion && canHaveThumbnail(a.link)
+  )
+  const textAttachments = attachments?.filter(
+    (a) => !a.markForDeletion && !canHaveThumbnail(a.link)
+  )
 
   const imageGridSizing: { size: number; maxHeight: number } =
     imageAttachments?.length == 1
@@ -24,18 +31,14 @@ export function AttachmentDisplay({ attachments, onChange }: AttachmentDisplayPr
       <Grid container sx={{ alignItems: 'stretch' }}>
         {imageAttachments?.map((a) => (
           <Grid key={a.id} size={imageGridSizing.size}>
-            <ImageAttachment
-              attachment={a}
-              onChange={onChange}
-              maxHeight={imageGridSizing.maxHeight}
-            />
+            <ImageAttachment attachment={a} maxHeight={imageGridSizing.maxHeight} />
           </Grid>
         ))}
       </Grid>
       {textAttachments?.length != 0 && (
         <Stack>
           {textAttachments?.map((a) => (
-            <TextAttachment key={a.id} attachment={a} onChange={onChange} />
+            <TextAttachment key={a.id} attachment={a} />
           ))}
         </Stack>
       )}

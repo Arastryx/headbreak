@@ -27,57 +27,30 @@ export namespace AttachmentManager {
     }
   }
 
-  export async function createLink(payload: AttachmentPayload) {
-    const unit = unitOfWork()
+  // export async function createLink(payload: AttachmentPayload) {
+  //   const unit = unitOfWork()
 
-    const result = unit.create(AttachmentSchema, {
-      type: 'link',
-      link: payload.url,
-      title: payload.title,
-      task: payload.taskId ? rel(Task, payload.taskId) : undefined
-    })
+  //   const result = unit.create(AttachmentSchema, {
+  //     type: 'link',
+  //     link: payload.url,
+  //     title: payload.title,
+  //     task: payload.taskId ? rel(Task, payload.taskId) : undefined
+  //   })
 
-    await unit.flush()
+  //   await unit.flush()
 
-    return normalizeEntities(result)
-  }
+  //   return normalizeEntities(result)
+  // }
 
   export async function createFiles(taskId: string, type: 'file' | 'folder') {
     if (!headbreakApp.mainWindow) {
       throw new Error('Attempted to open a dialog before the window was ready')
     }
-
     const result = await dialog.showOpenDialog(headbreakApp.mainWindow, {
       properties: [type === 'file' ? 'openFile' : 'openDirectory', 'multiSelections']
     })
 
-    await createFileAttachments(result.filePaths, taskId)
-  }
-
-  async function createFileAttachments(filePaths: string[], taskId?: string) {
-    const unit = unitOfWork()
-
-    const attachments = await Promise.all(
-      filePaths.map(async (p) => {
-        const isFolder = (await lstat(p)).isDirectory()
-
-        const attachment = unit.create(AttachmentSchema, {
-          type: isFolder ? 'localFolder' : 'localFile',
-          link: p,
-          task: taskId ? rel(Task, taskId) : undefined
-        })
-
-        if (ThumbnailManager.canGenerateThumbnail(attachment)) {
-          await ThumbnailManager.createThumbnail(attachment, unit)
-        }
-
-        return attachment
-      })
-    )
-
-    await unit.flush()
-
-    return normalizeEntities(attachments)
+    return result.filePaths
   }
 
   export async function createFromClipboard() {
@@ -89,7 +62,7 @@ export namespace AttachmentManager {
       console.log('You pasted an image!!!!')
       return []
     } else {
-      return await createFileAttachments(await readFiles(items))
+      return await readFiles(items)
     }
   }
 
@@ -119,18 +92,18 @@ export namespace AttachmentManager {
     return []
   }
 
-  export async function getForTask(taskId: string) {
-    const unit = unitOfWork()
+  // export async function getForTask(taskId: string) {
+  //   const unit = unitOfWork()
 
-    const attachments = await unit.findAll(AttachmentSchema, {
-      where: {
-        task: { id: taskId }
-      },
-      populate: ['thumbnail']
-    })
+  //   const attachments = await unit.findAll(AttachmentSchema, {
+  //     where: {
+  //       task: { id: taskId }
+  //     },
+  //     populate: ['thumbnail']
+  //   })
 
-    return normalizeEntities(attachments.map((a) => a))
-  }
+  //   return normalizeEntities(attachments.map((a) => a))
+  // }
 
   export async function openFile(attachmentId: string) {
     const unit = unitOfWork()
@@ -154,32 +127,32 @@ export namespace AttachmentManager {
     await shell.showItemInFolder(attachment.link)
   }
 
-  export async function edit(attachmentId: string, payload: AttachmentPayload) {
-    const unit = unitOfWork()
+  // export async function edit(attachmentId: string, payload: AttachmentPayload) {
+  //   const unit = unitOfWork()
 
-    const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId)
+  //   const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId)
 
-    attachment.link = payload.url
-    attachment.title = payload.title
+  //   attachment.link = payload.url
+  //   attachment.title = payload.title
 
-    await unit.flush()
+  //   await unit.flush()
 
-    return attachment
-  }
+  //   return attachment
+  // }
 
-  export async function deleteAttachment(attachmentId: string) {
-    const unit = unitOfWork()
+  // export async function deleteAttachment(attachmentId: string) {
+  //   const unit = unitOfWork()
 
-    const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId, {
-      populate: ['thumbnail']
-    })
-    unit.remove(attachment)
+  //   const attachment = await unit.findOneOrFail(AttachmentSchema, attachmentId, {
+  //     populate: ['thumbnail']
+  //   })
+  //   unit.remove(attachment)
 
-    if (attachment.thumbnail) {
-      unit.remove(attachment.thumbnail)
-      await unlink(attachment.thumbnail.path)
-    }
+  //   if (attachment.thumbnail) {
+  //     unit.remove(attachment.thumbnail)
+  //     await unlink(attachment.thumbnail.path)
+  //   }
 
-    await unit.flush()
-  }
+  //   await unit.flush()
+  // }
 }

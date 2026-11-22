@@ -34,7 +34,12 @@ export interface TaskEditorProps {
 }
 
 export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: TaskEditorProps) {
-  const [task, setTask] = useImmer<DeepPartial<BasicTaskPayload>>(editableTask ?? {})
+  const [task, setTask] = useImmer<DeepPartial<BasicTaskPayload>>(
+    editableTask ?? {
+      tags: [],
+      attachments: []
+    }
+  )
   const [attachments, setAttachments] = useState<Headbreak.Attachment[]>([])
 
   //Last moved override is stored separately because I have learned my lesson about storing date picker
@@ -50,10 +55,10 @@ export function TaskEditor({ columnId, onSubmit, onClose, task: editableTask }: 
       throw new Error('Tried to submit a partially filled task')
     }
 
-    const payload = {
+    const payload: BasicTaskPayload = {
       ...task,
       lastMoved: lastMovedOverride?.set('hour', 12).toISOString(),
-      attachments: (editableTask?.attachments ?? []).concat(attachments.map((a) => a.id))
+      attachments: (editableTask?.attachments ?? []).concat(attachments)
     }
 
     if (editableTask) {

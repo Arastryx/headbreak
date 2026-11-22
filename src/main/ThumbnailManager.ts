@@ -17,56 +17,43 @@ export namespace ThumbnailManager {
     }
   }
 
-  export function canGenerateThumbnail(attachment: Attachment) {
-    return (
-      (attachment.type == 'localFile' || attachment.type == 'pastedImage') &&
-      ['.png', '.jpg', '.jpeg'].includes(extname(attachment.link))
-    )
+  export function canGenerateThumbnail(path: string) {
+    return ['.png', '.jpg', '.jpeg'].includes(extname(path))
   }
 
-  export async function createThumbnail(attachment: Attachment, unit: Fork) {
-    if (!canGenerateThumbnail(attachment)) {
-      throw new Error(
-        'Tried to generate a thumbnail for an attachment which does not support thumbnails'
-      )
+  export async function getThumbnail(path: string) {
+    if (!canGenerateThumbnail(path)) {
+      throw new Error('Tried to generate a thumbnail for a file which does not support thumbnails')
     }
 
-    if (attachment.thumbnail) {
-      throw new Error('This attachment already has a thumbnail')
-    }
-
-    if (!attachment.thumbnail) {
-      attachment.thumbnail = await buildThumbnail(attachment, unit)
-    }
-
-    if (!attachment.thumbnail) {
-      throw new Error('Failed to generate thumbnail')
-    }
-  }
-
-  async function buildThumbnail(attachment: Attachment, unit: Fork) {
-    const thumb = await nativeImage.createFromPath(attachment.link).resize({ width: 600 })
-
-    const isPng = attachment.link.endsWith('png')
-    const path = `${THUMBNAIL_PATH}/${v4()}.${isPng ? 'png' : 'jpg'}`
-
-    await writeFile(path, isPng ? thumb.toPNG() : thumb.toJPEG(100))
-
-    const size = thumb.getSize()
-
-    return unit.create(ThumbnailSchema, {
-      path,
-      width: size.width,
-      height: size.height,
-      attachment: attachment
-    })
-  }
-
-  export async function getThumbnail(id: number) {
     const unit = unitOfWork()
 
-    const thumbnail = await unit.findOneOrFail(ThumbnailSchema, id)
+    let thumbnail: any = unit.findOne(ThumbnailSchema, path)
 
-    return thumbnail.path
+    if (!thumbnail) {
+      thumbnail = await buildThumbnail(path, unit)
+    }
+
+    await unit.flush()
+
+    return thumbnail.thumb
+  }
+
+  async function buildThumbnail(path: string, unit: Fork) {
+    const image = await nativeImage.createFromPath(path).resize({ width: 600 })
+
+    const isPng = path.endsWith('png')
+    const thumb = `${THUMBNAIL_PATH}/${v4()}.${isPng ? 'png' : 'jpg'}`
+
+    await writeFile(path, isPng ? image.toPNG() : image.toJPEG(100))
+
+    const size = image.getSize()
+
+    return unit.create(ThumbnailSchema, {
+      path: path,
+      thumb,
+      width: size.width,
+      height: size.height
+    })
   }
 }

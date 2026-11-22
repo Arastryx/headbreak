@@ -9,10 +9,10 @@ import {
 } from '@mui/material'
 import { ContextMenu } from '@renderer/Common/Components/ContextMenu'
 import { Micon } from '@renderer/Common/Components/Micon'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { LinkAttachmentEditor } from '../AttachmentCreator/LinkAttachmentEditor'
-import { useIpcCall } from '@renderer/Common/Hooks/useIpcCall'
 import { MaterialIcon } from 'material-icons'
+import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
 
 function getAttachmentIcon(attachment: Headbreak.Attachment): MaterialIcon {
   if (attachment.type === 'link') {
@@ -46,13 +46,12 @@ function getAttachmentLabel(attachment: Headbreak.Attachment) {
 
 export interface TextAttachmentProps {
   attachment: Headbreak.Attachment
-  onChange?: () => void
 }
 
-export function TextAttachment({ attachment, onChange }: TextAttachmentProps) {
+export function TextAttachment({ attachment }: TextAttachmentProps) {
   const [showEdit, setShowEdit] = useState(false)
 
-  const { callIpc: deleteAttachment } = useIpcCall(window.attachmentApi.delete, [])
+  const { deleteAttachment } = useKanban()
 
   const attachmentContent = (
     <Stack
@@ -113,7 +112,6 @@ export function TextAttachment({ attachment, onChange }: TextAttachmentProps) {
             danger: true,
             onClick: async () => {
               await deleteAttachment(attachment.id)
-              onChange?.()
             }
           }
         ]}
@@ -143,11 +141,7 @@ export function TextAttachment({ attachment, onChange }: TextAttachmentProps) {
       <Dialog open={showEdit} onClose={() => setShowEdit(false)}>
         <DialogTitle>Edit Link</DialogTitle>
         <DialogContent>
-          <LinkAttachmentEditor
-            onClose={() => setShowEdit(false)}
-            attachment={attachment}
-            onSubmit={onChange}
-          />
+          <LinkAttachmentEditor onClose={() => setShowEdit(false)} attachment={attachment} />
         </DialogContent>
       </Dialog>
     </>

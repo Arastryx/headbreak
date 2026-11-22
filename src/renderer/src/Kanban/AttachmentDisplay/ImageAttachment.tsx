@@ -13,6 +13,8 @@ import React, { useState } from 'react'
 import { LinkAttachmentEditor } from '../AttachmentCreator/LinkAttachmentEditor'
 import { useIpcCall } from '@renderer/Common/Hooks/useIpcCall'
 import { MaterialIcon } from 'material-icons'
+import { useKanbanManagement } from '@renderer/KanbanProvider/useKanbanManagement'
+import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
 
 function getAttachmentIcon(attachment: Headbreak.Attachment): MaterialIcon {
   if (attachment.type === 'link') {
@@ -51,16 +53,12 @@ export interface ImageAttachmentProps {
 }
 
 export function ImageAttachment({ attachment, onChange, maxHeight }: ImageAttachmentProps) {
-  if (!attachment.thumbnail) {
-    throw new Error('Tried to render an image attachment for an attachment which has no thumbnail')
-  }
-
-  const { callIpc: deleteAttachment } = useIpcCall(window.attachmentApi.delete, [])
+  const { deleteAttachment } = useKanban()
 
   const attachmentContent = (
     <Box
       component={'img'}
-      src={`thum:///${attachment.thumbnail.id}`}
+      src={`thum:///${attachment.link}`}
       sx={{ maxWidth: '100%', maxHeight: maxHeight }}
     />
   )

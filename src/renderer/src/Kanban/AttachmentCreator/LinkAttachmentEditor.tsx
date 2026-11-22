@@ -1,28 +1,20 @@
 import { Button, Stack, TextField } from '@mui/material'
 import { useIpcCall } from '@renderer/Common/Hooks/useIpcCall'
+import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
+import { useKanbanManagement } from '@renderer/KanbanProvider/useKanbanManagement'
 import React, { useState } from 'react'
 
 export interface LinkAttachmentEditorProps {
   onClose?: () => void
-  onSubmit?: () => void
   attachment?: Headbreak.Attachment
   taskId?: string
 }
 
-export function LinkAttachmentEditor({
-  onClose,
-  onSubmit,
-  taskId,
-  attachment
-}: LinkAttachmentEditorProps) {
+export function LinkAttachmentEditor({ onClose, taskId, attachment }: LinkAttachmentEditorProps) {
   const [url, setUrl] = useState(attachment?.link ?? '')
   const [title, setTitle] = useState(attachment?.title ?? '')
 
-  const { callIpc: createLink, isLoading: isCreating } = useIpcCall(
-    window.attachmentApi.createLink,
-    []
-  )
-  const { callIpc: editLink, isLoading: isEditing } = useIpcCall(window.attachmentApi.edit, [])
+  const { createAttachment, editAttachment } = useKanban()
 
   const submit = async () => {
     if (!url) {
@@ -30,12 +22,15 @@ export function LinkAttachmentEditor({
     }
 
     if (attachment) {
-      await editLink(attachment.id, { url, title, taskId })
+      await editAttachment(attachment.id, { link: url, title, type: 'link' })
     } else {
-      await createLink({ url, title, taskId })
+      if (!taskId) {
+        throw new Error('Attempted to create an attachment attached to nothing')
+      }
+
+      await createAttachment({ link: url, title, type: 'link' }, taskId)
     }
 
-    onSubmit?.()
     onClose?.()
   }
 
@@ -45,12 +40,7 @@ export function LinkAttachmentEditor({
       <TextField label="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
       <Stack direction="row" spacing={2} sx={{ justifyContent: 'flex-end' }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button
-          variant="contained"
-          disabled={url == ''}
-          loading={isCreating || isEditing}
-          onClick={submit}
-        >
+        <Button variant="contained" disabled={url == ''} onClick={submit}>
           Add
         </Button>
       </Stack>

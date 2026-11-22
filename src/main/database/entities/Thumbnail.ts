@@ -8,11 +8,10 @@ export const ThumbnailSchema = defineEntity({
   name: 'Thumbnail',
   extends: AuditableSchema,
   properties: {
-    id: p.integer().primary(),
-    path: p.string(),
+    path: p.string().primary(),
+    thumb: p.string(),
     width: p.integer(),
-    height: p.integer(),
-    attachment: () => p.oneToOne(AttachmentSchema).mappedBy('thumbnail')
+    height: p.integer()
   }
 })
 

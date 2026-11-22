@@ -10,9 +10,9 @@ import { defineConfig } from '@mikro-orm/sqlite'
 import { Migration20260930175134 } from './migrations/Migration20260930175134'
 import { AttachmentSchema } from './entities/Attachment'
 import { ThumbnailSchema } from './entities/Thumbnail'
-import { Migration20261121185933 } from './migrations/Migration20261121185933'
+import { Migration20261122132508 } from './migrations/Migration20261122132508'
 
-const __GENERATING_MIGRATIONS = true
+const __GENERATING_MIGRATIONS = false
 
 const path = __GENERATING_MIGRATIONS
   ? './db.sqlite'
@@ -33,7 +33,7 @@ export default defineConfig({
   ],
   migrations: {
     pathTs: './src/main/database/migrations',
-    migrationsList: [Migration20260930175134, Migration20261121185933]
+    migrationsList: [Migration20260930175134, Migration20261122132508]
   },
   debug: import.meta.env.DEV
 })

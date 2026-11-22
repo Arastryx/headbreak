@@ -26,10 +26,7 @@ export interface TaskDetailsProps {
 
 export function TaskDetails({ task }: TaskDetailsProps) {
   const { data: changes } = useIpcData(() => window.kanbanApi.getChanges(task.id), [task.id])
-  const { data: attachments, reload: reloadAttachments } = useIpcData(
-    () => window.attachmentApi.getForTask(task.id),
-    [task.id]
-  )
+
   const [editMode, setEditMode] = useState(false)
 
   const createdThisYear = dayjs(task.createdAt).year() === dayjs().year()
@@ -67,9 +64,9 @@ export function TaskDetails({ task }: TaskDetailsProps) {
           )}
 
           <Box>
-            <AttachmentCreator taskId={task.id} onChange={reloadAttachments} />
+            <AttachmentCreator taskId={task.id} />
           </Box>
-          <AttachmentDisplay attachments={attachments} onChange={reloadAttachments} />
+          <AttachmentDisplay attachments={task.attachments} />
 
           {task.mover && (
             <Typography variant="caption">
