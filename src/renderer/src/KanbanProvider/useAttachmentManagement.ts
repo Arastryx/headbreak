@@ -13,6 +13,14 @@ export function getAttachmentIndex(columns: Headbreak.Column[], attachmentId: st
           return { columnIndex: c, taskIndex: t, attachmentIndex: a }
         }
       }
+
+      for (let co = 0; co < columns[c].tasks[t].comments.length; co++) {
+        for (let a = 0; a < columns[c].tasks[t].comments[co].attachments.length; a++) {
+          if (columns[c].tasks[t].comments[co].attachments[a].id === attachmentId) {
+            return { columnIndex: c, taskIndex: t, commentIndex: co, attachmentIndex: a }
+          }
+        }
+      }
     }
   }
 
@@ -20,8 +28,17 @@ export function getAttachmentIndex(columns: Headbreak.Column[], attachmentId: st
 }
 
 export function findAttachment(columns: Headbreak.Column[], attachmentId: string) {
-  const { columnIndex, taskIndex, attachmentIndex } = getAttachmentIndex(columns, attachmentId)
-  return columns[columnIndex].tasks[taskIndex].attachments[attachmentIndex]
+  const { columnIndex, taskIndex, commentIndex, attachmentIndex } = getAttachmentIndex(
+    columns,
+    attachmentId
+  )
+  const task = columns[columnIndex].tasks[taskIndex]
+
+  if (commentIndex != null) {
+    return task.comments[commentIndex].attachments[attachmentIndex]
+  }
+
+  return task.attachments[attachmentIndex]
 }
 
 export type BasicAttachmentPayload = Omit<Headbreak.Payload.Attachment, 'id'>

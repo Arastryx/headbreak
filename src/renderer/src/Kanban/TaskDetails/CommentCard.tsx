@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { CommentBox } from './CommentBox'
 import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
+import { AttachmentDisplay } from '../AttachmentDisplay'
 
 export interface CommentCardProps {
   comment: Headbreak.Comment
@@ -12,7 +13,7 @@ export interface CommentCardProps {
 export function CommentCard({ comment }: CommentCardProps) {
   const [editMode, setEditMode] = useState(false)
 
-  const { deleteComment } = useKanban()
+  const { deleteComment, deleteAttachment } = useKanban()
 
   return (
     <Card
@@ -43,6 +44,15 @@ export function CommentCard({ comment }: CommentCardProps) {
           <Typography sx={{ p: 1, pb: 1.5, whiteSpace: 'pre-wrap' }}>
             {comment.content.trim()}
           </Typography>
+          {comment.attachments.length > 0 && (
+            <Box sx={{ px: 1, pb: 2 }}>
+              <AttachmentDisplay
+                attachments={comment.attachments}
+                onDelete={(a) => deleteAttachment(a.id)}
+              />
+            </Box>
+          )}
+
           <Typography variant="caption" sx={{ position: 'absolute', bottom: 0, right: 8 }}>
             {dayjs.duration(dayjs(comment.createdAt).diff(dayjs()), 'milliseconds').humanize(true)}
           </Typography>

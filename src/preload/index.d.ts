@@ -45,6 +45,7 @@ declare global {
     interface Comment extends Syncable {
       content: string
       task: string
+      attachments: Attachment[]
     }
 
     type PolicyType = 'cron' | 'interval'
@@ -126,6 +127,7 @@ declare global {
 
       export interface Comment extends Syncable {
         content: string
+        attachments: Attachment[]
       }
 
       export interface Task extends Syncable {

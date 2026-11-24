@@ -26,6 +26,7 @@ export interface TaskMoverPayload extends Syncable {
 
 export interface CommentPayload extends Syncable {
   content: string
+  attachments: AttachmentPayload[]
 }
 
 export interface TaskPayload extends Syncable {
@@ -174,6 +175,10 @@ export namespace KanbanManager {
     }
 
     comment.content = payload.content
+
+    await Promise.all([
+      ...payload.attachments.map((a) => createUpdateDeleteAttachment(a, comment, unit))
+    ])
   }
 
   async function createUpdateDeleteTaskMover(
@@ -228,7 +233,15 @@ export namespace KanbanManager {
     }
   }
 
-  async function createUpdateDeleteAttachment(payload: AttachmentPayload, task: Task, unit: Fork) {
+  function parentIsTask(parent: Task | TaskComment): parent is Task {
+    return (parent as Task).title != null
+  }
+
+  async function createUpdateDeleteAttachment(
+    payload: AttachmentPayload,
+    parent: Task | TaskComment,
+    unit: Fork
+  ) {
     let attachment = await unit.findOne(AttachmentSchema, payload.id)
 
     if (!attachment) {
@@ -247,7 +260,12 @@ export namespace KanbanManager {
     attachment.type = payload.type
     attachment.title = payload.title
     attachment.link = payload.link
-    attachment.task = task
+
+    if (parentIsTask(parent)) {
+      attachment.task = parent
+    } else {
+      attachment.comment = parent
+    }
   }
 
   async function createUpdateDeleteTag(payload: TagPayload, unit: Fork) {
@@ -276,7 +294,12 @@ export namespace KanbanManager {
 
     const [columns, tags] = await Promise.all([
       unit.findAll(ColumnSchema, {
-        populate: ['tasks.comments', 'tasks.mover', 'tasks.tags:ref', 'tasks.attachments'],
+        populate: [
+          'tasks.comments.attachments',
+          'tasks.mover',
+          'tasks.tags:ref',
+          'tasks.attachments'
+        ],
         populateOrderBy: { tasks: { order: 'ASC' } },
         orderBy: { order: 'ASC' }
       }),

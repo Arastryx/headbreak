@@ -1,7 +1,4 @@
-import { emit } from 'process'
 import { unitOfWork } from './database/database'
-import { AttachmentSchema } from './database/entities/Attachment'
-import { unlink } from 'fs/promises'
 import { Thumbnail } from './database/entities/Thumbnail'
 import { ThumbnailManager } from './ThumbnailManager'
 
