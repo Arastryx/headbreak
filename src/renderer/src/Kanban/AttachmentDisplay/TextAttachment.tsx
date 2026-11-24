@@ -7,42 +7,11 @@ import {
   Stack,
   Typography
 } from '@mui/material'
-import { ContextMenu } from '@renderer/Common/Components/ContextMenu'
 import { Micon } from '@renderer/Common/Components/Micon'
 import { useState } from 'react'
 import { LinkAttachmentEditor } from '../AttachmentCreator/LinkAttachmentEditor'
-import { MaterialIcon } from 'material-icons'
-import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
-
-function getAttachmentIcon(attachment: Headbreak.Payload.Attachment): MaterialIcon {
-  if (attachment.type === 'link') {
-    return 'link'
-  }
-
-  if (attachment.type === 'localFolder') {
-    return 'folder'
-  }
-
-  const extensionRegex = /(?:\.([^.]+))?$/
-  const extension = extensionRegex.exec(attachment.link)?.[1]
-
-  switch (extension) {
-    case 'png':
-    case 'jpg':
-    case 'gif':
-      return 'image'
-    default:
-      return 'insert_drive_file'
-  }
-}
-
-function getAttachmentLabel(attachment: Headbreak.Payload.Attachment) {
-  if (attachment.type === 'link') {
-    return attachment.title
-  }
-
-  return attachment.link.replace(/^.*[\\/]/, '')
-}
+import { AttachmentContextMenu } from './AttachmentContextMenu'
+import { getAttachmentLabel, getAttachmentIcon } from './attachmentHelpers'
 
 export interface TextAttachmentProps {
   attachment: Headbreak.Attachment | Headbreak.Payload.Attachment
@@ -86,42 +55,10 @@ export function TextAttachment({ attachment, onDelete, compact }: TextAttachment
 
   return (
     <>
-      <ContextMenu
-        options={[
-          {
-            label: 'Open',
-            icon: 'file_open',
-            onClick: () => {
-              if (attachment.type === 'link') {
-                window.open(attachment.link, '_blank')
-              } else {
-                window.attachmentApi.openFile(attachment.id)
-              }
-            }
-          },
-          {
-            label: 'Open File Location',
-            icon: 'folder',
-            onClick: () => {
-              window.attachmentApi.openFileLocation(attachment.id)
-            },
-            hide: attachment.type !== 'localFile'
-          },
-          {
-            label: 'Edit',
-            icon: 'edit',
-            onClick: () => setShowEdit(true),
-            hide: attachment.type !== 'link'
-          },
-          {
-            label: 'Delete',
-            icon: 'delete',
-            danger: true,
-            onClick: () => {
-              onDelete(attachment)
-            }
-          }
-        ]}
+      <AttachmentContextMenu
+        attachment={attachment}
+        onDelete={() => onDelete(attachment)}
+        onEdit={() => setShowEdit(true)}
         render={({ open }) => (
           <Box onContextMenu={(e) => open(e)}>
             {attachment.type === 'link' && (
@@ -144,7 +81,7 @@ export function TextAttachment({ attachment, onDelete, compact }: TextAttachment
             )}
           </Box>
         )}
-      ></ContextMenu>
+      />
       <Dialog open={showEdit} onClose={() => setShowEdit(false)}>
         <DialogTitle>Edit Link</DialogTitle>
         <DialogContent>

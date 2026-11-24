@@ -67,7 +67,9 @@ export function useAttachmentManagement(modify: KanbanModifier) {
     (id: string, payload: BasicAttachmentPayload) => {
       modify((copy) => {
         const attachment = findAttachment(copy.columns, id)
-        Object.assign(payload, attachment)
+
+        attachment.link = payload.link
+        attachment.title = payload.title
       })
     },
     [modify]
