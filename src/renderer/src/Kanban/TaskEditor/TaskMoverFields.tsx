@@ -1,6 +1,6 @@
 import { Typography, Stack, FormControlLabel, Switch, Box, Collapse, Tooltip } from '@mui/material'
 import { ColumnSelect } from '@renderer/Common/Components/ColumnSelect'
-import { IntervalSelector } from './IntervalSelector/IntervalSelector'
+import { IntervalSelector } from '../IntervalSelector/IntervalSelector'
 import { Emphasize } from '@renderer/Common/Components/Emphasize'
 import { DatePicker, DateTimePicker } from '@mui/x-date-pickers'
 import { Micon } from '@renderer/Common/Components/Micon'

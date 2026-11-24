@@ -20,13 +20,18 @@ function getComment(kanban: Headbreak.Column[], commentId: string) {
 
 export function useCommentManagement(modify: KanbanModifier) {
   const createComment = useCallback(
-    (taskId: string, text: string) => {
+    (taskId: string, text: string, attachments: Headbreak.Payload.Attachment[]) => {
       const comment: Headbreak.Comment = {
         id: v4(),
         content: text,
         createdAt: dayjs().toISOString(),
         updatedAt: dayjs().toISOString(),
-        task: taskId
+        task: taskId,
+        attachments: attachments.map((a) => ({
+          ...a,
+          createdAt: dayjs().toISOString(),
+          updatedAt: dayjs().toISOString()
+        }))
       }
 
       modify((copy) => {
@@ -40,9 +45,18 @@ export function useCommentManagement(modify: KanbanModifier) {
   )
 
   const editComment = useCallback(
-    (commentId: string, text: string) => {
+    (commentId: string, text: string, addedAttachments: Headbreak.Payload.Attachment[]) => {
       modify((copy) => {
-        getComment(copy.columns, commentId).content = text
+        const comment = getComment(copy.columns, commentId)
+
+        comment.content = text
+        comment.attachments = comment.attachments.concat(
+          addedAttachments.map((a) => ({
+            ...a,
+            createdAt: dayjs().toISOString(),
+            updatedAt: dayjs().toISOString()
+          }))
+        )
       })
     },
     [modify]

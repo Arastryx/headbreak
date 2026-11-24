@@ -6,12 +6,14 @@ import { useTaskManagement } from './useTaskManagement'
 import { useColumnManagement } from './useColumnManagement'
 import { useCommentManagement } from './useCommentManagement'
 import { useTagManagement } from './useTagManagement'
+import { useAttachmentManagement } from './useAttachmentManagement'
 
 export type ColumnPayload = Omit<Headbreak.Column, 'id' | 'tasks' | 'markForDeletion'>
 export type TagPayload = Omit<Headbreak.Tag, 'id' | 'markForDeletion'>
 
 export type KanbanModifier = (modify: (kanban: Headbreak.Kanban) => void) => void
 
+/** @package */
 export function useKanbanManagement() {
   const {
     data,
@@ -31,7 +33,8 @@ export function useKanbanManagement() {
         throw new Error('Attempted to modify kanban before it was loaded')
       }
 
-      setKanban(produce(data, modify))
+      const result = produce(data, modify)
+      setKanban(result)
 
       dirtyRef.current = true
     },
@@ -42,6 +45,7 @@ export function useKanbanManagement() {
   const columnManagement = useColumnManagement(modifyKanban)
   const commentManagement = useCommentManagement(modifyKanban)
   const tagManagement = useTagManagement(modifyKanban)
+  const attachmentManagement = useAttachmentManagement(modifyKanban)
 
   const { callIpc: sync, isLoading: isSyncing } = useIpcCall(window.kanbanApi.sync, [])
 
@@ -67,6 +71,7 @@ export function useKanbanManagement() {
     ...taskManagement,
     ...columnManagement,
     ...commentManagement,
-    ...tagManagement
+    ...tagManagement,
+    ...attachmentManagement
   }
 }

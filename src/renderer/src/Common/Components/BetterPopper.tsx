@@ -5,6 +5,7 @@ export interface BetterPopper extends Omit<PopperProps, 'modifiers'> {}
 export function BetterPopper({ ...popperProps }: BetterPopper) {
   return (
     <Popper
+      style={{ zIndex: 1301 }}
       {...popperProps}
       modifiers={[
         {

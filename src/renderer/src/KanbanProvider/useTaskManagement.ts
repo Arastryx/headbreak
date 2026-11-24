@@ -4,6 +4,13 @@ import { v4 } from 'uuid'
 import { KanbanModifier } from './useKanbanManagement'
 import dayjs from 'dayjs'
 
+function auditableFields(): Headbreak.Auditable {
+  return {
+    createdAt: dayjs().toISOString(),
+    updatedAt: dayjs().toISOString()
+  }
+}
+
 function processMover(
   taskId: string,
   mover?: Headbreak.TaskMover,
@@ -15,13 +22,12 @@ function processMover(
     } else {
       return {
         id: v4(),
+        ...auditableFields(),
         policy: payload.policy,
         policyType: payload.policyType,
         sourceColumn: payload.sourceColumn,
         destinationColumn: payload.destinationColumn,
-        task: taskId,
-        createdAt: dayjs().toISOString(),
-        updatedAt: dayjs().toISOString()
+        task: taskId
       }
     }
   }
@@ -71,10 +77,10 @@ export function useTaskManagement(modify: KanbanModifier) {
         mover: processMover(id, undefined, payload.mover),
         lastMoved: payload.lastMoved ?? now,
         column: columnId,
-        updatedAt: now,
-        createdAt: now,
+        ...auditableFields(),
         comments: [],
-        tags: payload.tags ?? []
+        tags: payload.tags,
+        attachments: payload.attachments.map((a) => ({ ...a, ...auditableFields() }))
       }
 
       modify((copy) => {
@@ -100,7 +106,8 @@ export function useTaskManagement(modify: KanbanModifier) {
         task.title = payload.title
         task.description = payload.description
         task.mover = processMover(task.id, task.mover, payload.mover)
-        task.tags = payload.tags ?? []
+        task.tags = payload.tags
+        task.attachments = payload.attachments.map((a) => ({ ...auditableFields(), ...a }))
         task.lastMoved = payload.lastMoved ?? task.lastMoved
       })
     },

@@ -5,6 +5,7 @@ import { ChangeLogSchema } from './ChangeLog'
 import { CommentSchema } from './Comment'
 import { TaskMoverSchema } from './TaskMover'
 import { TagSchema } from './Tag'
+import { AttachmentSchema } from './Attachment'
 
 export const TaskSchema = defineEntity({
   name: 'Task',
@@ -20,7 +21,8 @@ export const TaskSchema = defineEntity({
 
     mover: () => p.oneToOne(TaskMoverSchema).mappedBy('task'),
     changes: () => p.oneToMany(ChangeLogSchema).mappedBy('task'),
-    comments: () => p.oneToMany(CommentSchema).mappedBy('task')
+    comments: () => p.oneToMany(CommentSchema).mappedBy('task'),
+    attachments: () => p.oneToMany(AttachmentSchema).mappedBy('task')
   }
 })
 

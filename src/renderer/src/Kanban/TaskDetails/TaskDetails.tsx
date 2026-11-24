@@ -1,8 +1,8 @@
-import { Box, Divider, IconButton, Stack, Typography } from '@mui/material'
+import { Box, Divider, Grid, IconButton, Stack, Typography } from '@mui/material'
 import { useIpcData } from '../../Common/Hooks/useIpcCall'
 import dayjs from 'dayjs'
 import { useState } from 'react'
-import { TaskEditor } from '../TaskEditor'
+import { TaskEditor } from '../TaskEditor/TaskEditor'
 import { Micon } from '../../Common/Components/Micon'
 import { CommentCard } from './CommentCard'
 import { ChangeDisplay } from './ChangeDisplay'
@@ -11,6 +11,11 @@ import { intervalToString } from '../IntervalSelector/intervalToString'
 import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
 import { TagChip } from '@renderer/Common/Components/TagChip'
 import { calculateTimeUntilMove, TimeUntilMove } from '../MovementWarning'
+import { AttachmentCreator } from '../AttachmentCreator'
+import { ImageAttachment } from '../AttachmentDisplay/ImageAttachment'
+import { TextAttachment } from '../AttachmentDisplay/TextAttachment'
+import { AttachmentDisplay } from '../AttachmentDisplay'
+import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
 
 function isComment(c: Headbreak.Comment | Headbreak.ChangeLog): c is Headbreak.Comment {
   return typeof c.content === 'string'
@@ -22,6 +27,7 @@ export interface TaskDetailsProps {
 
 export function TaskDetails({ task }: TaskDetailsProps) {
   const { data: changes } = useIpcData(() => window.kanbanApi.getChanges(task.id), [task.id])
+
   const [editMode, setEditMode] = useState(false)
 
   const createdThisYear = dayjs(task.createdAt).year() === dayjs().year()
@@ -29,6 +35,8 @@ export function TaskDetails({ task }: TaskDetailsProps) {
   const history = [...task.comments.filter((c) => !c.markForDeletion), ...(changes ?? [])].sort(
     (a, b) => dayjs(a.createdAt).diff(b.createdAt)
   )
+
+  const { deleteAttachment } = useKanban()
 
   return (
     <Box sx={{ minWidth: 300 }}>
@@ -57,6 +65,15 @@ export function TaskDetails({ task }: TaskDetailsProps) {
               ))}
             </Stack>
           )}
+
+          <Box>
+            <AttachmentCreator taskId={task.id} />
+          </Box>
+          <AttachmentDisplay
+            attachments={task.attachments}
+            onDelete={(a) => deleteAttachment(a.id)}
+          />
+
           {task.mover && (
             <Typography variant="caption">
               This task moves from{' '}

@@ -26,6 +26,7 @@ declare global {
       comments: Comment[]
       mover?: TaskMover
       tags: string[]
+      attachments: Attachment[]
     }
 
     interface Column extends Syncable {
@@ -44,6 +45,7 @@ declare global {
     interface Comment extends Syncable {
       content: string
       task: string
+      attachments: Attachment[]
     }
 
     type PolicyType = 'cron' | 'interval'
@@ -60,6 +62,15 @@ declare global {
       label?: string
       icon?: MaterialIcon
       color?: string
+    }
+
+    type AttachmentType = 'link' | 'localFile' | 'localFolder' | 'pastedImage'
+
+    interface Attachment extends Syncable {
+      id: string
+      type: AttachmentType
+      link: string
+      title?: string
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
@@ -116,6 +127,7 @@ declare global {
 
       export interface Comment extends Syncable {
         content: string
+        attachments: Attachment[]
       }
 
       export interface Task extends Syncable {
@@ -124,7 +136,8 @@ declare global {
         lastMoved?: string
         comments: Comment[]
         mover?: TaskMover
-        tags?: string[]
+        tags: string[]
+        attachments: Attachment[]
       }
 
       export interface ColumnPayload extends Syncable {
@@ -139,6 +152,12 @@ declare global {
         label?: string
         icon?: string
         color?: string
+      }
+
+      interface Attachment extends Syncable {
+        type: AttachmentType
+        link: string
+        title?: string
       }
     }
 
@@ -160,6 +179,11 @@ declare global {
       name?: string
       stack?: string
     }
+
+    interface PastedDirectory {
+      path: string
+      type: Exclude<AttachmentType, 'link'>
+    }
   }
 
   interface Window {
@@ -170,6 +194,13 @@ declare global {
       sync: (columns: Headbreak.Payload.Column[], tags: Headbreak.Payload.Tag[]) => Result<void>
       get: () => Result<Headbreak.Kanban>
       getChanges: (taskId: string) => Result<Headbreak.ChangeLog[]>
+    }
+
+    attachmentApi: {
+      createFiles: (type: 'file' | 'folder') => Result<string[]>
+      createFromClipboard: () => Result<Headbreak.PastedDirectory[]>
+      openFile: (attachmentId: string) => void
+      openFileLocation: (attachmentId: string) => void
     }
   }
 }

@@ -1,0 +1,140 @@
+import { TextField, Collapse, Stack, Tooltip, Box } from '@mui/material'
+import { DatePicker } from '@mui/x-date-pickers'
+import { Emphasize } from '@renderer/Common/Components/Emphasize'
+import { Micon } from '@renderer/Common/Components/Micon'
+import { TagMultiSelect } from '@renderer/Common/Components/TagMultiSelect'
+import { title } from 'process'
+import React from 'react'
+import { TaskMoverFields } from './TaskMoverFields'
+import { DeepPartial } from '@renderer/Common/Types/deepPartial'
+import { BasicTaskPayload } from '@renderer/KanbanProvider/useTaskManagement'
+import { Updater } from 'use-immer'
+import { Dayjs } from 'dayjs'
+import { AttachmentCreator } from '../AttachmentCreator/AttachmentCreator'
+import { useIpcCall } from '@renderer/Common/Hooks/useIpcCall'
+import { AttachmentDisplay } from '../AttachmentDisplay'
+import { BasicAttachmentPayload } from '@renderer/KanbanProvider/useAttachmentManagement'
+
+export interface TaskFieldsProps {
+  task: DeepPartial<BasicTaskPayload>
+  attachments: Headbreak.Payload.Attachment[]
+  lastMovedOverride: Dayjs | null
+  columnId: string
+  highlightErrors?: boolean
+  onLastMovedOverrideChange: (v: Dayjs | null) => void
+  setTask: Updater<DeepPartial<BasicTaskPayload>>
+  onFilesPasted: (paths: Headbreak.PastedDirectory[]) => void
+  onDeleteAttachment: (id: string) => void
+}
+
+export function TaskFields({
+  task,
+  attachments,
+  highlightErrors,
+  columnId,
+  setTask,
+  lastMovedOverride,
+  onLastMovedOverrideChange,
+  onFilesPasted,
+  onDeleteAttachment
+}: TaskFieldsProps) {
+  const { title, description, mover, tags: tagIds } = task
+
+  const { callIpc: createFromClipboard } = useIpcCall(window.attachmentApi.createFromClipboard, [])
+
+  return (
+    <Stack spacing={4}>
+      <Emphasize color="error" show={highlightErrors && !title}>
+        <TextField
+          placeholder="Title"
+          fullWidth
+          value={title}
+          error={highlightErrors && !title}
+          onChange={(e) =>
+            setTask((copy) => {
+              copy.title = e.target.value
+            })
+          }
+          slotProps={{
+            input: { sx: { fontSize: 19, fontFamily: 'Open Sans Variable', fontWeight: '400' } },
+            htmlInput: { maxLength: 127 }
+          }}
+        />
+      </Emphasize>
+      <TextField
+        placeholder="Description"
+        multiline
+        fullWidth
+        value={description}
+        onPaste={async (e) => {
+          var items = e.clipboardData.items
+
+          for (let j = 0; j < items.length; j++) {
+            const file = items[j].getAsFile()
+            if (file) {
+              const result = await createFromClipboard()
+
+              if (result) {
+                onFilesPasted(result)
+              }
+
+              return
+            }
+          }
+        }}
+        onChange={(e) =>
+          setTask((copy) => {
+            copy.description = e.target.value
+          })
+        }
+      />
+      {attachments.length > 0 && (
+        <AttachmentDisplay
+          attachments={attachments}
+          preventOpeningImages
+          onDelete={(a) => onDeleteAttachment(a.id)}
+          compact
+        />
+      )}
+      <TagMultiSelect
+        value={tagIds ?? []}
+        onChange={(t) =>
+          setTask((copy) => {
+            copy.tags = t
+          })
+        }
+      />
+      <Box>
+        <TaskMoverFields
+          mover={mover}
+          onChange={(m) =>
+            setTask((copy) => {
+              copy.mover = m
+            })
+          }
+          currentColumnId={columnId}
+          highlightErrors={highlightErrors}
+        />
+        <Collapse in={columnId === mover?.sourceColumn && mover.policyType === 'interval'}>
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+            <DatePicker
+              label="Last Moved Override"
+              value={lastMovedOverride}
+              onChange={onLastMovedOverrideChange}
+              slotProps={{
+                field: { clearable: true },
+                textField: { fullWidth: true, size: 'small' }
+              }}
+            />
+            <Tooltip
+              title="Allows you to specify a custom date for when this task was previously performed (defaults to now)."
+              placement="right"
+            >
+              <Micon icon="info" color="action" />
+            </Tooltip>
+          </Stack>
+        </Collapse>
+      </Box>
+    </Stack>
+  )
+}

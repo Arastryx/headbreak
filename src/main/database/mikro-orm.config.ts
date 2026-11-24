@@ -8,18 +8,32 @@ import { TaskSchema } from './entities/Task'
 import { TaskMoverSchema } from './entities/TaskMover'
 import { defineConfig } from '@mikro-orm/sqlite'
 import { Migration20260930175134 } from './migrations/Migration20260930175134'
+import { AttachmentSchema } from './entities/Attachment'
+import { ThumbnailSchema } from './entities/Thumbnail'
+import { Migration20261122221229 } from './migrations/Migration20261122221229'
 
 const __GENERATING_MIGRATIONS = false
 
-const path = __GENERATING_MIGRATIONS ? '.' : app.getPath('userData')
+const path = __GENERATING_MIGRATIONS
+  ? './db.sqlite'
+  : `${app.getPath('userData')}/${import.meta.env.DEV ? 'dev' : 'app'}/db.sqlite`
 
 export default defineConfig({
   extensions: [Migrator],
-  dbName: `${path}/${import.meta.env.DEV ? 'dev' : 'app'}/db.sqlite`,
-  entities: [TaskSchema, ColumnSchema, CommentSchema, ChangeLogSchema, TaskMoverSchema, TagSchema],
+  dbName: path,
+  entities: [
+    TaskSchema,
+    ColumnSchema,
+    CommentSchema,
+    ChangeLogSchema,
+    TaskMoverSchema,
+    TagSchema,
+    AttachmentSchema,
+    ThumbnailSchema
+  ],
   migrations: {
     pathTs: './src/main/database/migrations',
-    migrationsList: [Migration20260930175134]
+    migrationsList: [Migration20260930175134, Migration20261122221229]
   },
   debug: import.meta.env.DEV
 })

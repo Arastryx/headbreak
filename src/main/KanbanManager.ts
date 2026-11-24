@@ -8,6 +8,9 @@ import { TaskMover, TaskMoverSchema } from './database/entities/TaskMover'
 import { Collection, rel, wrap } from '@mikro-orm/core'
 import dayjs from 'dayjs'
 import { Tag, TagSchema } from './database/entities/Tag'
+import { Attachment, AttachmentSchema } from './database/entities/Attachment'
+
+type AttachmentType = 'link' | 'localFile' | 'localFolder' | 'pastedImage'
 
 interface Syncable {
   id: string
@@ -23,6 +26,7 @@ export interface TaskMoverPayload extends Syncable {
 
 export interface CommentPayload extends Syncable {
   content: string
+  attachments: AttachmentPayload[]
 }
 
 export interface TaskPayload extends Syncable {
@@ -31,7 +35,8 @@ export interface TaskPayload extends Syncable {
   lastMoved: string
   comments: CommentPayload[]
   mover?: TaskMoverPayload
-  tags?: string[]
+  tags: string[]
+  attachments: AttachmentPayload[]
 }
 
 export interface ColumnPayload extends Syncable {
@@ -46,6 +51,12 @@ export interface TagPayload extends Syncable {
   label?: string
   icon?: string
   color?: string
+}
+
+export interface AttachmentPayload extends Syncable {
+  type: AttachmentType
+  link: string
+  title?: string
 }
 
 export namespace KanbanManager {
@@ -104,6 +115,7 @@ export namespace KanbanManager {
       task = new Task()
       task.id = payload.id
       task.tags = new Collection<Tag>(task)
+      task.attachments = new Collection<Attachment>(task)
 
       unit.persist(task)
       taskIsNew = true
@@ -138,7 +150,8 @@ export namespace KanbanManager {
 
     await Promise.all([
       ...payload.comments.map((c) => createUpdateDeleteComment(c, task, unit)),
-      ...(payload.mover ? [createUpdateDeleteTaskMover(payload.mover, task, unit, taskIsNew)] : [])
+      ...(payload.mover ? [createUpdateDeleteTaskMover(payload.mover, task, unit, taskIsNew)] : []),
+      ...payload.attachments.map((a) => createUpdateDeleteAttachment(a, task, unit))
     ])
   }
 
@@ -162,6 +175,10 @@ export namespace KanbanManager {
     }
 
     comment.content = payload.content
+
+    await Promise.all([
+      ...payload.attachments.map((a) => createUpdateDeleteAttachment(a, comment, unit))
+    ])
   }
 
   async function createUpdateDeleteTaskMover(
@@ -216,6 +233,41 @@ export namespace KanbanManager {
     }
   }
 
+  function parentIsTask(parent: Task | TaskComment): parent is Task {
+    return (parent as Task).title != null
+  }
+
+  async function createUpdateDeleteAttachment(
+    payload: AttachmentPayload,
+    parent: Task | TaskComment,
+    unit: Fork
+  ) {
+    let attachment = await unit.findOne(AttachmentSchema, payload.id)
+
+    if (!attachment) {
+      if (payload.markForDeletion) {
+        return
+      }
+
+      attachment = new Attachment()
+      attachment.id = payload.id
+      unit.persist(attachment)
+    } else if (payload.markForDeletion) {
+      unit.remove(attachment)
+      return
+    }
+
+    attachment.type = payload.type
+    attachment.title = payload.title
+    attachment.link = payload.link
+
+    if (parentIsTask(parent)) {
+      attachment.task = parent
+    } else {
+      attachment.comment = parent
+    }
+  }
+
   async function createUpdateDeleteTag(payload: TagPayload, unit: Fork) {
     let tag = await unit.findOne(TagSchema, payload.id)
 
@@ -242,7 +294,12 @@ export namespace KanbanManager {
 
     const [columns, tags] = await Promise.all([
       unit.findAll(ColumnSchema, {
-        populate: ['tasks.comments', 'tasks.mover', 'tasks.tags:ref'],
+        populate: [
+          'tasks.comments.attachments',
+          'tasks.mover',
+          'tasks.tags:ref',
+          'tasks.attachments'
+        ],
         populateOrderBy: { tasks: { order: 'ASC' } },
         orderBy: { order: 'ASC' }
       }),

@@ -1,12 +1,17 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, net, protocol } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.ico?asset'
-import { setupKanbanApi } from './kanbanApi'
+import { setupKanbanApi } from './api/kanbanApi'
 import { initDatabase } from './database/database'
 import { checkAutomatedMovements } from './checkAutomatedMovements'
 import { store } from './config'
 import { mkdirSync, existsSync } from 'node:fs'
+import { setupAttachmentApi } from './api/attachmentApi'
+import { clearOrphanedThumbnails } from './clearOrphanedThumbnails'
+import { ThumbnailManager } from './ThumbnailManager'
+import url from 'node:url'
+import { AttachmentManager } from './AttachmentManager'
 
 const isDev = !app.isPackaged
 
@@ -20,6 +25,15 @@ if (isDev) {
     console.error('Failed to install Devtron:', error)
   })
 }
+
+ThumbnailManager.prepThumbnails()
+AttachmentManager.prepPasted()
+
+interface HeadbreakApp {
+  mainWindow?: BrowserWindow
+}
+
+export const headbreakApp: HeadbreakApp = {}
 
 function createWindow(): void {
   // Create the browser window.
@@ -67,6 +81,8 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  headbreakApp.mainWindow = mainWindow
 }
 
 const gotTheLock = app.requestSingleInstanceLock()
@@ -74,12 +90,32 @@ const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
   app.quit()
 } else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (headbreakApp.mainWindow) {
+      if (headbreakApp.mainWindow.isMinimized()) {
+        headbreakApp.mainWindow.restore()
+      }
+      headbreakApp.mainWindow.focus()
+    }
+  })
+
+  protocol.registerSchemesAsPrivileged([{ scheme: 'thum', privileges: { bypassCSP: true } }])
+
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.whenReady().then(async () => {
     // Set app user model id for windows
-    electronApp.setAppUserModelId('com.electron')
+    electronApp.setAppUserModelId('com.arastryx.headbreak')
+
+    protocol.handle('thum', async (request) => {
+      let params = request.url.slice('thum:///'.length)
+
+      return net.fetch(
+        url.pathToFileURL((await ThumbnailManager.getThumbnail(decodeURI(params))) ?? '').toString()
+      )
+    })
 
     // Default open or close DevTools by F12 in development
     // and ignore CommandOrControl + R in production.
@@ -96,12 +132,14 @@ if (!gotTheLock) {
     }
 
     await initDatabase()
-    await checkAutomatedMovements()
+
+    await Promise.all([checkAutomatedMovements(), clearOrphanedThumbnails()])
 
     // IPC test
     ipcMain.on('ping', () => console.log('pong'))
 
     setupKanbanApi()
+    setupAttachmentApi()
 
     createWindow()
 

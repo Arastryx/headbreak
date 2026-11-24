@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 function generateEndpoint(channel: string) {
@@ -27,6 +27,16 @@ try {
     sync: generateEndpoint('kanban/sync'),
     get: generateEndpoint('kanban/get'),
     getChanges: generateEndpoint('kanban/get-changes')
+  })
+
+  contextBridge.exposeInMainWorld('attachmentApi', {
+    createLink: generateEndpoint('attachment/createLink'),
+    createFiles: generateEndpoint('attachment/createFiles'),
+    createFromClipboard: generateEndpoint('attachment/createFromClipboard'),
+    getForTask: generateEndpoint('attachment/getForTask'),
+
+    openFile: generateCommand('attachment/openFile'),
+    openFileLocation: generateCommand('attachment/openFileLocation')
   })
 } catch (error) {
   console.error(error)
