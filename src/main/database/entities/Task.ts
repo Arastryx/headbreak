@@ -12,6 +12,7 @@ export const TaskSchema = defineEntity({
   extends: AuditableSchema,
   properties: {
     id: p.uuid().primary(),
+    number: p.integer().default(0).unique(),
     title: p.string().length(127),
     description: p.text().nullable(),
     order: p.integer(),
