@@ -10,7 +10,10 @@ export function fitsFilters(task: Headbreak.Task, filters?: TaskFilters) {
     //If not every term is found in a given task
     if (
       !terms.every(
-        (t) => task.title.toLowerCase().includes(t) || task.description?.toLowerCase().includes(t)
+        (t) =>
+          task.title.toLowerCase().includes(t) ||
+          task.description?.toLowerCase().includes(t) ||
+          task.number.toString().includes(t)
       )
     ) {
       return false
