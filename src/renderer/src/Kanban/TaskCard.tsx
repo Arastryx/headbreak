@@ -7,7 +7,8 @@ import {
   DialogContent,
   Box,
   Stack,
-  Tooltip
+  Tooltip,
+  Skeleton
 } from '@mui/material'
 import { useSortable } from '@dnd-kit/react/sortable'
 import { useState } from 'react'
@@ -72,7 +73,26 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
             <CardHeader
               title={
                 <Stack direction={'row'} spacing={0.5} sx={{ alignItems: 'center' }}>
-                  {task.title} <MovementWarning task={task} />
+                  <Typography variant="h5">
+                    <Typography component={'span'} sx={{ fontWeight: 200, mr: 0.25 }}>
+                      #
+                      {task.number == -1 ? (
+                        <Skeleton
+                          width={15}
+                          sx={{
+                            display: 'inline-block',
+                            ml: 0.25,
+                            verticalAlign: 'text-bottom',
+                            mb: -0.15
+                          }}
+                        />
+                      ) : (
+                        task.number
+                      )}
+                    </Typography>{' '}
+                    {task.title}
+                  </Typography>{' '}
+                  <MovementWarning task={task} />
                 </Stack>
               }
               sx={{ pb: task.description ? 1 : undefined }}

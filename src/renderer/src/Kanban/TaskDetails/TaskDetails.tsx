@@ -1,4 +1,4 @@
-import { Box, Divider, Grid, IconButton, Stack, Typography } from '@mui/material'
+import { Box, Divider, Grid, IconButton, Skeleton, Stack, Typography } from '@mui/material'
 import { useIpcData } from '../../Common/Hooks/useIpcCall'
 import dayjs from 'dayjs'
 import { useState } from 'react'
@@ -50,7 +50,25 @@ export function TaskDetails({ task }: TaskDetailsProps) {
             spacing={2}
             sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
           >
-            <Typography variant="h5">{task.title}</Typography>
+            <Typography variant="h5">
+              <Typography component={'span'} sx={{ fontWeight: 200, mr: 0.25 }}>
+                #
+                {task.number == -1 ? (
+                  <Skeleton
+                    width={15}
+                    sx={{
+                      display: 'inline-block',
+                      ml: 0.25,
+                      verticalAlign: 'text-bottom',
+                      mb: -0.15
+                    }}
+                  />
+                ) : (
+                  task.number
+                )}
+              </Typography>{' '}
+              {task.title}
+            </Typography>
             <IconButton size="small" onClick={() => setEditMode(true)}>
               <Micon icon="edit" fontSize="inherit" />
             </IconButton>
