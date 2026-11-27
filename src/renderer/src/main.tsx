@@ -17,6 +17,7 @@ import { NotificationProvider } from './Common/Contexts/NotificationProvider'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import AdvancedFormat from 'dayjs/plugin/advancedFormat'
+import { TaskSelectionProvider } from './Kanban/TaskSelectionProvider'
 
 dayjs.extend(LocalizedFormat)
 dayjs.extend(Duration)
@@ -30,8 +31,10 @@ createRoot(document.getElementById('root')!).render(
         <KanbanProvider>
           <ThemeProvider theme={theme}>
             <ActiveContextMenuProvider>
-              <CssBaseline />
-              <Headbreak />
+              <TaskSelectionProvider>
+                <CssBaseline />
+                <Headbreak />
+              </TaskSelectionProvider>
             </ActiveContextMenuProvider>
           </ThemeProvider>
         </KanbanProvider>

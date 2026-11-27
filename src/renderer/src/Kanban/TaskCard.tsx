@@ -21,6 +21,7 @@ import { TagChip } from '@renderer/Common/Components/TagChip'
 import { Micon } from '@renderer/Common/Components/Micon'
 import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
 import { MovementWarning } from './MovementWarning'
+import { useTaskSelection } from './TaskSelectionProvider'
 
 export const TASK_TYPE = 'task'
 
@@ -39,9 +40,8 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
     group: columnId
   })
 
-  const [showFullTask, setShowFullTask] = useState(false)
-
   const { deleteTask } = useKanban()
+  const { setTask } = useTaskSelection()
 
   const createdThisYear = dayjs(task.createdAt).year() === dayjs().year()
 
@@ -59,7 +59,7 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
         render={({ open }) => (
           <Card
             elevation={isDragging ? 6 : 1}
-            onClick={() => setShowFullTask(true)}
+            onClick={() => setTask(task)}
             onContextMenu={open}
             sx={{
               position: 'relative',
@@ -134,11 +134,6 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
           </Card>
         )}
       ></ContextMenu>
-      <Dialog open={showFullTask} onClose={() => setShowFullTask(false)} maxWidth="sm" fullWidth>
-        <DialogContent>
-          <TaskDetails task={task} />
-        </DialogContent>
-      </Dialog>
     </Box>
   )
 }

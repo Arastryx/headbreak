@@ -1,8 +1,9 @@
 import { Column, COLUMN_TYPE } from './Column'
-import { Stack } from '@mui/material'
+import { Dialog, DialogContent, Stack } from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
 import { TaskFilters } from './filterTasks'
+import { TaskDetails } from './TaskDetails'
 
 interface Column {
   id: number

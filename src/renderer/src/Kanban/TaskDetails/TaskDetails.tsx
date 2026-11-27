@@ -14,6 +14,7 @@ import { calculateTimeUntilMove, TimeUntilMove } from '../MovementWarning'
 import { AttachmentCreator } from '../AttachmentCreator'
 import { AttachmentDisplay } from '../AttachmentDisplay'
 import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
+import { linkifyText } from './linkifyText'
 
 function isComment(c: Headbreak.Comment | Headbreak.ChangeLog): c is Headbreak.Comment {
   return typeof c.content === 'string'
@@ -72,7 +73,7 @@ export function TaskDetails({ task }: TaskDetailsProps) {
             </IconButton>
           </Stack>
           {task.description && (
-            <Typography sx={{ whiteSpace: 'pre-wrap' }}>{task.description}</Typography>
+            <Typography sx={{ whiteSpace: 'pre-wrap' }}>{linkifyText(task.description)}</Typography>
           )}
           {task.tags && (
             <Stack direction={'row'} spacing={1}>
