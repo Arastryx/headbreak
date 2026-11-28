@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import { CommentBox } from './CommentBox'
 import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
 import { AttachmentDisplay } from '../AttachmentDisplay'
+import { linkifyText } from './linkifyText'
 
 export interface CommentCardProps {
   comment: Headbreak.Comment
@@ -42,7 +43,7 @@ export function CommentCard({ comment }: CommentCardProps) {
             </IconButton>
           </Stack>
           <Typography sx={{ p: 1, pb: 1.5, whiteSpace: 'pre-wrap' }}>
-            {comment.content.trim()}
+            {linkifyText(comment.content.trim())}
           </Typography>
           {comment.attachments.length > 0 && (
             <Box sx={{ px: 1, pb: 2 }}>
