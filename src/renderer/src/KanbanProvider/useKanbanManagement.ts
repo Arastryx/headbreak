@@ -41,6 +41,21 @@ export function useKanbanManagement() {
     [data]
   )
 
+  const findTaskByNumber = useCallback(
+    (taskNumber: number) => {
+      for (const c of kanban ?? []) {
+        const task = c.tasks.find((t) => t.number == taskNumber)
+
+        if (task) {
+          return task
+        }
+      }
+
+      return null
+    },
+    [kanban]
+  )
+
   const taskManagement = useTaskManagement(modifyKanban)
   const columnManagement = useColumnManagement(modifyKanban)
   const commentManagement = useCommentManagement(modifyKanban)
@@ -66,6 +81,7 @@ export function useKanbanManagement() {
   return {
     kanban,
     tags,
+    findTaskByNumber,
     isLoading,
     isSyncing,
     ...taskManagement,

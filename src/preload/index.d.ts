@@ -21,6 +21,7 @@ declare global {
     interface Task extends Syncable {
       title: string
       description?: string
+      number: number
       column: string
       lastMoved: string
       comments: Comment[]

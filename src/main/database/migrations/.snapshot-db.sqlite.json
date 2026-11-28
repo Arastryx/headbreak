@@ -851,6 +851,23 @@
           "enumItems": [],
           "mappedType": "date"
         },
+        "number": {
+          "name": "number",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": true,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "0",
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
         "order": {
           "name": "order",
           "type": "integer",
@@ -923,6 +940,16 @@
           "keyName": "task_column_id_index",
           "primary": false,
           "unique": false
+        },
+        {
+          "columnNames": [
+            "number"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "task_number_unique",
+          "primary": false,
+          "unique": true
         }
       ],
       "checks": [],

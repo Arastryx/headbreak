@@ -73,6 +73,7 @@ export function useTaskManagement(modify: KanbanModifier) {
       const task: Headbreak.Task = {
         id: id,
         title: payload.title,
+        number: -1,
         description: payload.description,
         mover: processMover(id, undefined, payload.mover),
         lastMoved: payload.lastMoved ?? now,

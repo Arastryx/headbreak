@@ -1,4 +1,4 @@
-import { Box, Divider, Grid, IconButton, Stack, Typography } from '@mui/material'
+import { Box, Divider, IconButton, Skeleton, Stack, Typography } from '@mui/material'
 import { useIpcData } from '../../Common/Hooks/useIpcCall'
 import dayjs from 'dayjs'
 import { useState } from 'react'
@@ -12,29 +12,20 @@ import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
 import { TagChip } from '@renderer/Common/Components/TagChip'
 import { calculateTimeUntilMove, TimeUntilMove } from '../MovementWarning'
 import { AttachmentCreator } from '../AttachmentCreator'
-import { ImageAttachment } from '../AttachmentDisplay/ImageAttachment'
-import { TextAttachment } from '../AttachmentDisplay/TextAttachment'
 import { AttachmentDisplay } from '../AttachmentDisplay'
 import { useKanban } from '@renderer/KanbanProvider/KanbanProvider'
-
-function isComment(c: Headbreak.Comment | Headbreak.ChangeLog): c is Headbreak.Comment {
-  return typeof c.content === 'string'
-}
+import { linkifyText } from './linkifyText'
+import { TaskNumber } from '../TaskNumber'
+import { TaskHistory } from './TaskHistory'
 
 export interface TaskDetailsProps {
   task: Headbreak.Task
 }
 
 export function TaskDetails({ task }: TaskDetailsProps) {
-  const { data: changes } = useIpcData(() => window.kanbanApi.getChanges(task.id), [task.id])
-
   const [editMode, setEditMode] = useState(false)
 
   const createdThisYear = dayjs(task.createdAt).year() === dayjs().year()
-
-  const history = [...task.comments.filter((c) => !c.markForDeletion), ...(changes ?? [])].sort(
-    (a, b) => dayjs(a.createdAt).diff(b.createdAt)
-  )
 
   const { deleteAttachment } = useKanban()
 
@@ -50,13 +41,15 @@ export function TaskDetails({ task }: TaskDetailsProps) {
             spacing={2}
             sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
           >
-            <Typography variant="h5">{task.title}</Typography>
+            <Typography variant="h5">
+              <TaskNumber number={task.number} /> {task.title}
+            </Typography>
             <IconButton size="small" onClick={() => setEditMode(true)}>
               <Micon icon="edit" fontSize="inherit" />
             </IconButton>
           </Stack>
           {task.description && (
-            <Typography sx={{ whiteSpace: 'pre-wrap' }}>{task.description}</Typography>
+            <Typography sx={{ whiteSpace: 'pre-wrap' }}>{linkifyText(task.description)}</Typography>
           )}
           {task.tags && (
             <Stack direction={'row'} spacing={1}>
@@ -101,31 +94,7 @@ export function TaskDetails({ task }: TaskDetailsProps) {
       {!editMode && (
         <>
           <Divider sx={{ mx: -1, mt: 1 }} />
-          <Stack useFlexGap spacing={0.5} sx={{ py: 2 }}>
-            {history?.map((c) => (
-              <>
-                {isComment(c) && (
-                  <Box sx={{ mx: -1 }}>
-                    <CommentCard comment={c} />
-                  </Box>
-                )}
-                {!isComment(c) && (
-                  <Stack
-                    direction="row"
-                    spacing={2}
-                    sx={{ justifyContent: 'space-between', alignItems: 'center' }}
-                  >
-                    <ChangeDisplay key={c.id} change={c.content} />
-                    <Typography variant="caption">
-                      {dayjs
-                        .duration(dayjs(c.createdAt).diff(dayjs()), 'milliseconds')
-                        .humanize(true)}
-                    </Typography>
-                  </Stack>
-                )}
-              </>
-            ))}
-          </Stack>
+          <TaskHistory task={task} />
           <CommentBox taskId={task.id} />
         </>
       )}

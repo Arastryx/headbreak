@@ -11,6 +11,7 @@ import { Migration20260930175134 } from './migrations/Migration20260930175134'
 import { AttachmentSchema } from './entities/Attachment'
 import { ThumbnailSchema } from './entities/Thumbnail'
 import { Migration20261122221229 } from './migrations/Migration20261122221229'
+import { Migration20261126223902 } from './migrations/Migration20261126223902'
 
 const __GENERATING_MIGRATIONS = false
 
@@ -33,7 +34,7 @@ export default defineConfig({
   ],
   migrations: {
     pathTs: './src/main/database/migrations',
-    migrationsList: [Migration20260930175134, Migration20261122221229]
+    migrationsList: [Migration20260930175134, Migration20261122221229, Migration20261126223902]
   },
   debug: import.meta.env.DEV
 })

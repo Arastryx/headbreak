@@ -60,8 +60,12 @@ export interface AttachmentPayload extends Syncable {
 }
 
 export namespace KanbanManager {
+  let counter: number = -1
+
   export async function sync(columns: ColumnPayload[], tags: TagPayload[]) {
     const unit = unitOfWork()
+
+    counter = (await getMaxTaskNumber(unit)) + 1
 
     await Promise.all([
       ...columns.map((c, index) => createUpdateColumn(c, index, unit)),
@@ -116,6 +120,7 @@ export namespace KanbanManager {
       task.id = payload.id
       task.tags = new Collection<Tag>(task)
       task.attachments = new Collection<Attachment>(task)
+      task.number = counter++
 
       unit.persist(task)
       taskIsNew = true
@@ -153,6 +158,16 @@ export namespace KanbanManager {
       ...(payload.mover ? [createUpdateDeleteTaskMover(payload.mover, task, unit, taskIsNew)] : []),
       ...payload.attachments.map((a) => createUpdateDeleteAttachment(a, task, unit))
     ])
+  }
+
+  async function getMaxTaskNumber(unit: Fork) {
+    return (
+      (
+        await unit.execute<{ maxNumber: number | null }[]>(
+          'SELECT MAX(number) AS maxNumber FROM task'
+        )
+      )[0].maxNumber ?? 0
+    )
   }
 
   async function createUpdateDeleteComment(payload: CommentPayload, task: Task, unit: Fork) {
