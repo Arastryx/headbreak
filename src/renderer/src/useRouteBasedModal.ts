@@ -32,7 +32,7 @@ export function useRouteBasedModal(): {
 
       setTask(task)
     }
-  })
+  }, [modal, findTaskByNumber, navigate])
 
   const modalToShow = useMemo((): 'settings' | 'task' | null => {
     if (modal == null) {
@@ -56,7 +56,7 @@ export function useRouteBasedModal(): {
     }
 
     return null
-  }, [modal])
+  }, [modal, findTaskByNumber])
 
   return {
     show: modalToShow,
