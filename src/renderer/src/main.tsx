@@ -11,13 +11,13 @@ import '@fontsource-variable/open-sans'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { KanbanProvider } from './KanbanProvider/KanbanProvider'
 import { theme } from './theme'
-import { Headbreak } from './Headbreak'
 import { ActiveContextMenuProvider } from './Common/Components/ContextMenu/ActiveContextMenuProvider'
 import { NotificationProvider } from './Common/Contexts/NotificationProvider'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import AdvancedFormat from 'dayjs/plugin/advancedFormat'
-import { TaskSelectionProvider } from './Kanban/TaskSelectionProvider'
+import { RouterProvider } from 'react-router'
+import { router } from './router'
 
 dayjs.extend(LocalizedFormat)
 dayjs.extend(Duration)
@@ -31,10 +31,8 @@ createRoot(document.getElementById('root')!).render(
         <KanbanProvider>
           <ThemeProvider theme={theme}>
             <ActiveContextMenuProvider>
-              <TaskSelectionProvider>
-                <CssBaseline />
-                <Headbreak />
-              </TaskSelectionProvider>
+              <CssBaseline />
+              <RouterProvider router={router} />
             </ActiveContextMenuProvider>
           </ThemeProvider>
         </KanbanProvider>
