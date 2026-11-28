@@ -1,28 +1,13 @@
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  Typography,
-  Dialog,
-  DialogContent,
-  Box,
-  Stack,
-  Tooltip,
-  Skeleton
-} from '@mui/material'
+import { Card, CardHeader, CardContent, Typography, Box, Stack } from '@mui/material'
 import { useSortable } from '@dnd-kit/react/sortable'
-import { useState } from 'react'
 import { useKanban } from '../KanbanProvider/KanbanProvider'
-import dayjs, { Dayjs } from 'dayjs'
-import { TaskDetails } from './TaskDetails/TaskDetails'
+import dayjs from 'dayjs'
 import { ContextMenu } from '../Common/Components/ContextMenu'
 import { FadeOutText } from '../Common/Components/FadeOutText'
 import { TagChip } from '@renderer/Common/Components/TagChip'
-import { Micon } from '@renderer/Common/Components/Micon'
-import { ColumnLabel } from '@renderer/Common/Components/ColumnLabel'
 import { MovementWarning } from './MovementWarning'
-import { Link } from 'react-router'
 import { UnstyledLink } from '@renderer/Common/Components/UnstyledLink'
+import { TaskNumber } from './TaskNumber'
 
 export const TASK_TYPE = 'task'
 
@@ -74,23 +59,7 @@ export function TaskCard({ task, index, columnId }: TaskCardProps) {
                 title={
                   <Stack direction={'row'} spacing={0.5} sx={{ alignItems: 'center' }}>
                     <Typography variant="h5">
-                      <Typography component={'span'} sx={{ fontWeight: 200, mr: 0.25 }}>
-                        #
-                        {task.number == -1 ? (
-                          <Skeleton
-                            width={15}
-                            sx={{
-                              display: 'inline-block',
-                              ml: 0.25,
-                              verticalAlign: 'text-bottom',
-                              mb: -0.15
-                            }}
-                          />
-                        ) : (
-                          task.number
-                        )}
-                      </Typography>{' '}
-                      {task.title}
+                      <TaskNumber number={task.number} /> {task.title}
                     </Typography>{' '}
                     <MovementWarning task={task} />
                   </Stack>
